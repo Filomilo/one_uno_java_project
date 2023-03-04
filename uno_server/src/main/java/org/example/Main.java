@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        ServerConnectionManager connection= new ServerConnectionManager();
-            connection.testFunction();
+        ServerApp serverApp=new ServerApp(25565);
+
 
 
         }

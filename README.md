@@ -33,11 +33,13 @@ Ranking rozgrywek danych osób
 
 
 ![image of playable game interafce project](https://i.imgur.com/VUsJ4fa.png)
-Projekt interefejsu rozgrywki
+
+## Schemat bazy danych:
 
 
-![image of game results](https://i.imgur.com/JnP6DWm.png)
-Interfejs wyników po rozgrywce
+![image of  data Base scheme](https://i.imgur.com/aPSd6di.png)
+schemat bazy danych
 
-
+### skrypty do bazy danych
+[Scripts](https://github.com/Filomilo/one_uno_java_project/blob/master/SqlScripts.md#crete-table)
 

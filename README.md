@@ -40,6 +40,12 @@ Ranking rozgrywek danych osób
 ![image of  data Base scheme](https://i.imgur.com/aPSd6di.png)
 schemat bazy danych
 
+
+![image of  result penel](https://i.imgur.com/JnP6DWm.png)
+Panel z wynikami
+
+
+
 ### skrypty do bazy danych
 [Scripts](https://github.com/Filomilo/one_uno_java_project/blob/master/SqlScripts.md#crete-table)
 

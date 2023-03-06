@@ -1,5 +1,6 @@
 package org.example;
 
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,6 +178,21 @@ public class DataBaseMangaer {
         executeProcedure(SqlScripts.ClearGameSrript);
     }
 
+    int getPlayerCount()
+    {
+        return executeFunciton(SqlScripts.GetPlayerCountScript);
+    }
+
+    int getNumbOntheTable()
+    {
+        return executeFunciton(SqlScripts.GetNumberOnTableScript);
+    }
+
+    int getPlayerAmtOfCards(String nick)
+    {
+        return executeFunciton(SqlScripts.GetAmtOfCardsScript, nick);
+    }
+
     private void executeProcedure(String sqlCode)
     {
             try{
@@ -215,6 +231,37 @@ public class DataBaseMangaer {
         }
     }
 
+    private int executeFunciton(String sqlCode )
+    {
+        int result=-1;
+        try{
+            CallableStatement statement = connection.prepareCall(sqlCode);
+            statement.registerOutParameter(1, Types.INTEGER);
+            ResultSet resultSet=statement.executeQuery();
+            result=(int)statement.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(sqlCode + "--------------didint execute porpely---------------");
+             e.printStackTrace();
+        }
+        return result;
+    }
+
+    private int executeFunciton(String sqlCode, String var)
+    {
+        int result=-1;
+        try{
+            CallableStatement statement = connection.prepareCall(sqlCode);
+            statement.registerOutParameter(1, Types.INTEGER);
+            statement.setString(2,var);
+            ResultSet resultSet=statement.executeQuery();
+            result=(int)statement.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(sqlCode + "--------------didint execute porpely---------------");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
      private void executeArrayStatements(String [] statemnt)
      {
          for (String sqlCode: statemnt) {
@@ -228,6 +275,8 @@ public class DataBaseMangaer {
 
          }
      }
+
+
 
 
 }

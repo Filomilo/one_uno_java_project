@@ -34,6 +34,22 @@ public class SqlScripts {
     static String ClearGameSrript=
             "{call CLEAR_GAME}";
 
+
+    static String GetPlayerCountScript=
+    "{? = call GET_PLAYER_COUNT}";
+
+    static String GetNumberOnTableScript=
+            "{? = call  GET_NUMBER_ON_TABLE }";
+
+    static String GetAmtOfCardsScript=
+            "{? = call  GET_AMT_OF_CARD(?) }";
+
+
+
+
+
+
+
     static String[] CreateTablecSripts={
             "CREATE TABLE PLAYERS( "+
                     "NICK VARCHAR(30) PRIMARY KEY "+
@@ -117,7 +133,7 @@ public class SqlScripts {
                 "amount NUMBER; "+
                 "val NUMBER; "+
                 "BEGIN "+
-                "val:=GAME_ID_SEQ.currval; "+
+                "val:=GET_ACTIVE_GAME_ID; "+
                 "SELECT COUNT(*) INTO amount "+
                 "FROM GAMES  "+
                 "WHERE GAMES_ID = val "+
@@ -129,7 +145,7 @@ public class SqlScripts {
                         "AS "+
                         "val NUMBER; "+
                         "BEGIN "+
-                        "val:=GAME_ID_SEQ.currval; "+
+                        "SELECT MAX(GAMES_ID) INTO val FROM games; "+
                         "RETURN val; "+
                         "END; "+
                         "",

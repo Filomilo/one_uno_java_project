@@ -59,7 +59,11 @@ public class Main {
         dataBaseMangaer.drawCard("Filip");
         dataBaseMangaer.drawCard("Filip");
          */
-        UnoCard unoCard= new UnoCard();
+        dataBaseMangaer.dropSeq();
+        dataBaseMangaer.createSeq();
+        System.out.println(dataBaseMangaer.getPlayerCount());
+        System.out.println(dataBaseMangaer.getNumbOntheTable());
+        System.out.println(dataBaseMangaer.getPlayerAmtOfCards("Filip"));
     }
         // System.out.println("Hello world from server!"
     }

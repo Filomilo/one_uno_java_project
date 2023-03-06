@@ -74,6 +74,16 @@ public class Main {
             System.out.println(i+"   "+card);
             i++;
         }
+
+
+        List<String> players= dataBaseMangaer.selectOrderFromPlayer("nick");
+        i=1;
+        for (String player: players) {
+            System.out.println(i+"   "+player);
+            i++;
+        }
+
+
     }
         // System.out.println("Hello world from server!"
     }

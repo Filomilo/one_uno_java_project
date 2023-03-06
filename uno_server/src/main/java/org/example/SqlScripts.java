@@ -59,6 +59,28 @@ public class SqlScripts {
                     "ORDER BY POSITION DESC ";
 
 
+    static String SelectOrderForPlayer=
+            "SELECT * FROM( "+
+                    "SELECT * FROM( "+
+                    " SELECT NICK, turn- (SELECT MAX(TURN) turn FROM PLAYER_ORDER "+
+                    "    WHERE TURN>( "+
+                    "        SELECT TURN FROM PLAYER_ORDER "+
+                    "        WHERE nick= ? "+
+                    "        )) turn FROM PLAYER_ORDER "+
+                    "    WHERE TURN>( "+
+                    "        SELECT TURN FROM PLAYER_ORDER "+
+                    "        WHERE nick= ? "+
+                    "        ) "+
+                    "    ) "+
+                    "UNION ( "+
+                    "    SELECt NICK, turn FROM PLAYER_ORDER "+
+                    "    WHERE TURN<( "+
+                    "        SELECT TURN FROM PLAYER_ORDER "+
+                    "        WHERE nick= ? "+
+                    "    ) "+
+                    "     "+
+                    ") "+
+                    ")ORDER BY TURN ";
 
     static String[] CreateTablecSripts={
             "CREATE TABLE PLAYERS( "+
@@ -111,20 +133,25 @@ public class SqlScripts {
 
 
     static String[] CreateViewsScripts=
-    {
-        "CREATE OR REPLACE VIEW Table_stack_view AS "+
-                "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
-                "WHERE ACTIVE_CARD_PLACES.PLACE_Type='TABLE' AND "+
-                "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
-                "ORDER BY POSITION DESC "+
-                "",
-                "CREATE OR REPLACE VIEW stack_view AS "+
-                        "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
-                        "WHERE ACTIVE_CARD_PLACES.PLACE_Type='STACK' AND "+
-                        "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
-                        "ORDER BY POSITION DESC "+
-                        ""
-    };
+            {
+                    "CREATE OR REPLACE VIEW Table_stack_view AS "+
+                            "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
+                            "WHERE ACTIVE_CARD_PLACES.PLACE_Type='TABLE' AND "+
+                            "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
+                            "ORDER BY POSITION DESC "+
+                            "",
+                    "CREATE OR REPLACE VIEW stack_view AS "+
+                            "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
+                            "WHERE ACTIVE_CARD_PLACES.PLACE_Type='STACK' AND "+
+                            "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
+                            "ORDER BY POSITION DESC "+
+                            "",
+                    "CREATE OR REPLACE VIEW PLAYER_ORDER AS "+
+                            "SELECT NICK, RANK() OVER(ORDER BY NICK) turn FROM GAMES "+
+                            "WHERE GAMES_ID = GET_ACTIVE_GAME_ID "+
+                            "ORDER BY NICK "+
+                            ""
+            };
 
     static String[] CreateSequencesScripts=
     {

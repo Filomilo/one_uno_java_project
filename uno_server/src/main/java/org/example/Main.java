@@ -59,8 +59,7 @@ public class Main {
         dataBaseMangaer.drawCard("Filip");
         dataBaseMangaer.drawCard("Filip");
          */
-
-
+        UnoCard unoCard= new UnoCard();
     }
         // System.out.println("Hello world from server!"
     }

@@ -2,6 +2,12 @@ package org.example;
 
 public class SqlScripts {
 
+    static String TableStackViewScript=
+    "SELECT * FROM Table_stack_view";
+
+    static String MainStackViewScript=
+            "SELECT * FROM stack_view";
+
     static String AddPlayerScript =
             "{call ADD_PLAYER(?)}";
 
@@ -46,7 +52,11 @@ public class SqlScripts {
 
 
 
-
+    static String SelectCardsFromHandScript=
+            "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
+                    "WHERE ACTIVE_CARD_PLACES.NICK= ? AND "+
+                    "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
+                    "ORDER BY POSITION DESC ";
 
 
 
@@ -257,7 +267,7 @@ public class SqlScripts {
                         "ID_COUNTER :=ID_COUNTER+1; "+
                         "ADD_CARD(ID_COUNTER,COLOR_var,'REVERSE'); "+
                         "ID_COUNTER :=ID_COUNTER+1; "+
-                        "ADD_CARD(ID_COUNTER,COLOR_var,'plus2'); "+
+                        "ADD_CARD(ID_COUNTER,COLOR_var,'PLUS2'); "+
                         "ID_COUNTER :=ID_COUNTER+1; "+
                         "END LOOP; "+
                         "FOR iterator_2 IN 1..2  "+

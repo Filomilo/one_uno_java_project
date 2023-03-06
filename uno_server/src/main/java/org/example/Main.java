@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
@@ -21,7 +22,7 @@ public class Main {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        /*
+
         dataBaseMangaer.dropTables();
         dataBaseMangaer.createTables();
 
@@ -58,12 +59,21 @@ public class Main {
         dataBaseMangaer.drawCard("Filip");
         dataBaseMangaer.drawCard("Filip");
         dataBaseMangaer.drawCard("Filip");
-         */
+
         dataBaseMangaer.dropSeq();
         dataBaseMangaer.createSeq();
         System.out.println(dataBaseMangaer.getPlayerCount());
         System.out.println(dataBaseMangaer.getNumbOntheTable());
         System.out.println(dataBaseMangaer.getPlayerAmtOfCards("Filip"));
+
+
+
+        List<UnoCard> cardStack= dataBaseMangaer.selectFromHand("Filip");
+        int i=1;
+        for (UnoCard card: cardStack) {
+            System.out.println(i+"   "+card);
+            i++;
+        }
     }
         // System.out.println("Hello world from server!"
     }

@@ -1,5 +1,7 @@
 package org.example;
 
+import oracle.jdbc.proxy.annotation.Pre;
+
 import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
@@ -193,6 +195,21 @@ public class DataBaseMangaer {
         return executeFunciton(SqlScripts.GetAmtOfCardsScript, nick);
     }
 
+    List<UnoCard> selectTableStack()
+    {
+       return executeSelectCards(SqlScripts.TableStackViewScript);
+    }
+
+    List<UnoCard> selectMainStack()
+    {
+        return executeSelectCards(SqlScripts.MainStackViewScript);
+    }
+
+    List<UnoCard> selectFromHand(String nick)
+    {
+        return executeSelectCards(SqlScripts.SelectCardsFromHandScript, nick);
+    }
+
     private void executeProcedure(String sqlCode)
     {
             try{
@@ -276,6 +293,45 @@ public class DataBaseMangaer {
          }
      }
 
+
+     private List<UnoCard> executeSelectCards(String sqlCode)
+     {
+         List<UnoCard> cardStack= new ArrayList<UnoCard>();
+         try{
+
+             Statement statement = connection.createStatement();
+             ResultSet resultSet=statement.executeQuery(sqlCode);
+             while (resultSet.next())
+             {
+                 UnoCard unoCard= new UnoCard(resultSet);
+                 cardStack.add(unoCard);
+             }
+         } catch (SQLException e) {
+             System.out.println(sqlCode + "--------------didint execute porpely---------------");
+             e.printStackTrace();
+         }
+         return cardStack;
+     }
+
+    private List<UnoCard> executeSelectCards(String sqlCode, String var)
+    {
+        List<UnoCard> cardStack= new ArrayList<UnoCard>();
+        try{
+
+            PreparedStatement statement = connection.prepareStatement(sqlCode);
+            statement.setString(1,var);
+            ResultSet resultSet=statement.executeQuery();
+            while (resultSet.next())
+            {
+                UnoCard unoCard= new UnoCard(resultSet);
+                cardStack.add(unoCard);
+            }
+        } catch (SQLException e) {
+            System.out.println(sqlCode + "--------------didint execute porpely---------------");
+            e.printStackTrace();
+        }
+        return cardStack;
+    }
 
 
 

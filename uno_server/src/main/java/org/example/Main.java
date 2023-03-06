@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        ServerApp serverApp=new ServerApp(25565);
+        ServerApp serverApp=new ServerApp();
 
 
 

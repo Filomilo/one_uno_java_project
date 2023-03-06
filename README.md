@@ -37,13 +37,13 @@ Ranking rozgrywek danych osób
 ## Schemat bazy danych:
 
 
-![image of  data Base scheme](https://i.imgur.com/aPSd6di.png)
-schemat bazy danych
+
 
 
 ![image of  result penel](https://i.imgur.com/JnP6DWm.png)
 Panel z wynikami
-
+![image of  data Base scheme](https://i.imgur.com/aPSd6di.png)
+schemat bazy danych
 
 
 ### skrypty do bazy danych

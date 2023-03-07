@@ -5,9 +5,11 @@ import com.sun.net.httpserver.Authenticator;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class ServerConnectionManager {
 
+    boolean isServerRunning=true;
     ServerApp serverApp;
     ServerConnectionManager(ServerApp serverApp)
     {
@@ -19,16 +21,22 @@ public class ServerConnectionManager {
     }
 
     static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        System.out.println("waiting for messegae");
         MessageFormat messageFormat = new MessageFormat();
         messageFormat= (MessageFormat)objectInputStream.readObject();
         return messageFormat;
     }
 
-
+    void stopServer()
+    {
+        this.isServerRunning=false;
+        System.out.println("stopoyn");
+    }
     void setupServerConnections(int port) throws IOException {
 
         ServerSocket serverSocket = new ServerSocket(25565);
-        while(true)
+        serverSocket.setSoTimeout(1000);
+        while(isServerRunning)
         {
             Socket socket= null;
             try{
@@ -57,17 +65,22 @@ public class ServerConnectionManager {
                     objectInStream.close();
                     inStream.close();
                     outStream.close();
-                    socket.close();
+                    isServerRunning=false;
                 }
+
+            }
+            catch (SocketTimeoutException e)
+            {
 
             }
             catch(IOException e)
             {
-            socket.close();
+                e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
+        serverSocket.close();
     }
 
 

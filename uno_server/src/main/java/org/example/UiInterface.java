@@ -88,7 +88,8 @@ public class UiInterface {
     boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
-        boolean res=this.getYesNo();
+        boolean res=false;//this.getYesNo();
+
         if(res)
         {
             this.serverApp.dataBaseMangaer.resetDataBase();
@@ -125,7 +126,8 @@ void strartInterface()
             this.clearTerminal();
             System.out.println("Data base setup finished");
             System.out.println("On what port would you like to start uno Server");
-            input=scanner.nextInt();
+            //input=scanner.nextInt();
+            input=25565;
             this.serverApp.setPort(input);
             serverRunThread = new ServerRunThread(this.serverApp);
             serverRunThread.start();

@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class ServerApp {
     int port;
+    ServerConnectionManager connectionManger;
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
 
     public void setPort(int port) {
@@ -29,7 +30,7 @@ public class ServerApp {
 
     void  startServer()
     {
-        ServerConnectionManager connectionManger = new ServerConnectionManager(this);
+        connectionManger = new ServerConnectionManager(this);
         try {
             connectionManger.setupServerConnections(this.port);
         } catch (IOException e) {
@@ -40,6 +41,7 @@ public class ServerApp {
     //TODO: create stop server funciotn
     void stopServer()
     {
+        connectionManger.isServerRunning=false;
         System.out.println("STOP");
     }
 

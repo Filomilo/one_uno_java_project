@@ -10,6 +10,7 @@ public class ServerRunThread extends  Thread{
     @Override
     public void run() {
         serverApp.startServer();
-        super.run();
     }
+
+
 }

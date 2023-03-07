@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        /*
         // ServerApp serverApp=new ServerApp();
         DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
         dataBaseMangaer.setDataBaseName("orcl");
@@ -84,6 +85,9 @@ public class Main {
         }
 
 
+         */
+        UiInterface uiInterface= new UiInterface();
+        uiInterface.strartInterface();
     }
         // System.out.println("Hello world from server!"
     }

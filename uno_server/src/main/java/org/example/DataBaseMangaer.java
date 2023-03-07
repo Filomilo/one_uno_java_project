@@ -53,13 +53,32 @@ public class DataBaseMangaer {
         this.dataBasePass = dataBasePass;
     }
 
-    void connectWithDataBase()
+    boolean connectWithDataBase()
     {
         try {
             this.connection= DriverManager.getConnection("jdbc:oracle:thin:@"+this.dataBaseAdres + ":"+ this.dataBasePort +":"+this.dataBaseName , this.dataBaseUserName, this.dataBasePass);
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
+    }
+
+    void resetDataBase()
+    {
+        this.dropSeq();
+        this.dropTables();
+        this.createSeq();
+        this.createTables();
+        this.createBaseCards();
+    }
+
+    void prepDataBase()
+    {
+        this.createFunctions();
+        this.createProcedures();
+        this.createViews();
     }
 
     boolean checkTable() throws SQLException {

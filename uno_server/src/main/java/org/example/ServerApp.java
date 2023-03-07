@@ -5,6 +5,12 @@ import java.util.Scanner;
 
 public class ServerApp {
     int port;
+    DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     ServerApp(String[] arg)
     {
         this.port=Integer.parseInt(arg[0]);
@@ -17,10 +23,7 @@ public class ServerApp {
     }
     ServerApp()
     {
-        System.out.println("On Waht port would you like to start Server: ");
-        Scanner scanner=new Scanner(System.in);
-        this.port=scanner.nextInt();
-        startServer();
+
 
     }
 
@@ -32,6 +35,12 @@ public class ServerApp {
         } catch (IOException e) {
             System.out.println(e.getStackTrace());
         }
+    }
+
+    //TODO: create stop server funciotn
+    void stopServer()
+    {
+        System.out.println("STOP");
     }
 
 

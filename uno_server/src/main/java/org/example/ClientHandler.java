@@ -2,29 +2,47 @@ package org.example;
 
 
 import java.io.*;
-import java.net.Socket;
-import java.util.Base64;
 
 public class ClientHandler extends  Thread{
 
-    static Socket[] socket=new Socket[8];
-    static   ObjectOutputStream[] outStream=new  ObjectOutputStream[8];
-    static   ObjectInputStream[] inStream=new  ObjectInputStream[8];
-    static String[] nicks= new String[8];
-    static int PlayersAmount=0;
-    int ActivePlayer=0;
-    ClientHandler(Socket socket,  ObjectInputStream inStream,  ObjectOutputStream outStream, String nick)
-    {
-        
-        this.ActivePlayer=ClientHandler.PlayersAmount;
-        ClientHandler.inStream[this.ActivePlayer]=inStream;
-        ClientHandler.outStream[this.ActivePlayer]=outStream;
-        ClientHandler.socket[this.ActivePlayer]=socket;
-        ClientHandler.nicks[this.ActivePlayer]=nick;
-        ClientHandler.PlayersAmount++;
-     
+    PlayerData playerData;
+    ServerConnectionManager serverConnectionManager;
+    boolean connectionActive=true;
+
+    public ClientHandler(PlayerData playerData, ServerConnectionManager serverConnectionManager) {
+        this.playerData = playerData;
+        this.serverConnectionManager = serverConnectionManager;
+        this.playerData.clientHandler=this;
     }
 
+    @Override
+    public void run() {
+        super.run();
+
+        while(connectionActive && ServerConnectionManager.isServerRunning)
+        {
+            try{
+                MessageFormat messageFormat;
+                messageFormat= ServerConnectionManager.getMesseage(this.playerData.objectInputStream);
+                System.out.println(messageFormat);
+
+
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+
+
+
+
+
+    }
+
+/*
     @Override
    public void run()
    {
@@ -70,8 +88,10 @@ public class ClientHandler extends  Thread{
        {
            ex.printStackTrace();
        }
+
+
    }
-    
+
    void senndMessagetoall(MessageFormat mes) throws IOException {
        for(int i=0;i<ClientHandler.PlayersAmount;i++) {
            if(ClientHandler.outStream[i]!=null) {
@@ -90,6 +110,10 @@ public class ClientHandler extends  Thread{
 
     }
 
+
+
+
+     */
 
    }
 

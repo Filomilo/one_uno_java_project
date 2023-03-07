@@ -1,33 +1,25 @@
 package org.example;
 
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.*;
 
 public class ServerApp {
     int port;
     ServerConnectionManager connectionManger;
+
+    int playersConnected=0;
+    int playersReady=0;
+
+    List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
 
     public void setPort(int port) {
         this.port = port;
     }
 
-    ServerApp(String[] arg)
-    {
-        this.port=Integer.parseInt(arg[0]);
-        startServer();
-    }
-    ServerApp(int port)
-    {
-        this.port=port;
-        startServer();
-    }
     ServerApp()
     {
-
-
     }
-
     void  startServer()
     {
         connectionManger = new ServerConnectionManager(this);
@@ -38,12 +30,40 @@ public class ServerApp {
         }
     }
 
-    //TODO: create stop server funciotn
+
     void stopServer()
     {
         connectionManger.isServerRunning=false;
         System.out.println("STOP");
     }
 
+    void addPlayer(PlayerData pLayerData)
+    {
+        this.nicks.add(pLayerData);
+        Collections.sort(this.nicks);
+        this.dataBaseMangaer.addPlayer(pLayerData.nick);
+        this.playersConnected++;
+    }
 
+    void disconnectPlayer(PlayerData pLayerData)
+    {
+        this.nicks.remove(pLayerData);
+        this.playersConnected--;
+    }
+
+    void hadleMesseage(PlayerData playerData, MessageFormat messageFormat)
+    {
+        System.out.println(playerData);
+        System.out.println(messageFormat);
+    }
+
+
+    @Override
+    public String toString() {
+        return "ServerApp{" +
+                "playersConnected=" + playersConnected +
+                ", playersReady=" + playersReady +
+                ", nicks=" + nicks +
+                '}';
+    }
 }

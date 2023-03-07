@@ -44,7 +44,8 @@ public class ClientConnectionManager {
 
         MessageFormat message=new MessageFormat();
         message.type=MessageFormat.messegeTypes.CONNECT;
-        message.text=this.nick;
+        message.text=new String[1];
+        message.text[0]=this.nick;
         this.sendMessage(message);
         message=null;
         message=this.getMesseage();
@@ -88,8 +89,8 @@ public class ClientConnectionManager {
             {
                 break;
             }
-
-            messageFormat.text=text;
+            messageFormat.text= new String[1];
+            messageFormat.text[0]=text;
             messageFormat.type=MessageFormat.messegeTypes.CONNECT;
 
             this.sendMessage(messageFormat);

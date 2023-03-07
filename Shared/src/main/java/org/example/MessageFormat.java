@@ -8,11 +8,12 @@ public class MessageFormat implements Serializable {
         CONNECT,
         DISCONNECT,
         SUCCES,
+        CONFIRM,
 
     }
     messegeTypes type;
-    int integerVal;
-    String text;
+    int[] number;
+    String[] text;
 
 
 }

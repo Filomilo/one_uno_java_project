@@ -34,8 +34,8 @@ public class ClientConnectionManager {
         return messageFormat;
     }
 
-    void connectToServer() throws IOException, ClassNotFoundException {
-        this.socket = new Socket("localhost", 25565);
+    void connectToServer(String ip, int port) throws IOException, ClassNotFoundException {
+        this.socket = new Socket(ip, port);
         this.outStream= socket.getOutputStream();
         this.objectOutStream= new ObjectOutputStream(this.outStream);
         this.inStream= socket.getInputStream();
@@ -47,10 +47,6 @@ public class ClientConnectionManager {
         message.text=new String[1];
         message.text[0]=this.nick;
         this.sendMessage(message);
-        message=null;
-        message=this.getMesseage();
-        reciverHandler= new ReciverHandler(this);
-        reciverHandler.start();
 
     }
 
@@ -68,40 +64,6 @@ public class ClientConnectionManager {
         socket.close();
     }
 
-
-    void testFunction() throws IOException, ClassNotFoundException {
-
-
-        Scanner scaner= new Scanner(System.in);
-
-
-        this.nick=scaner.nextLine();
-
-        this.connectToServer();
-
-        String text;
-        MessageFormat messageFormat = new MessageFormat();
-        while(true)
-        {
-
-            text=scaner.nextLine();
-            if(text.equals("EXIT"))
-            {
-                break;
-            }
-            messageFormat.text= new String[1];
-            messageFormat.text[0]=text;
-            messageFormat.type=MessageFormat.messegeTypes.CONNECT;
-
-            this.sendMessage(messageFormat);
-
-        }
-    try {
-
-        this.disconnetFromServer();
-    } catch (InterruptedException e) {
-       System.out.println(e.getStackTrace());
-    }
 
 
 /*
@@ -127,4 +89,3 @@ public class ClientConnectionManager {
 
 
 
-}

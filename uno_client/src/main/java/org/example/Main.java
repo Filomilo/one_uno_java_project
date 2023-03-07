@@ -8,14 +8,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-
-
-        ClientConnectionManager connManger = new ClientConnectionManager();
-        try {
-            connManger.testFunction();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    InterfaceUi interfaceUi = new InterfaceUi();
+    interfaceUi.starUi();
 
 
 

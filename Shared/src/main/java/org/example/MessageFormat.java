@@ -13,11 +13,14 @@ public class MessageFormat implements Serializable {
         READY,
         START,
         NEWPLAYER,
+        DEALCARDS,
+        RECIVECARDS,
+        RECIVEVARDCOMMUNICAT,
     }
     messegeTypes type;
     int[] number;
     String[] text;
-
+    UnoCard unoCard;
 
     @Override
     public String toString() {
@@ -25,6 +28,7 @@ public class MessageFormat implements Serializable {
                 "type=" + type +
                 ", number=" + Arrays.toString(number) +
                 ", text=" + Arrays.toString(text) +
+                ", unoCard=" + unoCard +
                 '}';
     }
 }

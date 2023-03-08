@@ -1,10 +1,11 @@
 package org.example;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.PrimitiveIterator;
 
-public class UnoCard {
+public class UnoCard  implements Serializable  {
     static enum UNO_COLOR{
         GREEN,
         RED,

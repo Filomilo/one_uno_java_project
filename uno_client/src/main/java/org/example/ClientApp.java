@@ -15,7 +15,6 @@ public class ClientApp {
     int readyPlayers;
     int connectedPlayers;
     boolean isConnected=false;
-
     boolean isReady;
 
     ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);

@@ -392,6 +392,7 @@ public class SqlScripts {
                         "END LOOP; "+
                         "LOOP "+
                         "FETCH ACTIVE_CARDS_CUR INTO card; "+
+                        "EXIT WHEN ACTIVE_CARDS_CUR%NOTFOUND;"+
                         "SELECT TYPE INTO card_type FROM CARDS "+
                         "    WHERE CARDS_ID=card.CARDS_ID; "+
                         "     "+

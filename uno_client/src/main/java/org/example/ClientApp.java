@@ -1,6 +1,10 @@
 package org.example;
 
+import org.omg.CORBA.Object;
+import sun.misc.Lock;
+
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,9 @@ public class ClientApp {
 
     String ip;
     int port;
+
+    final Lock confirmLock= new Lock();
+
 
 
     public String getNick() {
@@ -66,10 +73,8 @@ public class ClientApp {
     }
 
     public void setReady(boolean ready) {
+        this.clientConnectionManager.sendReady(ready);
         isReady = ready;
-
-
-
     }
 
     boolean connectWithServer()

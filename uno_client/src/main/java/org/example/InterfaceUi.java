@@ -85,14 +85,14 @@ public class InterfaceUi {
     void app()
     {
         String input;
-        boolean bool;
+        boolean isReady;
         while(clientApp.isReady()==false)
         {
             System.out.println(clientApp);
             System.out.println("Are you ready to play?");
-           // bool=getYesNo();
-            bool=true;
-            if(bool)
+            isReady=getYesNo();
+           // bool=true;
+            if(isReady)
             {
                 clientApp.setReady(true);
             }

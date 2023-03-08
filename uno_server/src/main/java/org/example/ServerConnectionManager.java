@@ -72,7 +72,7 @@ public class ServerConnectionManager {
 
             System.out.println(pLayerData);
             MessageFormat confirmationMessege = new MessageFormat();
-            confirmationMessege.type = MessageFormat.messegeTypes.CONFIRM;
+            confirmationMessege.type = MessageFormat.messegeTypes.CONNECT;
             if(res==false)
             {
                 confirmationMessege.number = new int[1];

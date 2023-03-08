@@ -44,7 +44,10 @@ public class ClientConnectionManager {
     }
 
     public void setConfirmedMesseage(boolean confirmedMesseage) {
-        this.confirmedMesseage = confirmedMesseage;
+        synchronized (clientApp.confirmLock) {
+            this.confirmedMesseage = confirmedMesseage;
+            this.clientApp.confirmLock.notifyAll();
+        }
     }
 
     void sendMessage(MessageFormat messageFormat) throws IOException {
@@ -64,32 +67,30 @@ public class ClientConnectionManager {
     }
 
     boolean connectToServer(String ip, int port, String nick) throws IOException, ClassNotFoundException {
-        boolean result=false;
+        boolean result = false;
         this.socket = new Socket(ip, port);
         socket.setSoTimeout(100);
-        this.nick=nick;
-        this.outStream= socket.getOutputStream();
-        this.objectOutStream= new ObjectOutputStream(this.outStream);
-        this.inStream= socket.getInputStream();
-        this.objectInStream= new ObjectInputStream(this.inStream);
+        this.nick = nick;
+        this.outStream = socket.getOutputStream();
+        this.objectOutStream = new ObjectOutputStream(this.outStream);
+        this.inStream = socket.getInputStream();
+        this.objectInStream = new ObjectInputStream(this.inStream);
 
 
-        MessageFormat message=new MessageFormat();
-        message.type=MessageFormat.messegeTypes.CONNECT;
-        message.text=new String[1];
-        message.text[0]=this.nick;
+        MessageFormat message = new MessageFormat();
+        message.type = MessageFormat.messegeTypes.CONNECT;
+        message.text = new String[1];
+        message.text[0] = this.nick;
         this.sendMessage(message);
 
-        reciverHandler=new ReciverHandler(this);
+        reciverHandler = new ReciverHandler(this);
         reciverHandler.start();
 
-        while(!this.isConfirmedMesseage())
-        {
-          //  System.out.println("waiting for confimation");
-        }
-        result=this.conectionResult;
-        this.setConfirmedMesseage(false);
-        return result;
+        this.waitTillconfirmed();
+
+            result = this.conectionResult;
+            this.setConfirmedMesseage(false);
+            return result;
     }
 
     void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
@@ -106,6 +107,18 @@ public class ClientConnectionManager {
         socket.close();
     }
 
+    void waitTillconfirmed()
+    {
+        while(!isConfirmedMesseage())
+        {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     boolean sendReady(boolean type)
     {
 
@@ -114,11 +127,12 @@ public class ClientConnectionManager {
         messageFormat.type=MessageFormat.messegeTypes.READY;
         messageFormat.number= new int[1];
         messageFormat.number[0]= type?1:0;
-
-        while(!isConfirmedMesseage())
-        {
-
+        try {
+            this.sendMessage(messageFormat);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+this.waitTillconfirmed();
 
         return  result;
     }

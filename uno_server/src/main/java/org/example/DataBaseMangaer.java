@@ -1,8 +1,5 @@
 package org.example;
 
-import oracle.jdbc.proxy.annotation.Pre;
-
-import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,10 +131,11 @@ public class DataBaseMangaer {
         executeArrayStatements(SqlScripts.CreateProceduresScripts);
     }
 
-    void addPlayer(String nick)
+    boolean addPlayer(String nick)
     {
         String[] arr={nick};
-        executeProcedure(SqlScripts.AddPlayerScript,arr);
+        boolean res= executeProcedure(SqlScripts.AddPlayerScript,arr);
+        return res;
     }
 
     void createBaseCards()
@@ -246,7 +244,7 @@ public class DataBaseMangaer {
             }
     }
 
-    private void executeProcedure(String sqlCode, String[] vars)
+    private boolean executeProcedure(String sqlCode, String[] vars)
     {
         try{
             PreparedStatement statement = connection.prepareStatement(sqlCode);
@@ -257,8 +255,10 @@ public class DataBaseMangaer {
             statement.executeQuery();
         } catch (SQLException e) {
             System.out.println(sqlCode + "--------------didint execute porpely---------------");
+            return false;
            // e.printStackTrace();
         }
+        return true;
     }
     private void executeProcedure(String sqlCode, String var, int numb )
     {

@@ -14,7 +14,7 @@ public class ClientApp {
 
     boolean isReady;
 
-    ClientConnectionManager clientConnectionManager = new ClientConnectionManager();
+    ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
 
     String ip;
     int port;
@@ -67,17 +67,21 @@ public class ClientApp {
 
     public void setReady(boolean ready) {
         isReady = ready;
+
+
+
     }
 
     boolean connectWithServer()
     {
+        boolean res=false;
         try {
-            this.clientConnectionManager.connectToServer(this.getIp(), this.getPort());
+           res= this.clientConnectionManager.connectToServer(this.getIp(), this.getPort(), this.nick);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return  false;
         }
-        return true;
+        return res;
 
     }
 

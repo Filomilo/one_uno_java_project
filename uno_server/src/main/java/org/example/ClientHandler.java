@@ -2,12 +2,38 @@ package org.example;
 
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 
 public class ClientHandler extends  Thread{
 
     PlayerData playerData;
     ServerConnectionManager serverConnectionManager;
     boolean connectionActive=true;
+
+
+    public PlayerData getPlayerData() {
+        return playerData;
+    }
+
+    public void setPlayerData(PlayerData playerData) {
+        this.playerData = playerData;
+    }
+
+    public ServerConnectionManager getServerConnectionManager() {
+        return serverConnectionManager;
+    }
+
+    public void setServerConnectionManager(ServerConnectionManager serverConnectionManager) {
+        this.serverConnectionManager = serverConnectionManager;
+    }
+
+    public boolean isConnectionActive() {
+        return connectionActive;
+    }
+
+    public void setConnectionActive(boolean connectionActive) {
+        this.connectionActive = connectionActive;
+    }
 
     public ClientHandler(PlayerData playerData, ServerConnectionManager serverConnectionManager) {
         this.playerData = playerData;
@@ -28,9 +54,11 @@ public class ClientHandler extends  Thread{
 
 
 
-            } catch (IOException | ClassNotFoundException e) {
+            }
+            catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
+
         }
 
 

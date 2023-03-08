@@ -18,10 +18,16 @@ public class ServerConnectionManager {
 
     static void sendMessage(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
         objectOutputStream.writeObject(messageFormat);
+        objectOutputStream.flush();
+        objectOutputStream.reset();
+
+        System.out.println("send message");
+        System.out.println(messageFormat);
     }
 
     static void sendMessage(PlayerData pLayerData, MessageFormat messageFormat) throws IOException {
-        pLayerData.objectOutputStream.writeObject(messageFormat);
+        sendMessage(pLayerData.objectOutputStream,messageFormat);
+
     }
 
     static void sendConfirmationMessage(ObjectOutputStream objectOutputStream) throws IOException {
@@ -31,9 +37,10 @@ public class ServerConnectionManager {
     }
 
     static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException {
-        System.out.println("waiting for messegae");
         MessageFormat messageFormat = new MessageFormat();
         messageFormat = (MessageFormat) objectInputStream.readObject();
+        System.out.println("get messegae");
+        System.out.println(messageFormat);
         return messageFormat;
     }
 
@@ -52,16 +59,33 @@ public class ServerConnectionManager {
 
         MessageFormat messageFormat = getMesseage(objectInStream);
         if (messageFormat.type == MessageFormat.messegeTypes.CONNECT) {
+            System.out.println(messageFormat.text[0] + "Connected");
             PlayerData pLayerData = new PlayerData(messageFormat.text[0], socket, objectOutStream, objectInStream);
-            MessageFormat confirmationMessege = new MessageFormat();
-            confirmationMessege.type = MessageFormat.messegeTypes.CONFIRM;
-            confirmationMessege.number = new int[2];
-            confirmationMessege.number[0] = serverApp.playersReady;
-            confirmationMessege.number[1] = serverApp.playersConnected;
+
+            ClientHandler clientHandler= new ClientHandler(pLayerData,this);
+            pLayerData.setClientHandler(clientHandler);
+            clientHandler.start();
+
+            boolean res= serverApp.addPlayer(pLayerData);
+
+
 
             System.out.println(pLayerData);
+            MessageFormat confirmationMessege = new MessageFormat();
+            confirmationMessege.type = MessageFormat.messegeTypes.CONFIRM;
+            if(res==false)
+            {
+                confirmationMessege.number = new int[1];
+                confirmationMessege.number[0]=0;
+            }
+            else {
+                confirmationMessege.number = new int[3];
+                confirmationMessege.number[0] = 1;
+                confirmationMessege.number[1] = serverApp.playersReady;
+                confirmationMessege.number[2] = serverApp.playersConnected;
 
-
+            }
+            sendMessage(objectOutStream, confirmationMessege);
         }
 
     }
@@ -75,10 +99,11 @@ public class ServerConnectionManager {
             try {
                 this.connectWithNewPlyer();
             } catch (SocketTimeoutException e) {
+                //e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
         serverSocket.close();

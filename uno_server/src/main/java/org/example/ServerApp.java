@@ -37,12 +37,14 @@ public class ServerApp {
         System.out.println("STOP");
     }
 
-    void addPlayer(PlayerData pLayerData)
+    boolean addPlayer(PlayerData pLayerData)
     {
+        // TODO: 08.03.2023 add check if nick is alaredy in databse 
         this.nicks.add(pLayerData);
         Collections.sort(this.nicks);
-        this.dataBaseMangaer.addPlayer(pLayerData.nick);
+        boolean res= this.dataBaseMangaer.addPlayer(pLayerData.nick);
         this.playersConnected++;
+        return  true;
     }
 
     void disconnectPlayer(PlayerData pLayerData)

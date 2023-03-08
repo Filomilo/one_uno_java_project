@@ -3,6 +3,7 @@ package org.example;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Base64;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -19,23 +20,54 @@ public class ClientConnectionManager {
 
     ReciverHandler reciverHandler;
 
+    boolean confirmedMesseage=false;
+
+    ClientApp clientApp;
+
+    boolean conectionResult;
 
 
+    public ClientConnectionManager(ClientApp clientApp) {
+        this.clientApp = clientApp;
+    }
+
+    public boolean isConectionResult() {
+        return conectionResult;
+    }
+
+    public void setConectionResult(boolean conectionResult) {
+        this.conectionResult = conectionResult;
+    }
+
+    public boolean isConfirmedMesseage() {
+        return confirmedMesseage;
+    }
+
+    public void setConfirmedMesseage(boolean confirmedMesseage) {
+        this.confirmedMesseage = confirmedMesseage;
+    }
 
     void sendMessage(MessageFormat messageFormat) throws IOException {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
         this.objectOutStream.reset();
+        System.out.println("send Messegae");
+        System.out.println(messageFormat);
 
     }
 
-    MessageFormat getMesseage() throws IOException, ClassNotFoundException {
+    MessageFormat getMesseage() throws SocketTimeoutException, IOException, ClassNotFoundException {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
+        System.out.println("get meeaeg");
+        System.out.println(messageFormat);
         return messageFormat;
     }
 
-    void connectToServer(String ip, int port) throws IOException, ClassNotFoundException {
+    boolean connectToServer(String ip, int port, String nick) throws IOException, ClassNotFoundException {
+        boolean result=false;
         this.socket = new Socket(ip, port);
+        socket.setSoTimeout(100);
+        this.nick=nick;
         this.outStream= socket.getOutputStream();
         this.objectOutStream= new ObjectOutputStream(this.outStream);
         this.inStream= socket.getInputStream();
@@ -48,6 +80,16 @@ public class ClientConnectionManager {
         message.text[0]=this.nick;
         this.sendMessage(message);
 
+        reciverHandler=new ReciverHandler(this);
+        reciverHandler.start();
+
+        while(!this.isConfirmedMesseage())
+        {
+          //  System.out.println("waiting for confimation");
+        }
+        result=this.conectionResult;
+        this.setConfirmedMesseage(false);
+        return result;
     }
 
     void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
@@ -63,6 +105,46 @@ public class ClientConnectionManager {
         outStream.close();
         socket.close();
     }
+
+    boolean sendReady(boolean type)
+    {
+
+        boolean result=false;
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type=MessageFormat.messegeTypes.READY;
+        messageFormat.number= new int[1];
+        messageFormat.number[0]= type?1:0;
+
+        while(!isConfirmedMesseage())
+        {
+
+        }
+
+        return  result;
+    }
+
+    public void handleMesseage(MessageFormat messageFormat) {
+        switch (messageFormat.type)
+                {
+        case CONFIRM:
+            this.setConfirmedMesseage(true);
+
+
+            break;
+        case CONNECT:
+            this.setConectionResult(messageFormat.number[0] == 1);
+            if(this.isConectionResult())
+            {
+                clientApp.setReadyPlayers(messageFormat.number[1] );
+                clientApp.setConnectedPlayers(messageFormat.number[2] );
+            }
+            this.setConfirmedMesseage(true);
+                }
+
+
+
+    }
+
 
 
 

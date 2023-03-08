@@ -1,6 +1,7 @@
 package org.example;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class MessageFormat implements Serializable {
     static enum messegeTypes{
@@ -9,6 +10,7 @@ public class MessageFormat implements Serializable {
         DISCONNECT,
         SUCCES,
         CONFIRM,
+        READY,
 
     }
     messegeTypes type;
@@ -16,4 +18,12 @@ public class MessageFormat implements Serializable {
     String[] text;
 
 
+    @Override
+    public String toString() {
+        return "MessageFormat{" +
+                "type=" + type +
+                ", number=" + Arrays.toString(number) +
+                ", text=" + Arrays.toString(text) +
+                '}';
+    }
 }

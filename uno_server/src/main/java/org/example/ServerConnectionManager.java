@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.print.DocFlavor;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -84,6 +85,13 @@ public class ServerConnectionManager {
                 confirmationMessege.number[1] = serverApp.playersReady;
                 confirmationMessege.number[2] = serverApp.playersConnected;
 
+                MessageFormat newPlayerCommunicat = new MessageFormat();
+                newPlayerCommunicat.type= MessageFormat.messegeTypes.NEWPLAYER;
+                newPlayerCommunicat.number= new int[1];
+                newPlayerCommunicat.number[0]=1;
+
+                this.sendExclusice(newPlayerCommunicat,pLayerData);
+
             }
             sendMessage(objectOutStream, confirmationMessege);
         }
@@ -109,5 +117,44 @@ public class ServerConnectionManager {
         serverSocket.close();
     }
 
+
+    void sendToAll(MessageFormat messageFormat)
+    {
+        for (PlayerData player:
+             this.serverApp.nicks) {
+            try {
+                ServerConnectionManager.sendMessage(player.objectOutputStream, messageFormat);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    void hadleMesseage(PlayerData playerData, MessageFormat messageFormat)
+    {
+        switch (messageFormat.type) {
+            case READY:
+                this.sendExclusice(messageFormat, playerData);
+                if(messageFormat.number[0]==1)
+                serverApp.setPlayersReady(serverApp.getPlayersReady()+1);
+                else
+                    serverApp.setPlayersReady(serverApp.getPlayersReady()-1);
+                break;
+        }
+    }
+
+
+    void sendExclusice(MessageFormat messageFormat, PlayerData playerExclued)
+    {
+        for (PlayerData player:
+                this.serverApp.nicks) {
+            try {
+                if(player!=playerExclued)
+                ServerConnectionManager.sendMessage(player.objectOutputStream, messageFormat);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

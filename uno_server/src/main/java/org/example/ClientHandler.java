@@ -50,7 +50,7 @@ public class ClientHandler extends  Thread{
             try{
                 MessageFormat messageFormat;
                 messageFormat= ServerConnectionManager.getMesseage(this.playerData.objectInputStream);
-                System.out.println(messageFormat);
+                this.serverConnectionManager.hadleMesseage(playerData,messageFormat);
 
 
 

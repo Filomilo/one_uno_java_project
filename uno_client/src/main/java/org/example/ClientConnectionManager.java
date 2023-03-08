@@ -1,5 +1,7 @@
 package org.example;
 
+import com.sun.xml.internal.ws.api.model.MEP;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -107,6 +109,18 @@ public class ClientConnectionManager {
         socket.close();
     }
 
+
+    void sendConfirmation()
+    {
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
+        try {
+            this.sendMessage(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     void waitTillconfirmed()
     {
         while(!isConfirmedMesseage())
@@ -138,25 +152,35 @@ this.waitTillconfirmed();
     }
 
     public void handleMesseage(MessageFormat messageFormat) {
-        switch (messageFormat.type)
-                {
-        case CONFIRM:
-            this.setConfirmedMesseage(true);
+        switch (messageFormat.type) {
+            case CONFIRM:
+                this.setConfirmedMesseage(true);
 
 
-            break;
-        case CONNECT:
-            this.setConectionResult(messageFormat.number[0] == 1);
-            if(this.isConectionResult())
-            {
-                clientApp.setReadyPlayers(messageFormat.number[1] );
-                clientApp.setConnectedPlayers(messageFormat.number[2] );
-            }
-            this.setConfirmedMesseage(true);
+                break;
+            case CONNECT:
+                this.setConectionResult(messageFormat.number[0] == 1);
+                if (this.isConectionResult()) {
+                    clientApp.setReadyPlayers(messageFormat.number[1]);
+                    clientApp.setConnectedPlayers(messageFormat.number[2]);
                 }
+                this.setConfirmedMesseage(true);
+                break;
+            case NEWPLAYER:
+                if (messageFormat.number[0]==1)
+                    this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() + 1);
+                else
+                    this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() - 1);
+            case READY:
+                if (messageFormat.number[0]==1)
+                    this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() + 1);
+                else
+                    this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() - 1);
+
+                    break;
 
 
-
+        }
     }
 
 

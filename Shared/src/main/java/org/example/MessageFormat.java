@@ -11,7 +11,8 @@ public class MessageFormat implements Serializable {
         SUCCES,
         CONFIRM,
         READY,
-
+        START,
+        NEWPLAYER,
     }
     messegeTypes type;
     int[] number;

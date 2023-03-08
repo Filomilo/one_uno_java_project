@@ -13,6 +13,28 @@ public class ServerApp {
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
 
+
+    public int getPlayersConnected() {
+        return playersConnected;
+    }
+
+    public void setPlayersConnected(int playersConnected) {
+        this.playersConnected = playersConnected;
+    }
+
+    public int getPlayersReady() {
+        return playersReady;
+    }
+
+    public void setPlayersReady(int playersReady) {
+        this.playersReady = playersReady;
+        if(this.playersReady==this.playersConnected && this.playersConnected>1)
+        {
+            this.startGame();
+        }
+
+    }
+
     public void setPort(int port) {
         this.port = port;
     }
@@ -53,11 +75,14 @@ public class ServerApp {
         this.playersConnected--;
     }
 
-    void hadleMesseage(PlayerData playerData, MessageFormat messageFormat)
+    void startGame()
     {
-        System.out.println(playerData);
-        System.out.println(messageFormat);
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type=MessageFormat.messegeTypes.START;
+        this.connectionManger.sendToAll(messageFormat);
     }
+
+
 
 
     @Override

@@ -1,6 +1,8 @@
 package org.example;
 
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class InterfaceUi {
 
@@ -97,12 +99,37 @@ public class InterfaceUi {
                 clientApp.setReady(true);
             }
         }
-        System.out.println("Now you have to wait for other players");
 
-        while(this.clientApp.isReady())
+
+        while(this.clientApp.isGameStarted())
+        {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Now you have to wait for other players");
+
+        }
+        gameUi();
+    }
+
+    void gameUi()
+    {
+        int card_choice ;
+        while(true)
         {
 
-
+            this.clearTerminal();
+            System.out.println(clientApp);
+            System.out.println("CHOOSE CARD TO PLAY: ");
+            card_choice= scanner.nextInt();
+            if(card_choice>=1 && card_choice <= this.clientApp.cardsInHand.size())
+            {
+                this.clientApp.playCard(card_choice);
+            }
+            if(card_choice==0)
+                break;
         }
     }
 

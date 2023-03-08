@@ -56,7 +56,7 @@ public class ClientConnectionManager {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
         this.objectOutStream.reset();
-        System.out.println("send Messegae");
+        System.out.println("_____________________________________________send Messegae_______________________________1");
         System.out.println(messageFormat);
 
     }
@@ -224,11 +224,12 @@ this.waitTillconfirmed();
 
                 System.exit(1);
                 break;
-
             case TOPCARD:
                 this.clientApp.setCardOntop(messageFormat.unoCard);
 
                 break;
+            case START:
+                this.clientApp.setGameStarted(true);
 
 
 
@@ -240,22 +241,7 @@ this.waitTillconfirmed();
 
 
 
-/*
-        for(int i=0;i<10;i++) {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            }
-            catch ( InterruptedException ex)
-            {
-                System.out.println(ex.getStackTrace());
-            }
-            String text =new String("a meesage nr" + i);
-            doutStream.writeUTF(text);
-            System.out.println("Wrtiirng " + text);
-        }
-        String text =new String("EXIT");
-        doutStream.writeUTF(text);
-        */
+
 
     }
 

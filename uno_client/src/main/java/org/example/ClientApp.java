@@ -1,5 +1,6 @@
 package org.example;
 
+import org.omg.CORBA.INTERNAL;
 import org.omg.CORBA.Object;
 import sun.misc.Lock;
 
@@ -18,6 +19,7 @@ public class ClientApp {
     boolean isConnected=false;
     boolean isReady;
 
+    boolean isGameStarted= false;
     ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
 
     String ip;
@@ -26,6 +28,13 @@ public class ClientApp {
     final Lock confirmLock= new Lock();
 
 
+    public boolean isGameStarted() {
+        return isGameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        isGameStarted = gameStarted;
+    }
 
     public String getNick() {
         return nick;
@@ -106,6 +115,39 @@ public class ClientApp {
 
     }
 
+    boolean vaidateCard(UnoCard unoCard)
+    {
+        if(unoCard.getColor()== UnoCard.UNO_COLOR.BLACK)
+            return true;
+        if(unoCard.getNumb()==this.cardOntop.getNumb() || unoCard.getColor()==this.cardOntop.getColor())
+        {
+            return true;
+        }
+        return false;
+    }
+    void playCard(int numbCard)
+    {
+        if(!vaidateCard(this.cardsInHand.get(numbCard-1)))
+        {
+            System.out.println("You cant play this card");
+            return;
+        }
+
+        this.cardsInHand.remove(numbCard-1);
+
+        MessageFormat messageForma = new MessageFormat();
+        messageForma.type= MessageFormat.messegeTypes.PLAYCARD;
+        messageForma.number= new int[1];
+        messageForma.number[0]=numbCard;
+
+
+        try {
+            this.clientConnectionManager.sendMessage(messageForma);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean getIsGameReady() {
         boolean result=false;
         if(this.readyPlayers==this.connectedPlayers && this.connectedPlayers>1)
@@ -115,15 +157,21 @@ public class ClientApp {
 
     @Override
     public String toString() {
-        return "ClientApp{" +
-                "nick='" + nick + '\'' +
-                ", playersInORder=" + playersInORder +
+        String string= "ClientApp{" +
+                "nick='" + nick + '\n' +
+                ", playersInORder=" + playersInORder + '\n'+
                 ", readyPlayers=" + readyPlayers +
                 ", connectedPlayers=" + connectedPlayers +
-                ", playerData=" + playerData +
-                ", cardsInHand=" + cardsInHand +
-                ", cardOntop=" + cardOntop +
-                '}';
+                ", playerData=" + playerData + '\n' +
+                ", cardOntop=" + cardOntop + '\n' +
+                '}' + '\n'+'\n';
+        int i=1;
+        for (UnoCard card: this.cardsInHand
+             ) {
+            string= string + i++ +", " + card + '\n';
+
+        }
+    return string;
     }
 
 //////////////////////////////////////////////////////// GAME

@@ -1,15 +1,14 @@
 package org.example;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
-import com.sun.xml.internal.bind.v2.TODO;
-
-import javax.print.DocFlavor;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.abs;
 
 
 public class ServerConnectionManager {
@@ -96,6 +95,30 @@ public class ServerConnectionManager {
 
     }
 
+
+
+    void playCard(PlayerData playerData, UnoCard  unoCard)
+    {
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.PLAYCARD;
+        messageFormat.text= new String[1];
+        messageFormat.text[0]= playerData.nick;
+        messageFormat.unoCard = unoCard;
+        List<UnoCard> cards= this.serverApp.dataBaseMangaer.selectFromHand(playerData.getNick());
+        UnoCard card= cards.get(0);
+
+
+
+        try {
+            this.sendExclusice(messageFormat, playerData);
+            this.serverApp.giveCard(unoCard,playerData);
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     // this method is my client thread in order to proces te meessege they received
     public void handleMesseage(PlayerData playerData, MessageFormat messageFormat) throws IOException, ClassNotFoundException {
         switch (messageFormat.type)
@@ -122,6 +145,18 @@ public class ServerConnectionManager {
                 this.sendToAll(messageFormat);
 
                 break;
+             case PLAYCARD:
+                 List<UnoCard> cards= this.serverApp.dataBaseMangaer.selectFromHand(playerData.getNick());
+                 UnoCard card= cards.get(abs(messageFormat.number[0] - cards.size()));
+                 this.serverApp.dataBaseMangaer.playCard(playerData.getNick(),abs(messageFormat.number[0] - cards.size()));
+                 this.playCard(playerData, card);
+
+
+
+
+
+                 break;
+
 
 
 

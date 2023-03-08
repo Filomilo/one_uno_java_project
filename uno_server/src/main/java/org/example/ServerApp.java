@@ -161,9 +161,24 @@ System.out.println("giving cards");
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
         connectionManger.sendToAll(messageFormat);
-
+        this.sendPlayerOrder();
         this.createGame();
         this.dealCards();
+
+    }
+
+     void sendPlayerOrder() throws IOException {
+         for (PlayerData player:this.nicks) {
+             List<String> nicks= this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
+             MessageFormat  messageFormat= new MessageFormat();
+             messageFormat.type= MessageFormat.messegeTypes.ORDER;
+             messageFormat.text= new String[nicks.size()];
+             messageFormat.text= nicks.toArray(messageFormat.text);
+             ServerConnectionManager.sendMessage(player,messageFormat);
+
+         }
+
+
 
     }
 

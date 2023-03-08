@@ -178,9 +178,27 @@ this.waitTillconfirmed();
                     this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() - 1);
 
                     break;
+            case RECIVECARDS:
+                // TODO: 08.03.2023
+                break;
+            case RECIVEVARDCOMMUNICAT:
+                // TODO: 08.03.2023
+                break;
+            case ORDER:
+                for (String nick:
+                     messageFormat.text) {
+                    System.out.println("-------------------------" + nick);
+                    PlayerData playerData= new PlayerData(nick);
+                    this.clientApp.playersInORder.add(playerData);
+                    System.out.println(  this.clientApp.playersInORder);
+                }
+                break;
+
 
 
         }
+        System.out.println(this.clientApp);
+
     }
 
 

@@ -11,7 +11,7 @@ import java.util.List;
 public class ClientApp {
 
     String nick;
-    List<String> playersInORder= new ArrayList<String>();
+    List<PlayerData> playersInORder= new ArrayList<PlayerData>();
     int readyPlayers;
     int connectedPlayers;
     boolean isConnected=false;
@@ -95,6 +95,21 @@ public class ClientApp {
             result=true;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ClientApp{" +
+                "playersInORder=" + playersInORder +
+                '}';
+    }
+
+
+    //////////////////////////////////////////////////////// GAME
+
+    List<PlayerData> playerData= new ArrayList<PlayerData>();
+
+
+
 }
 
 

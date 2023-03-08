@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class ReciverHandler extends  Thread{
@@ -13,11 +14,21 @@ public class ReciverHandler extends  Thread{
 
     }
 
+    boolean shoudldRun=true;
+
+    public boolean isShoudldRun() {
+        return shoudldRun;
+    }
+
+    public void setShoudldRun(boolean shoudldRun) {
+        this.shoudldRun = shoudldRun;
+    }
+
     @Override
     public void run()
     {
         MessageFormat messageFormat;
-        while(true)
+        while(shoudldRun)
         {
             try {
                 messageFormat = this.clientConnectionManager.getMesseage();
@@ -27,6 +38,10 @@ public class ReciverHandler extends  Thread{
             catch (SocketTimeoutException e)
             {
 
+            }
+            catch (SocketException e)
+            {
+                return  ;
             }
             catch (IOException | ClassNotFoundException e) {
              e.printStackTrace(

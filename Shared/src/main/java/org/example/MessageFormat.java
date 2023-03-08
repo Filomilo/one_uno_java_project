@@ -17,6 +17,7 @@ public class MessageFormat implements Serializable {
         RECIVECARDS,
         RECIVEVARDCOMMUNICAT,
         ORDER,
+        TOPCARD,
     }
     messegeTypes type;
     int[] number;

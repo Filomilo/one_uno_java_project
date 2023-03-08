@@ -3,6 +3,7 @@ package org.example;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ServerApp {
     int port;
@@ -11,8 +12,10 @@ public class ServerApp {
     int playersConnected=0;
     int playersReady=0;
 
+
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
+    private boolean gameStarted=false;
 
     ServerApp()
     {
@@ -64,21 +67,18 @@ public class ServerApp {
         this.playersReady = playersReady;
         System.out.println("PLAYERS READY " + this.playersReady);
         System.out.println("PLAYERS connected " + this.playersConnected);
-        if(this.playersReady==this.playersConnected && this.playersConnected>1)
+        if(this.playersReady==this.playersConnected && this.playersConnected>1 && this.getPlayersReady()>1 && !this.gameStarted)
         {
-            this.startGame();
+            try {
+                this.gameStarted=true;
+                this.startGame();
+            } catch (IOException | ClassNotFoundException e) {
+                this.gameStarted=false;
+                e.printStackTrace();
+            }
         }
 
     }
-
-    private void startGame() {
-    }
-
-
-/*
-
-
-
 
 
 
@@ -102,12 +102,12 @@ public class ServerApp {
 
 
 
- */
+
 
 
 
     ////////////////////////////////////////// GAME
-/*
+
 
     void giveCard(UnoCard card, PlayerData player) throws IOException, ClassNotFoundException {
         MessageFormat messageFormat = new MessageFormat();
@@ -120,8 +120,8 @@ public class ServerApp {
         messageFormatToAll.text= new String[1];
         messageFormatToAll.text[0]= player.nick;
 
-        this.sendMessage(player,messageFormat);
-        this.sendExclusice(messageFormatToAll,player);
+        this.connectionManger.sendMessage(player,messageFormat);
+        this.connectionManger.sendExclusice(messageFormatToAll,player);
 
     }
 
@@ -164,24 +164,46 @@ System.out.println("giving cards");
 
 
     void startGame() throws IOException, ClassNotFoundException {
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         Collections.sort(this.nicks);
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
         connectionManger.sendToAll(messageFormat);
+
         this.sendPlayerOrder();
         this.createGame();
         this.dealCards();
+        this.setTopCard();
+
+    }
+
+    void setTopCard()
+    {
+        try {
+            List<UnoCard> unoCardsTable = this.dataBaseMangaer.selectTableStack();
+            MessageFormat messageForm = new MessageFormat();
+            messageForm.type = MessageFormat.messegeTypes.TOPCARD;
+            messageForm.unoCard = unoCardsTable.get(0);
+            this.connectionManger.sendToAll(messageForm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
      void sendPlayerOrder() throws IOException, ClassNotFoundException {
          for (PlayerData player:this.nicks) {
              List<String> nicks= this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
+             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + this.nicks);
              MessageFormat  messageFormat= new MessageFormat();
              messageFormat.type= MessageFormat.messegeTypes.ORDER;
              messageFormat.text= new String[nicks.size()];
              messageFormat.text= nicks.toArray(messageFormat.text);
-             ServerConnectionManager.sendMessage(player,messageFormat);
+             this.connectionManger.sendMessage(player,messageFormat);
 
          }
 
@@ -189,5 +211,5 @@ System.out.println("giving cards");
 
     }
 
-*/
+
 }

@@ -169,7 +169,6 @@ this.waitTillconfirmed();
             case CONFIRM:
                 this.setConfirmedMesseage(true);
 
-
                 break;
             case CONNECT:
                 this.setConectionResult(messageFormat.number[0] == 1);
@@ -186,10 +185,9 @@ this.waitTillconfirmed();
                     this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() - 1);
                 this.sendConfirm();
             case READY:
-                if (messageFormat.number[0]==1)
-                    this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() + 1);
-                else
-                    this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() - 1);
+
+                this.clientApp.setReadyPlayers(messageFormat.number[0]);
+
 
                     break;
             case RECIVECARDS:
@@ -198,6 +196,7 @@ this.waitTillconfirmed();
             case RECIVEVARDCOMMUNICAT:
                 for (PlayerData player: this.clientApp.playersInORder
                      ) {
+                    if(player.getNick()== messageFormat.text[0])
                         player.amountOfCards++;
                 }
                 break;
@@ -209,6 +208,26 @@ this.waitTillconfirmed();
                     this.clientApp.playersInORder.add(playerData);
                     System.out.println(  this.clientApp.playersInORder);
                 }
+                break;
+            case DISCONNECT:
+                this.reciverHandler.setShoudldRun(false);
+                try {
+                    this.reciverHandler.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    this.socket.close();
+                } catch (IOException e) {
+                   e.printStackTrace();
+                }
+
+                System.exit(1);
+                break;
+
+            case TOPCARD:
+                this.clientApp.setCardOntop(messageFormat.unoCard);
+
                 break;
 
 

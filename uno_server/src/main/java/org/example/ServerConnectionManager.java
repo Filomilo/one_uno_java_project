@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerConnectionManager {
 
+   static final Object messeageLocker= new Object();
     ServerApp serverApp;
     ServerSocket serverSocket;
     //variable that change should close thrad and server
@@ -26,26 +27,30 @@ public class ServerConnectionManager {
 
     //static function for sending object of messeafe to chosen stream
     static void sendMessage(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
-        objectOutputStream.writeObject(messageFormat);
-        objectOutputStream.flush();
-        objectOutputStream.reset();
-        System.out.println("send message: ");
-        System.out.println(messageFormat);
-        System.out.println(" ");
+        synchronized (ServerConnectionManager.messeageLocker) {
+            objectOutputStream.writeObject(messageFormat);
+            objectOutputStream.flush();
+            objectOutputStream.reset();
+            System.out.println("send message: ");
+            System.out.println(messageFormat);
+            System.out.println(" ");
+        }
     }
 
     //static funciton fo receving object messege form chosen stream
     static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException {
-        MessageFormat messageFormat = new MessageFormat();
-        messageFormat = (MessageFormat) objectInputStream.readObject();
-        System.out.println("get messegae");
-        System.out.println(messageFormat);
-        return messageFormat;
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat = (MessageFormat) objectInputStream.readObject();
+            System.out.println("get messegae");
+            System.out.println(messageFormat);
+            return messageFormat;
+
     }
 
 
 //method to get meege form specif player, after getting messege auntamtl send confimation messee to seder
      MessageFormat getMesseage(PlayerData playerData) throws IOException, ClassNotFoundException, SocketException {
+        System.out.println("from: " + playerData.getNick());
         MessageFormat messageFormat = ServerConnectionManager.getMesseage(playerData.getObjectInputStream());
         if(messageFormat.type!= org.example.MessageFormat.messegeTypes.CONFIRM)
         {
@@ -84,6 +89,7 @@ public class ServerConnectionManager {
     // funciton to send messege to specifcly connected player
     // this method should be used instead of the static to automaticly wait for confirmation method
     void sendMessage(PlayerData playerData, MessageFormat messageFormat) throws IOException {
+        System.out.println("To: " + playerData.getNick());
     ServerConnectionManager.sendMessage(playerData.getObjectOutputStream(),messageFormat);
     waitConfirm(playerData);
 
@@ -91,10 +97,11 @@ public class ServerConnectionManager {
     }
 
     // this method is my client thread in order to proces te meessege they received
-    public void handleMesseage(PlayerData playerData, MessageFormat messageFormat) {
+    public void handleMesseage(PlayerData playerData, MessageFormat messageFormat) throws IOException, ClassNotFoundException {
         switch (messageFormat.type)
         {
             case CONNECT:
+
 
                 break;
             case CONFIRM:
@@ -104,11 +111,16 @@ public class ServerConnectionManager {
                 break;
 
             case READY:
-                this.sendExclusice(messageFormat, playerData);
+
                 if(messageFormat.number[0]==1)
                     serverApp.setPlayersReady(serverApp.getPlayersReady()+1);
                 else
                     serverApp.setPlayersReady(serverApp.getPlayersReady()-1);
+
+                messageFormat.number = new int[1];
+                messageFormat.number[0]=serverApp.getPlayersReady();
+                this.sendToAll(messageFormat);
+
                 break;
 
 
@@ -167,9 +179,22 @@ public class ServerConnectionManager {
 
     }
 
+// mrthod that send the same messege to all connected players
+    void sendToAll(MessageFormat messageFormat) throws IOException {
+        for (PlayerData player:
+                this.serverApp.nicks) {
+                this.sendMessage(player, messageFormat);
+            }
+        }
     //method that sends messeages to everyone exlcuding the chosen player
-    private void sendExclusice(MessageFormat newPlayerCommunicat, PlayerData pLayerData) {
+    void sendExclusice(MessageFormat messageFormat, PlayerData playerExclued) throws IOException, ClassNotFoundException {
+        for (PlayerData player:
+                this.serverApp.nicks) {
+            if(player!=playerExclued) {
+                this.sendMessage(player, messageFormat);
+            }
 
+        }
     }
 
 

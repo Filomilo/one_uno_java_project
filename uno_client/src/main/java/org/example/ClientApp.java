@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ClientApp {
 
@@ -67,13 +68,29 @@ public class ClientApp {
         this.port = port;
     }
 
+
+    public UnoCard getCardOntop() {
+        return cardOntop;
+    }
+
+    public void setCardOntop(UnoCard cardOntop) {
+        this.cardOntop = cardOntop;
+    }
+
     public boolean isReady() {
         return isReady;
     }
 
     public void setReady(boolean ready) {
-        this.clientConnectionManager.sendReady(ready);
+
         isReady = ready;
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        this.clientConnectionManager.sendReady(ready);
+        this.setReadyPlayers(this.getReadyPlayers()+1);
     }
 
     boolean connectWithServer()

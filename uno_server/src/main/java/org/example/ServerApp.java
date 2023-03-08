@@ -14,6 +14,39 @@ public class ServerApp {
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
 
+    ServerApp()
+    {
+    }
+    void  startServer()
+    {
+        connectionManger = new ServerConnectionManager(this);
+        try {
+            connectionManger.setupServerConnections(this.port);
+        } catch (IOException e) {
+            System.out.println(e.getStackTrace());
+        }
+    }
+
+    boolean addPlayer(PlayerData pLayerData)
+    {
+        this.nicks.add(pLayerData);
+        Collections.sort(this.nicks);
+        boolean res= this.dataBaseMangaer.addPlayer(pLayerData.nick);
+        this.playersConnected++;
+        return  true;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    //method that shoudl be run when ineting STOP commnad in server terminal to close server
+    void stopServer()
+    {
+        connectionManger.isServerRunning =false;
+        System.out.println("STOP");
+    }
+
 
     public int getPlayersConnected() {
         return playersConnected;
@@ -33,49 +66,21 @@ public class ServerApp {
         System.out.println("PLAYERS connected " + this.playersConnected);
         if(this.playersReady==this.playersConnected && this.playersConnected>1)
         {
-            try {
-                this.startGame();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("THERE WAS PROBELM WITH TARTING GAME");
-            }
+            this.startGame();
         }
 
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    ServerApp()
-    {
-    }
-    void  startServer()
-    {
-        connectionManger = new ServerConnectionManager(this);
-        try {
-            connectionManger.setupServerConnections(this.port);
-        } catch (IOException e) {
-            System.out.println(e.getStackTrace());
-        }
+    private void startGame() {
     }
 
 
-    void stopServer()
-    {
-        ServerConnectionManager.isServerRunning =false;
-        System.out.println("STOP");
-    }
+/*
 
-    boolean addPlayer(PlayerData pLayerData)
-    {
-        // TODO: 08.03.2023 add check if nick is alaredy in databse 
-        this.nicks.add(pLayerData);
-        Collections.sort(this.nicks);
-        boolean res= this.dataBaseMangaer.addPlayer(pLayerData.nick);
-        this.playersConnected++;
-        return  true;
-    }
+
+
+
+
 
     void disconnectPlayer(PlayerData pLayerData)
     {
@@ -97,12 +102,14 @@ public class ServerApp {
 
 
 
+ */
+
 
 
     ////////////////////////////////////////// GAME
+/*
 
-
-    void giveCard(UnoCard card, PlayerData player) throws IOException {
+    void giveCard(UnoCard card, PlayerData player) throws IOException, ClassNotFoundException {
         MessageFormat messageFormat = new MessageFormat();
         MessageFormat messageFormatToAll= new MessageFormat();
 
@@ -113,12 +120,12 @@ public class ServerApp {
         messageFormatToAll.text= new String[1];
         messageFormatToAll.text[0]= player.nick;
 
-        ServerConnectionManager.sendMessage(player,messageFormat);
-        connectionManger.sendToAll(messageFormatToAll);
+        this.sendMessage(player,messageFormat);
+        this.sendExclusice(messageFormatToAll,player);
 
     }
 
-    void dealCards() throws IOException {
+    void dealCards() throws IOException, ClassNotFoundException {
         System.out.println("preaping DECK");
         this.dataBaseMangaer.preapreDeck();
         System.out.println("DELAING CARDs");
@@ -156,7 +163,7 @@ System.out.println("giving cards");
     }
 
 
-    void startGame() throws IOException {
+    void startGame() throws IOException, ClassNotFoundException {
         Collections.sort(this.nicks);
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
@@ -167,7 +174,7 @@ System.out.println("giving cards");
 
     }
 
-     void sendPlayerOrder() throws IOException {
+     void sendPlayerOrder() throws IOException, ClassNotFoundException {
          for (PlayerData player:this.nicks) {
              List<String> nicks= this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
              MessageFormat  messageFormat= new MessageFormat();
@@ -182,5 +189,5 @@ System.out.println("giving cards");
 
     }
 
-
+*/
 }

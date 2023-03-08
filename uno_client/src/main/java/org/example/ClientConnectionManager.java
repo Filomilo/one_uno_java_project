@@ -65,6 +65,9 @@ public class ClientConnectionManager {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
         System.out.println("get meeaeg");
         System.out.println(messageFormat);
+        if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM)
+        sendConfirm();
+
         return messageFormat;
     }
 
@@ -151,6 +154,16 @@ this.waitTillconfirmed();
         return  result;
     }
 
+    void sendConfirm()  {
+        MessageFormat messageFormat = new MessageFormat();
+        ;messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
+        try {
+            this.sendMessage(messageFormat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void handleMesseage(MessageFormat messageFormat) {
         switch (messageFormat.type) {
             case CONFIRM:
@@ -171,6 +184,7 @@ this.waitTillconfirmed();
                     this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() + 1);
                 else
                     this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() - 1);
+                this.sendConfirm();
             case READY:
                 if (messageFormat.number[0]==1)
                     this.clientApp.setReadyPlayers(this.clientApp.getReadyPlayers() + 1);
@@ -179,10 +193,13 @@ this.waitTillconfirmed();
 
                     break;
             case RECIVECARDS:
-                // TODO: 08.03.2023
+                this.clientApp.cardsInHand.add(messageFormat.unoCard);
                 break;
             case RECIVEVARDCOMMUNICAT:
-                // TODO: 08.03.2023
+                for (PlayerData player: this.clientApp.playersInORder
+                     ) {
+                        player.amountOfCards++;
+                }
                 break;
             case ORDER:
                 for (String nick:

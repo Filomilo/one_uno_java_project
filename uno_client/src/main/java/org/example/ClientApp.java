@@ -99,14 +99,22 @@ public class ClientApp {
     @Override
     public String toString() {
         return "ClientApp{" +
-                "playersInORder=" + playersInORder +
+                "nick='" + nick + '\'' +
+                ", playersInORder=" + playersInORder +
+                ", readyPlayers=" + readyPlayers +
+                ", connectedPlayers=" + connectedPlayers +
+                ", playerData=" + playerData +
+                ", cardsInHand=" + cardsInHand +
+                ", cardOntop=" + cardOntop +
                 '}';
     }
 
-
-    //////////////////////////////////////////////////////// GAME
+//////////////////////////////////////////////////////// GAME
 
     List<PlayerData> playerData= new ArrayList<PlayerData>();
+    List<UnoCard> cardsInHand= new ArrayList<UnoCard>();
+
+    UnoCard cardOntop=null;
 
 
 

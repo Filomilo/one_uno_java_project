@@ -45,15 +45,14 @@ public class ClientHandler extends  Thread{
     public void run() {
         super.run();
 
-        while(connectionActive && ServerConnectionManager.isServerRunning)
+        while(true)
         {
             try{
-                MessageFormat messageFormat;
-                messageFormat= ServerConnectionManager.getMesseage(this.playerData.objectInputStream);
-                this.serverConnectionManager.hadleMesseage(playerData,messageFormat);
-
-
-
+                synchronized (playerData) {
+                    MessageFormat messageFormat;
+                    messageFormat = this.serverConnectionManager.getMesseage(this.playerData);
+                    this.serverConnectionManager.handleMesseage(playerData, messageFormat);
+                }
             }
             catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

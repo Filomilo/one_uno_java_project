@@ -144,6 +144,7 @@ void strartInterface()
 
 }
 
+    //method run on Server run thread to get messege to STOP server
     void waitForExit() throws InterruptedException {
         while(true) {
             String input = scanner.next();

@@ -8,6 +8,8 @@ public class PlayerData implements Comparable<PlayerData> {
     String nick;
     boolean isReady=false;
 
+    boolean confirmedMesseage=false;
+
     Socket socket;
     ObjectOutputStream objectOutputStream;
 
@@ -26,6 +28,9 @@ public class PlayerData implements Comparable<PlayerData> {
     public PlayerData(String nick) {
         this.nick = nick;
     }
+
+
+
 
 
     public String getNick() {
@@ -82,6 +87,17 @@ public class PlayerData implements Comparable<PlayerData> {
                 "nick='" + nick + '\'' +
                 ", isReady=" + isReady +
                 '}';
+    }
+
+
+    public boolean isConfirmedMesseage() {
+        return confirmedMesseage;
+    }
+
+    public void setConfirmedMesseage(boolean confirmedMesseage) {
+        synchronized (this) {
+            this.confirmedMesseage = confirmedMesseage;
+        }
     }
 
     @Override

@@ -133,7 +133,29 @@ public class InterfaceUi {
 
             if(card_choice>=1 && card_choice <= this.clientApp.cardsInHand.size())
             {
-                this.clientApp.playCard(card_choice);
+                boolean changedColor=false;
+                String color= new String("");
+                int colorChoice=0;
+                UnoCard card= this.clientApp.cardsInHand.get(card_choice-1);
+                if(clientApp.cardsInHand.get(card_choice-1).getColor()== UnoCard.UNO_COLOR.BLACK)
+                {
+                    changedColor=true;
+
+                    boolean cont = true;
+                    while(cont) {
+                        System.out.println(" 1- GREEN \n 2- RED \n 3- YELLOW \n 4- BLUE \n wchich color: \n");
+                        card_choice = scanner.nextInt();
+                        switch (card_choice) {
+                            case 1: card.setColor(UnoCard.UNO_COLOR.GREEN); cont=false; break;
+                            case 2: card.setColor(UnoCard.UNO_COLOR.RED); cont=false; break;
+                            case 3: card.setColor(UnoCard.UNO_COLOR.YELLOW); cont=false; break;
+                            case 4: card.setColor(UnoCard.UNO_COLOR.BLUE); cont=false; break;
+
+                        }
+                    }
+                }
+
+                this.clientApp.playCard(card_choice, card, changedColor);
             }
             if(card_choice==0)
                 break;

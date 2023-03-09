@@ -55,6 +55,7 @@ public class ClientHandler extends  Thread{
                 }
             }
             catch (IOException | ClassNotFoundException e) {
+                // TODO: 09.03.2023  habdle i cient disconnected
                 e.printStackTrace();
             }
 

@@ -30,9 +30,10 @@ public class ServerConnectionManager {
             objectOutputStream.writeObject(messageFormat);
             objectOutputStream.flush();
             objectOutputStream.reset();
+            if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM){
             System.out.println("send message: ");
             System.out.println(messageFormat);
-            System.out.println(" ");
+            System.out.println(" ");}
         }
     }
 
@@ -40,8 +41,10 @@ public class ServerConnectionManager {
     static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException {
             MessageFormat messageFormat = new MessageFormat();
             messageFormat = (MessageFormat) objectInputStream.readObject();
-            System.out.println("get messegae");
-            System.out.println(messageFormat);
+            if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM) {
+                System.out.println("get messegae");
+                System.out.println(messageFormat);
+                System.out.println(" ");}
             return messageFormat;
 
     }
@@ -97,10 +100,13 @@ public class ServerConnectionManager {
 
 
 
-    void playCard(PlayerData playerData, UnoCard  unoCard) throws IOException, ClassNotFoundException {
+    void playCard(PlayerData playerData, UnoCard  unoCard , int num) throws IOException, ClassNotFoundException {
+
+        this.serverApp.dataBaseMangaer.playCard(playerData.getNick(),  num);
 
         if(unoCard.getType()== UnoCard.UNO_TYPE.REVERSE)
         {
+            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ REVERSE");
             this.serverApp.clockOrder=!this.serverApp.clockOrder;
         }
 
@@ -122,15 +128,32 @@ public class ServerConnectionManager {
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.PLAYCARD;
         messageFormat.text= new String[1];
-        messageFormat.text[0]= playerData.nick;
+        messageFormat.text[0]= playerData.getNick();
         messageFormat.unoCard = unoCard;
         List<UnoCard> cards= this.serverApp.dataBaseMangaer.selectFromHand(playerData.getNick());
         UnoCard card= cards.get(0);
 
 
 
+
+
         try {
             this.sendExclusice(messageFormat, playerData);
+            switch (unoCard.getType())
+            {
+                case PLUS4:
+                    for(int i=0;i<2;i++) {
+                        this.serverApp.giveCard(this.serverApp.dataBaseMangaer.selectMainStack().get(0), this.serverApp.nicks.get(this.serverApp.turn));
+                        this.serverApp.dataBaseMangaer.drawCard(this.serverApp.nicks.get(this.serverApp.turn).getNick());
+                    }
+                case PLUS2:
+                    for(int i=0;i<2;i++) {
+                        this.serverApp.giveCard(this.serverApp.dataBaseMangaer.selectMainStack().get(0), this.serverApp.nicks.get(this.serverApp.turn));
+                        this.serverApp.dataBaseMangaer.drawCard(this.serverApp.nicks.get(this.serverApp.turn).getNick());
+                    }
+                    break;
+
+            }
             this.serverApp.setTurn();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -168,11 +191,8 @@ public class ServerConnectionManager {
 
                 break;
              case PLAYCARD:
-                 List<UnoCard> cards= this.serverApp.dataBaseMangaer.selectFromHand(playerData.getNick());
-                 UnoCard card= cards.get(abs(messageFormat.number[0] - cards.size()));
-                 this.serverApp.dataBaseMangaer.playCard(playerData.getNick(),1+abs(messageFormat.number[0] - cards.size()));
-                 this.playCard(playerData, card);
-                 this.serverApp.setTopCard();
+                 this.playCard(playerData,messageFormat.unoCard, messageFormat.number[0]);
+
 
 
 

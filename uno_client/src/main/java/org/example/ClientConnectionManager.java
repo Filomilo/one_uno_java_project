@@ -237,7 +237,8 @@ this.waitTillconfirmed();
 
                 break;
 
-
+            case PLAYCARD:
+                clientApp.procesPlaycard(messageFormat.text[0], messageFormat.unoCard);
 
         }
         System.out.println(this.clientApp);

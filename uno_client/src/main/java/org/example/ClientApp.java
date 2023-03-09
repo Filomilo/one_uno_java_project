@@ -117,30 +117,52 @@ public class ClientApp {
 
     }
 
-    boolean vaidateCard(UnoCard unoCard)
+    boolean vaidateCard(UnoCard unoCard, boolean changedColor)
     {
+        if(changedColor)
+            return true;
+
+        if(unoCard.getType()!= UnoCard.UNO_TYPE.REGULAR)
+        {
+            if(unoCard.getType()== this.cardOntop.getType())
+            {
+                return  true;
+            }
+        }
+        else
+        {
+           if( unoCard.getNumb()==this.cardOntop.getNumb())
+               return true;
+        }
+
         if(unoCard.getColor()== UnoCard.UNO_COLOR.BLACK)
             return true;
-        if(unoCard.getNumb()==this.cardOntop.getNumb() || unoCard.getColor()==this.cardOntop.getColor())
+        else
         {
-            return true;
+            if(unoCard.getColor()==this.cardOntop.getColor())
+            {
+                return true;
+            }
         }
+
         return false;
     }
-    void playCard(int numbCard)
+    void playCard(int numbCard, UnoCard card, boolean changedColor)
     {
-        if(!vaidateCard(this.cardsInHand.get(numbCard-1)))
+        if(!vaidateCard(this.cardsInHand.get(numbCard-1),changedColor) )
         {
             System.out.println("You cant play this card");
             return;
         }
 
-        this.cardsInHand.remove(numbCard-1);
+        this.cardsInHand.remove(card);
 
         MessageFormat messageForma = new MessageFormat();
         messageForma.type= MessageFormat.messegeTypes.PLAYCARD;
         messageForma.number= new int[1];
         messageForma.number[0]=numbCard;
+       messageForma.unoCard=card;
+
 
 
         try {
@@ -148,6 +170,7 @@ public class ClientApp {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.cardOntop=card;
     }
 
     public boolean getIsGameReady() {
@@ -194,7 +217,10 @@ public class ClientApp {
     UnoCard cardOntop=null;
 
 
-
+    void procesPlaycard(String nick, UnoCard card)
+    {
+        this.setCardOntop(card);
+    }
 
 
 

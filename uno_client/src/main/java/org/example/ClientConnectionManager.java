@@ -230,6 +230,12 @@ this.waitTillconfirmed();
                 break;
             case START:
                 this.clientApp.setGameStarted(true);
+        break;
+            case TURN:
+
+                this.clientApp.setTurn(messageFormat.text[0]);
+
+                break;
 
 
 

@@ -12,6 +12,9 @@ public class ServerApp {
     int playersConnected=0;
     int playersReady=0;
 
+    boolean clockOrder=true;
+    int turn=0;
+
 
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
@@ -82,6 +85,10 @@ public class ServerApp {
 
 
 
+
+
+
+
     void disconnectPlayer(PlayerData pLayerData)
     {
         this.nicks.remove(pLayerData);
@@ -98,6 +105,9 @@ public class ServerApp {
                 ", nicks=" + nicks +
                 '}';
     }
+
+
+
 
 
 
@@ -125,7 +135,7 @@ public class ServerApp {
 
     }
 
-    void dealCards() throws IOException, ClassNotFoundException {
+    void dealCards() throws IOException, ClassNotFoundException, InterruptedException {
         System.out.println("preaping DECK");
         this.dataBaseMangaer.preapreDeck();
         System.out.println("DELAING CARDs");
@@ -139,9 +149,13 @@ System.out.println("giving cards");
 
         for(PlayerData player: this.nicks)
         {
+
+            //  TimeUnit.SECONDS.sleep(2);
+
             System.out.println(player.getNick());
             List<UnoCard> unoCardList= this.dataBaseMangaer.selectFromHand(player.getNick());
             for(UnoCard card: unoCardList) {
+                TimeUnit.MILLISECONDS.sleep(20);
               this.giveCard(card, player);
             }
 
@@ -176,8 +190,13 @@ System.out.println("giving cards");
 
         this.sendPlayerOrder();
         this.createGame();
-        this.dealCards();
+        try {
+            this.dealCards();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         this.setTopCard();
+        this.setTurn();
 
     }
 
@@ -211,5 +230,29 @@ System.out.println("giving cards");
 
     }
 
+
+
+    void setTurn() throws IOException {
+        System.out.println("TURA: " + this.turn);
+        PlayerData player= this.nicks.get(this.turn);
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.TURN;
+        messageFormat.text= new String[1];
+        messageFormat.text[0]=player.nick;
+        this.connectionManger.sendToAll(messageFormat);
+    }
+
+    void incrTurn()
+    {
+        this.turn++;
+        if(this.turn>=this.nicks.size())
+            this.turn=0;
+    }
+    void decrTurn()
+    {
+        this.turn--;
+        if(this.turn<0)
+            this.turn=this.nicks.size()-1;
+    }
 
 }

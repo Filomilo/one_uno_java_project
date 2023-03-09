@@ -124,6 +124,13 @@ public class InterfaceUi {
             System.out.println(clientApp);
             System.out.println("CHOOSE CARD TO PLAY: ");
             card_choice= scanner.nextInt();
+            System.out.println(clientApp.getTurn() + "==" + this.clientApp.getNick());
+            if(!clientApp.getTurn().equals(this.clientApp.getNick()))
+            {
+                System.out.println("Not your turn");
+                continue;
+            }
+
             if(card_choice>=1 && card_choice <= this.clientApp.cardsInHand.size())
             {
                 this.clientApp.playCard(card_choice);

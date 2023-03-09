@@ -22,6 +22,8 @@ public class ClientApp {
     boolean isGameStarted= false;
     ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
 
+    String turn = new String();
+
     String ip;
     int port;
 
@@ -155,6 +157,15 @@ public class ClientApp {
         return result;
     }
 
+
+    public String getTurn() {
+        return turn;
+    }
+
+    public void setTurn(String turn) {
+        this.turn = turn;
+    }
+
     @Override
     public String toString() {
         String string= "ClientApp{" +
@@ -164,6 +175,7 @@ public class ClientApp {
                 ", connectedPlayers=" + connectedPlayers +
                 ", playerData=" + playerData + '\n' +
                 ", cardOntop=" + cardOntop + '\n' +
+                "Tura: " + this. getTurn() + '\n' +
                 '}' + '\n'+'\n';
         int i=1;
         for (UnoCard card: this.cardsInHand
@@ -180,6 +192,9 @@ public class ClientApp {
     List<UnoCard> cardsInHand= new ArrayList<UnoCard>();
 
     UnoCard cardOntop=null;
+
+
+
 
 
 

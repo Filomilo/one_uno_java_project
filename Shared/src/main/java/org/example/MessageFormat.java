@@ -19,6 +19,9 @@ public class MessageFormat implements Serializable {
         ORDER,
         TOPCARD,
         PLAYCARD,
+        TURN,
+        REVERSE,
+
     }
     messegeTypes type;
     int[] number;

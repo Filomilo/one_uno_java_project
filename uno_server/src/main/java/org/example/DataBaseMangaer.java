@@ -247,6 +247,8 @@ public class DataBaseMangaer {
     private boolean executeProcedure(String sqlCode, String[] vars)
     {
         try{
+            System.out.println("*********************************************************"+ sqlCode +"*******************************************" );
+
             PreparedStatement statement = connection.prepareStatement(sqlCode);
             for (int i=1;i<=vars.length;i++)
             {
@@ -263,6 +265,7 @@ public class DataBaseMangaer {
     private void executeProcedure(String sqlCode, String var, int numb )
     {
         try{
+            System.out.println("*********************************************************"+ sqlCode +  "," +var + "," + numb + "*******************************************" );
             PreparedStatement statement = connection.prepareStatement(sqlCode);
             statement.setString(1,var);
             statement.setInt(2,numb);

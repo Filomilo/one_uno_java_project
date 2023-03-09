@@ -135,6 +135,7 @@ public class ServerConnectionManager {
 
 
         try {
+            this.serverApp.setTopCard(messageFormat.unoCard);
             this.sendExclusice(messageFormat, playerData);
             switch (unoCard.getType())
             {

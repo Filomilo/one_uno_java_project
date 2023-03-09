@@ -14,7 +14,15 @@ public class ServerApp {
 
     boolean clockOrder=true;
     int turn=0;
+    UnoCard topCard;
 
+    public UnoCard getTopCard() {
+        return topCard;
+    }
+
+    public void setTopCard(UnoCard topCard) {
+        this.topCard = topCard;
+    }
 
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
@@ -208,6 +216,7 @@ System.out.println("giving cards");
             messageForm.type = MessageFormat.messegeTypes.TOPCARD;
             messageForm.unoCard = unoCardsTable.get(0);
             this.connectionManger.sendToAll(messageForm);
+            setTopCard(unoCardsTable.get(0));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -257,7 +266,7 @@ System.out.println("giving cards");
 
     void validateHand(PlayerData playerData)
     {
-        UnoCard topCard=this.dataBaseMangaer.selectTableStack().get(0);
+        UnoCard topCard=this.getTopCard();
         int  validation=1;
         while (true)
         {

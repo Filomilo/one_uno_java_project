@@ -48,12 +48,12 @@ public class InterfaceUi {
         while(true)
         {
             System.out.println("please provide ip addres for server would you like to connect ");
-            // input=scanner.next();
-            input="localhost";
+             input=scanner.next();
+            //input="localhost";
             this.clientApp.setIp(input);
             System.out.println("please provide port  for server would you like to connect ");
-            //input=scanner.next();
-            input="25565";
+            input=scanner.next();
+            //input="25565";
             this.clientApp.setPort(Integer.parseInt(input));
             boolean res=this.clientApp.connectWithServer();
             this.clearTerminal();
@@ -73,8 +73,8 @@ public class InterfaceUi {
         String input;
         System.out.println("-------------Welcome to Uno terminal app ----------");
         System.out.println("How woul you like to be called in this game");
-       // input=this.scanner.next();
-        input=nick;
+        input=this.scanner.next();
+        //input=nick;
         clientApp.setNick(input);
         System.out.println("Welcome  "+ clientApp.nick);
         System.out.println("In order to play you will have to connect to Uno server app");
@@ -92,8 +92,8 @@ public class InterfaceUi {
         {
             System.out.println(clientApp);
             System.out.println("Are you ready to play?");
-           // isReady=getYesNo();
-            isReady=true;
+            isReady=getYesNo();
+            //isReady=true;
             if(isReady)
             {
                 clientApp.setReady(true);

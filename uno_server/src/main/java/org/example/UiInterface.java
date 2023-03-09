@@ -40,28 +40,28 @@ public class UiInterface {
         while (true)
         {
             System.out.println("what ip of your Oracle Data Base server");
-            input="localhost";
-           // input=scanner.next();
+           // input="localhost";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseAdres(input);
 
             System.out.println("What is port of your Oracel Dataa Base sever");
-            input="1521";
-            //input=scanner.next();
+            //input="1521";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBasePort(input);
 
             System.out.println("What is name of your Data base");
-            input="orcl";
-            //input=scanner.next();
+            //input="orcl";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseName(input);
 
             System.out.println("What username that you would like to connect to Data base");
-            input="test";
-            //input=scanner.next();
+            //input="test";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseUserName(input);
 
             System.out.println("What password that you would like to connect to Data base");
-            //input=scanner.next();
-            input="test";
+            input=scanner.next();
+            //input="test";
             this.serverApp.dataBaseMangaer.setDataBasePass(input);
 
             boolean res= this.serverApp.dataBaseMangaer.connectWithDataBase();
@@ -126,8 +126,8 @@ void strartInterface()
             this.clearTerminal();
             System.out.println("Data base setup finished");
             System.out.println("On what port would you like to start uno Server");
-            //input=scanner.nextInt();
-            input=25565;
+            input=scanner.nextInt();
+            //input=25565;
             this.serverApp.setPort(input);
             serverRunThread = new ServerRunThread(this.serverApp);
             serverRunThread.start();

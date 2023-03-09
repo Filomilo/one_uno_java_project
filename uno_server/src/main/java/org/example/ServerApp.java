@@ -214,27 +214,11 @@ System.out.println("giving cards");
 
     }
 
-     void sendPlayerOrder() throws IOException, ClassNotFoundException {
-         for (PlayerData player:this.nicks) {
-             List<String> nicks= this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
-             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + this.nicks);
-             MessageFormat  messageFormat= new MessageFormat();
-             messageFormat.type= MessageFormat.messegeTypes.ORDER;
-             messageFormat.text= new String[nicks.size()];
-             messageFormat.text= nicks.toArray(messageFormat.text);
-             this.connectionManger.sendMessage(player,messageFormat);
-
-         }
-
-
-
-    }
-
-
 
     void setTurn() throws IOException {
         System.out.println("TURA: " + this.turn);
         PlayerData player= this.nicks.get(this.turn);
+        validateHand(player);
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.TURN;
         messageFormat.text= new String[1];
@@ -242,7 +226,22 @@ System.out.println("giving cards");
         this.connectionManger.sendToAll(messageFormat);
     }
 
-    void incrTurn()
+    void sendPlayerOrder() throws IOException, ClassNotFoundException {
+        for (PlayerData player : this.nicks) {
+            List<String> nicks = this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + this.nicks);
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type = MessageFormat.messegeTypes.ORDER;
+            messageFormat.text = new String[nicks.size()];
+            messageFormat.text = nicks.toArray(messageFormat.text);
+            this.connectionManger.sendMessage(player, messageFormat);
+
+        }
+    }
+
+
+
+        void incrTurn()
     {
         this.turn++;
         if(this.turn>=this.nicks.size())
@@ -253,6 +252,65 @@ System.out.println("giving cards");
         this.turn--;
         if(this.turn<0)
             this.turn=this.nicks.size()-1;
+    }
+
+
+    void validateHand(PlayerData playerData)
+    {
+        UnoCard topCard=this.dataBaseMangaer.selectTableStack().get(0);
+        int  validation=1;
+        while (true)
+        {
+            List<UnoCard> hand= this.dataBaseMangaer.selectFromHand(playerData.getNick());
+                for (UnoCard card:hand
+                     ) {
+                    System.out.println(topCard +"====="+ card);
+                    if( topCard.getType()==card.getType() && topCard.getType()!= UnoCard.UNO_TYPE.REGULAR) {
+                        validation = 0;
+                        break;
+                    }
+                    if(topCard.getType()==UnoCard.UNO_TYPE.REGULAR && card.getType()==UnoCard.UNO_TYPE.REGULAR && topCard.getNumb()==card.getNumb() )
+                    {
+                        validation = 0;
+                        break;
+                    }
+                    if(topCard.getColor()==card.getColor())
+                    {
+                        validation = 0;
+                        break;
+                    }
+                }
+
+
+
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Validation: "+ validation);
+            if(validation==0)
+            {
+              break;
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            this.drawCard(playerData);
+
+
+
+        }
+
+    }
+
+    private void drawCard(PlayerData playerData) {
+        try {
+            System.out.println("################################################"+this.dataBaseMangaer.selectMainStack());
+            this.giveCard(this.dataBaseMangaer.selectMainStack().get(0),playerData );
+            this.dataBaseMangaer.drawCard(playerData.getNick());
+        } catch (IOException | ClassNotFoundException e) {
+           e.printStackTrace();
+        }
+
+
     }
 
 }

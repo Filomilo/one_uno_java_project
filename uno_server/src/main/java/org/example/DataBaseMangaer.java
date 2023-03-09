@@ -212,6 +212,11 @@ public class DataBaseMangaer {
         return executeFunciton(SqlScripts.GetAmtOfCardsScript, nick);
     }
 
+    int validateHand(String nick)
+    {
+        return executeFunciton(SqlScripts.ValidateHand, nick);
+    }
+
     List<UnoCard> selectTableStack()
     {
        return executeSelectCards(SqlScripts.TableStackViewScript);

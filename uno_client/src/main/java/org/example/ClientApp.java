@@ -155,15 +155,13 @@ public class ClientApp {
             return;
         }
 
-        this.cardsInHand.remove(card);
+        this.cardsInHand.remove( numbCard-1);
 
         MessageFormat messageForma = new MessageFormat();
         messageForma.type= MessageFormat.messegeTypes.PLAYCARD;
         messageForma.number= new int[1];
         messageForma.number[0]=numbCard;
        messageForma.unoCard=card;
-
-
 
         try {
             this.clientConnectionManager.sendMessage(messageForma);

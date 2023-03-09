@@ -144,8 +144,8 @@ public class InterfaceUi {
                     boolean cont = true;
                     while(cont) {
                         System.out.println(" 1- GREEN \n 2- RED \n 3- YELLOW \n 4- BLUE \n wchich color: \n");
-                        card_choice = scanner.nextInt();
-                        switch (card_choice) {
+                        colorChoice = scanner.nextInt();
+                        switch (colorChoice) {
                             case 1: card.setColor(UnoCard.UNO_COLOR.GREEN); cont=false; break;
                             case 2: card.setColor(UnoCard.UNO_COLOR.RED); cont=false; break;
                             case 3: card.setColor(UnoCard.UNO_COLOR.YELLOW); cont=false; break;

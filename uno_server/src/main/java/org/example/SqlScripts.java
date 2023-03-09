@@ -50,7 +50,8 @@ public class SqlScripts {
     static String GetAmtOfCardsScript=
             "{? = call  GET_AMT_OF_CARD(?) }";
 
-
+    static String ValidateHand=
+            "{? = call VALIDATE_HAND(?)}";
 
     static String SelectCardsFromHandScript=
             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
@@ -210,7 +211,38 @@ public class SqlScripts {
                         "GAMES_ID = GET_ACTIVE_GAME_ID "+
                         "; "+
                         "RETURN val; "+
-                        "END; "
+                        "END;",
+            "CREATE OR REPLACE FUNCTION VALIDATE_HAND (nick_var VARCHAR) RETURN NUMBER AS "+
+                    "CURSOR HAND_STACK IS "+
+                    "SELECT COLOR,TYPE,NUMB FROM ACTIVE_CARD_PLACES, CARDS "+
+                    "WHERE NICK = nick_var  AND "+
+                    "ACTIVE_CARD_PLACES.CARDS_ID = CARDS.CARDS_ID "+
+                    "ORDER BY POSITION "+
+                    "; "+
+                    "CARD_IN_HAND HAND_STACK%ROWTYPE; "+
+                    "CARD_ON_TOP HAND_STACK%ROWTYPE; "+
+                    "res NUMBER:=1; "+
+                    "BEGIN  "+
+                    "SELECT  COLOR,TYPE,NUMB INTO CARD_ON_TOP FROM ACTIVE_CARD_PLACES, CARDS "+
+                    "where PLACE_TYPE='TABLE' "+
+                    "AND ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
+                    "AND POSITION = ( "+
+                    "SELECT max(POSITION) FROM ACTIVE_CARD_PLACES "+
+                    "where PLACE_TYPE='TABLE'); "+
+                    "FOR card IN HAND_STACK "+
+                    "LOOP "+
+                    "IF(card.COLOR =  'BLACK') THEN "+
+                    "res:=0; "+
+                    "END IF; "+
+                    "IF(card.TYPE = CARD_ON_TOP.TYPE OR card.COLOR=CARD_ON_TOP.COLOR)THEN "+
+                    "res:=0; "+
+                    "END IF; "+
+                    "IF(card.NUMB IS NOT NULL AND card.NUMB=CARD_ON_TOP.NUMB)THEN "+
+                    "res:=0; "+
+                    "END IF; "+
+                    "END lOOP; "+
+                    "RETURN res; "+
+                    "END; "
     };
 
 

@@ -11,7 +11,7 @@
   - możliwość wybrania aktualnego koloru za pomocą specjalnych kart
   - możliwość pominięcia tury kolejnego gracza za pomocą specjalnych kart
   - możliwość zmiany kolejności tur za pomocą specjalnych kart
-  - możliwość zmuszenia kolejnego gracza za pomocą specjalnych kart
+  - możliwość zmuszenia kolejnego gracza do dobrania karta za pomocą specjalnych kart
 - Możliwość przedwczesnego opuszczenia rozgrywki
 - Przejście graczy w stan oczekiwania na połączenie się gracza z powrotem w przypadku przedwczesnego odłączenia
 

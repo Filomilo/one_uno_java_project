@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 
@@ -21,6 +23,7 @@ import javafx.scene.shape.Rectangle;
 import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 public class MainVew extends Application {
@@ -42,7 +45,10 @@ public class MainVew extends Application {
     ImageView unoLogoView;
 
 
+  ;
+
     String buttonsTexts[]={"Connect","Ready","Ranking","Exit"};
+    Text buttonTitles[]= new Text[buttonsTexts.length];
     Rectangle buttons[] = new Rectangle[buttonsTexts.length];
     final float buttonSizeRatio=9;
     final float buttonHeightToScreenRatio=12;
@@ -60,7 +66,6 @@ public class MainVew extends Application {
 
 
 
-            this.addListiners(primaryStage);
 
 
            this.setBackground();
@@ -70,6 +75,7 @@ public class MainVew extends Application {
 
             this.setupImages();
             this.setupButtons();
+            this.addListiners(primaryStage);
 
             primaryStage.show();
         }
@@ -130,30 +136,84 @@ public class MainVew extends Application {
                 }
 
         );
-/*
-     this.buttonConnect.setOnMouseMoved(
-             new EventHandler<MouseEvent>() {
-                 @Override
-                 public void handle(MouseEvent event) {
-                     onButtonMoved(buttonConnect);
-                 }
-             }
-     );
-
-     this.buttonConnect.setOnMouseExited(
-
-             new EventHandler<MouseEvent>() {
-                 @Override
-                 public void handle(MouseEvent event) {
-                     onButtonMovedOutside(buttonConnect);
-                 }
-             }
-     );
 
 
- */
+        for (Rectangle button: this.buttons
+             ) {
+            button.setOnMouseMoved(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonMoved(button);
+                        }
+                    }
+            );
+
+            button.setOnMouseExited(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonMovedOutside(button);
+                        }
+                    }
+
+            );
+
+            button.setOnMousePressed(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonBasicClick(button);
+                        }
+                    }
+            );
 
 
+        }
+
+        this.buttons[0].setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonConnectClick();
+                        onButtonMoved(buttons[0]);
+                    }
+                }
+        );
+
+        this.buttons[1].setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonReadyClick();
+                        onButtonMoved(buttons[1]);
+                    }
+                }
+        );
+
+
+        this.buttons[2].setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRankingClick();
+                        onButtonMoved(buttons[2]);
+                    }
+                }
+        );
+
+        this.buttons[3].setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonExitClick();
+                        onButtonMoved(buttons[3]);
+                    }
+                }
+        );
 
 
 
@@ -186,7 +246,7 @@ public class MainVew extends Application {
             buttonHeight=(this.mainScene.getWidth() / this.buttonHeightToScreenRatio  );
         }
         double buttonWIdth=buttonHeight * this.buttonSizeRatio;
-        double offset=5;
+        double offset=10;
 
         double initalX=this.mainScene.getWidth()-buttonWIdth-buttonWIdth/5;
         double initalY=this.mainScene.getHeight()/1.65- ((offset+buttonHeight)*buttons.length)/2;
@@ -205,6 +265,26 @@ public class MainVew extends Application {
                 iterator++;
             iterator++;
         }
+
+
+
+
+
+        //update text on button
+        iterator=0;
+        double size=this.buttons[0].getHeight()/1.5;
+        Font font=new Font("Arial",size);
+        for (Text text: this.buttonTitles
+             ) {
+            text.setFont(font);
+            text.setX(this.buttons[iterator].getX() + this.buttons[iterator].getWidth()/2 - text.getLayoutBounds().getWidth()/2);
+            text.setY(this.buttons[iterator].getY() + text.getLayoutBounds().getHeight()/2 + this.buttons[iterator].getHeight()/3);
+
+
+            iterator++;
+        }
+
+
     }
 
 
@@ -212,16 +292,24 @@ public class MainVew extends Application {
     {
         for(int i=0;i<buttons.length;i++){
             buttons[i]=new Rectangle();
-            System.out.println("button");
             this.setupButtonshape(buttons[i]);
             this.root.getChildren().add(buttons[i]);
+
+            this.buttonTitles[i]= new Text(this.buttonsTexts[i]);
+            setupTextParams( this.buttonTitles[i]);
+            this.root.getChildren().add(this.buttonTitles[i]);
         }
         this.updateButtonsSize();
 
     }
+
+    void setupTextParams(Text text)
+    {
+text.setFill(Color.WHITE);
+    }
     void setupButtonshape(Rectangle rectangle)
     {
-        rectangle.setStrokeWidth(1);
+        rectangle.setStrokeWidth(1.5);
         rectangle.setStroke(Color.WHITE);
         rectangle.setFill(tranparentColor);
     }
@@ -237,14 +325,42 @@ public class MainVew extends Application {
 
     void onButtonMoved(Rectangle button)
     {
-
         button.setFill(Color.WHITE);
+        int index= Arrays.asList(this.buttons).indexOf(button);
+        this.buttonTitles[index].setFill(Color.BLACK);
     }
 
     void onButtonMovedOutside(Rectangle button)
     {
-
         button.setFill(this.tranparentColor);
+        int index= Arrays.asList(this.buttons).indexOf(button);
+        this.buttonTitles[index].setFill(Color.WHITE);
+    }
+
+    void onButtonBasicClick(Rectangle button)
+    {
+        button.setFill(Color.GRAY);
+
+    }
+
+    void onButtonConnectClick()
+    {
+        System.out.println("CONNECT");
+    }
+
+    void onButtonReadyClick()
+    {
+        System.out.println("READY");
+    }
+
+    void onButtonRankingClick()
+    {
+        System.out.println("RANKING");
+    }
+
+    void onButtonExitClick()
+    {
+        System.out.println("EXIT");
     }
 
 }

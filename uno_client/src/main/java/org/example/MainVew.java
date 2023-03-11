@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,12 +21,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 
 
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -80,6 +77,8 @@ public class MainVew extends Application {
     final float buttonHeightToScreenRatio=12;
 
     Group root;
+
+    GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -94,7 +93,7 @@ public class MainVew extends Application {
 
 
 
-           this.setBackground();
+           this.updateBackground();
             primaryStage.setScene(mainScene);
          //   primaryStage.setFullScreen(true);
 
@@ -113,6 +112,29 @@ public class MainVew extends Application {
         }
         this.updateOnSize();
     }
+
+
+    void iniit() throws IOException {
+
+        root = new Group();
+
+        mainScene = new Scene(root, 1250, 720,true, SceneAntialiasing.BALANCED);
+
+
+
+
+
+
+        this.updateBackground();
+
+
+        this.setupImages();
+        this.setupButtons();
+        this.setupTextFields();
+        this.updateOnSize();
+    }
+
+
 
     private void setupTextFields() {
     for(int i=0;i<this.textFieldsTexts.length;i++)
@@ -182,7 +204,7 @@ public class MainVew extends Application {
     void setupTextField(TextField textField)
     {
         textField.setStyle("-fx-text-fill: white;");
-        textField.setBackground(Background.EMPTY);
+       textField.setBackground(Background.EMPTY);
         textField.setAlignment(Pos.CENTER);
     }
 
@@ -210,9 +232,11 @@ public class MainVew extends Application {
     }
 
 
+    public MainVew(GuiController guiController) {
+        this.guiController=guiController;
+    }
 
-
-    private void addListiners(Stage primaryStage) {
+    void addListiners(Stage primaryStage) {
 
        this.mainScene.widthProperty().addListener(
                new ChangeListener<Number>() {
@@ -243,6 +267,22 @@ public class MainVew extends Application {
                 }
 
         );
+
+        primaryStage.iconifiedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        updateOnSize();
+                    }
+                }
+        );
+
+        primaryStage.maxHeightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                updateOnSize();
+            }
+        });
 
 
         for (Rectangle button: this.buttons
@@ -324,13 +364,15 @@ public class MainVew extends Application {
 
 
 
+
+
     }
 
 
     void updateOnSize()
     {
         this.updateImagesSize();
-    this.setBackground();
+    this.updateBackground();
     this.updateButtonsSize();
     this.updateTextFieldsSize();
     }
@@ -422,10 +464,10 @@ text.setFill(Color.WHITE);
         rectangle.setFill(tranparentColor);
     }
 
-    void setBackground()
+    void updateBackground()
     {
 
-        RadialGradient gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getHeight()?mainScene.getHeight()*4:mainScene.getWidth()*4, false, CycleMethod.NO_CYCLE,this.blueStops);
+        RadialGradient gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getHeight()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
 
 
         mainScene.setFill(gradient);
@@ -458,6 +500,7 @@ text.setFill(Color.WHITE);
 
     void onButtonReadyClick()
     {
+        guiController.changeSceneToGame();
         System.out.println("READY");
     }
 

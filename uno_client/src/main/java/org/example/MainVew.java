@@ -4,18 +4,25 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 
@@ -37,6 +44,25 @@ public class MainVew extends Application {
     Color tranparentColor = new Color(1,0,0,0.0);
     Color blueColor = new Color(0,0.1,0.6,1);
     Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+
+
+
+
+    String[] textFieldsTexts={"Nick","Ip","Port"};
+    Text textFieldsTitles[]= new Text[textFieldsTexts.length];
+    TextField[] textFields = new TextField[textFieldsTexts.length];
+    Line[] textFieldsLine=new Line[textFieldsTexts.length];
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -75,7 +101,9 @@ public class MainVew extends Application {
 
             this.setupImages();
             this.setupButtons();
+            this.setupTextFields();
             this.addListiners(primaryStage);
+
 
             primaryStage.show();
         }
@@ -83,7 +111,86 @@ public class MainVew extends Application {
         {
             e.printStackTrace();
         }
+        this.updateOnSize();
+    }
 
+    private void setupTextFields() {
+    for(int i=0;i<this.textFieldsTexts.length;i++)
+    {
+        this.textFieldsTitles[i] = new Text(this.textFieldsTexts[i]);
+        this.textFields[i] = new TextField();
+        setupTextField(this.textFields[i]);
+
+        this.textFieldsLine[i] = new Line();
+        setupLine(this.textFieldsLine[i]);
+
+        this.textFieldsTitles[i] = new Text(this.textFieldsTexts[i]);
+        setupTextFiledTitle(this.textFieldsTitles[i]);
+
+     this.root.getChildren().add( this.textFieldsTitles[i])  ;
+        this.root.getChildren().add(this.textFields[i]);
+        this.root.getChildren().add(this.textFieldsLine[i]);
+    }
+    this.updateTextFieldsSize();
+    }
+
+    void setupTextFiledTitle(Text text)
+    {
+    text.setFill(Color.WHITE);
+    }
+
+    
+    void updateTextFieldsSize()
+    {
+        double width=this.buttons[0].getWidth()/1.8;
+        double height=this.buttons[0].getHeight();
+        double offesetGap=20;
+
+        this.textFields[0].setLayoutX(this.buttonTitles[0].getX() + this.buttonTitles[0].getLayoutBounds().getWidth()/2 - width/2);
+        this.textFields[0].setLayoutY(this.buttonTitles[0].getY() - this.buttonTitles[0].getLayoutBounds().getHeight() * 3*2.5);
+
+        //this.textFields[1].setLayoutX(this.buttonTitles[0].getX() + this.buttonTitles[0].getLayoutBounds().getWidth()/2 - width/2);
+        this.textFields[1].setLayoutX(this.textFields[0].getLayoutX() - width/2 -  offesetGap );
+        this.textFields[1].setLayoutY(this.textFields[0].getLayoutY()+height*2.5);
+
+        this.textFields[2].setLayoutX(this.textFields[0].getLayoutX() + width/2 + offesetGap);
+        this.textFields[2].setLayoutY(this.textFields[0].getLayoutY()+height*2.5);
+
+        double fontSize= this.textFields[0].getFont().getSize()/2;
+
+        Font font=new Font("Arial",fontSize);
+        for(int i=0;i<this.textFieldsTexts.length;i++)
+        {
+            this.textFields[i].setPrefSize(width,height);
+            this.textFields[i].setFont(this.buttonTitles[0].getFont());
+
+
+            this.textFieldsLine[i].setStartX(this.textFields[i].getLayoutBounds().getMinX()+this.textFields[i].getLayoutX());
+            this.textFieldsLine[i].setStartY(this.textFields[i].getLayoutBounds().getMaxY()+this.textFields[i].getLayoutY());
+            this.textFieldsLine[i].setEndX(this.textFields[i].getLayoutBounds().getMaxX()+this.textFields[i].getLayoutX());
+            this.textFieldsLine[i].setEndY(this.textFields[i].getLayoutBounds().getMaxY()+this.textFields[i].getLayoutY());
+
+            this.textFieldsTitles[i].setFont(font);
+            this.textFieldsTitles[i].setX(this.textFieldsLine[i].getStartX());
+            this.textFieldsTitles[i].setY(this.textFieldsLine[i].getEndY()+ this.textFieldsTitles[i].getLayoutBounds().getHeight()/1);
+
+        }
+
+
+    }
+
+    void setupTextField(TextField textField)
+    {
+        textField.setStyle("-fx-text-fill: white;");
+        textField.setBackground(Background.EMPTY);
+        textField.setAlignment(Pos.CENTER);
+    }
+
+    void setupLine(Line line)
+    {
+        line.setStroke(Color.WHITE);
+        line.setStrokeWidth(2);
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
     }
 
     private void setupImages() throws IOException {
@@ -225,6 +332,7 @@ public class MainVew extends Application {
         this.updateImagesSize();
     this.setBackground();
     this.updateButtonsSize();
+    this.updateTextFieldsSize();
     }
 
     void updateImagesSize()
@@ -339,7 +447,7 @@ text.setFill(Color.WHITE);
 
     void onButtonBasicClick(Rectangle button)
     {
-        button.setFill(Color.GRAY);
+        button.setFill(Color.LIGHTGRAY);
 
     }
 
@@ -360,7 +468,8 @@ text.setFill(Color.WHITE);
 
     void onButtonExitClick()
     {
-        System.out.println("EXIT");
+        //System.out.println("EXIT");
+        System.exit(1);
     }
 
 }

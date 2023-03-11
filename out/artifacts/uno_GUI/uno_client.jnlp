@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="uno_client.jnlp">
+  <information>
+    <title>uno_GUI</title>
+    <vendor>Unknown</vendor>
+    <description>uno_GUI</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="uno_client.jar" size="542119" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="org.example.MainVew"  name="uno_GUI" />
+  <update check="background"/>
+</jnlp>

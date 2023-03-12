@@ -1,7 +1,9 @@
 package org.example;
 
+import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -10,11 +12,13 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.effect.Bloom;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
@@ -47,6 +51,7 @@ public class GameView extends Application {
     GuiController guiController;
 
     String cardPrefix=  "uno_client\\src\\main\\resources\\Cards\\unoCards_";
+    String colorPrefix="uno_client\\src\\main\\resources\\ColorChoicePanel\\Circle_";
 
     Image cardImages[]= new Image[56];
 
@@ -237,6 +242,27 @@ public class GameView extends Application {
         loadCard(this.cardPrefix+"Empty.png", iterator++);
       //  System.out.println("Size: " + iterator);
 
+        String url=colorPrefix + "Blue.png";
+        try {
+            FileInputStream fileInputStream;
+            fileInputStream= new FileInputStream(url);
+            this.colorChoicePanel = new Image[4];
+            this.colorChoicePanel[0] = new Image(fileInputStream);
+            url=colorPrefix + "Green.png";
+            fileInputStream= new FileInputStream(url);
+            this.colorChoicePanel[1] = new Image(fileInputStream);
+            url=colorPrefix + "Red.png";
+            fileInputStream= new FileInputStream(url);
+            this.colorChoicePanel[2] = new Image(fileInputStream);
+            url=colorPrefix + "Yellow.png";
+            fileInputStream= new FileInputStream(url);
+            this.colorChoicePanel[3] = new Image(fileInputStream);
+        }
+        catch (Exception e)
+        {
+            System.out.println("problem laoding: " + url);
+            e.printStackTrace();
+        }
 
 
     }
@@ -246,6 +272,7 @@ public class GameView extends Application {
         try{
             FileInputStream fileInputStream = new FileInputStream(url);
             this.cardImages[positonInTable] = new Image(fileInputStream);
+         //   System.out.println(url);
         }
         catch (Exception e)
         {
@@ -269,7 +296,7 @@ public class GameView extends Application {
 
     int getAmtOfOpponets()
     {
-        return 4;
+        return 9;
     }
 
 
@@ -370,6 +397,7 @@ public class GameView extends Application {
         this.updateCardsInHandScale();
         this.upadateButtonShape();
         this.upadateText();
+        this.updateColorPanelScale();
     }
 
     private void setupButtonShape()
@@ -712,8 +740,9 @@ public class GameView extends Application {
        // this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
      //   this.updateCardsInHandScale();
        // setOpponentsHand(2,true);
-        this.giveCardToOpponent(3);
+        //   this.giveCardToOpponent(3);
       //  System.out.println("click");
+        this.showChoiceColor();
     }
 
     void setStackStable(boolean isFilled)
@@ -797,6 +826,137 @@ public class GameView extends Application {
 
     }
 
+
+
+
+
+
+    // Color Choice panel
+
+    Image colorChoicePanel[];
+    List<ImageView> colorPanel= new ArrayList<ImageView>();
+    int clikcedPanel=0;
+    int showChoiceColor()
+    {
+        this.isChoosingColor=true;
+
+        ImageView blue = new ImageView(this.colorChoicePanel[0]);
+        ImageView green = new ImageView(this.colorChoicePanel[1]);
+        ImageView red = new ImageView(this.colorChoicePanel[2]);
+        ImageView yellow = new ImageView(this.colorChoicePanel[3]);
+
+
+        blue.setPreserveRatio(true);
+        green.setPreserveRatio(true);
+        red.setPreserveRatio(true);
+        yellow.setPreserveRatio(true);
+
+        this.colorPanel.add(blue);
+        this.colorPanel.add(green);
+        this.colorPanel.add(red);
+        this.colorPanel.add(yellow);
+
+        this.updateColorPanelScale();
+
+        int i=0;
+        for (ImageView panel: this.colorPanel
+             ) {
+            panel.setOnMouseEntered(
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onPanelEntterd(panel);
+                        }
+                    }
+
+            );
+            panel.setOnMouseExited(
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onPanelExited(panel);
+                        }
+                    }
+
+            );
+
+            panel.setOnMouseClicked(
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onPanelClicked(panel);
+                        }
+                    }
+
+            );
+
+
+        }
+
+
+
+        this.root.getChildren().addAll(blue,green,red,yellow);
+
+
+
+
+        return 0;
+
+    }
+
+    private void updateColorPanelScale() {
+        if(this.isChoosingColor) {
+            double centerX = mainScene.getWidth() / 2;
+            double centerY = mainScene.getHeight() / 2;
+            double size=cardWidth*2;
+
+
+            this.colorPanel.get(0).setX(centerX-size);
+            this.colorPanel.get(0).setY(centerY-size);
+            this.colorPanel.get(0).setFitWidth(size);
+
+            this.colorPanel.get(1).setFitWidth(size);
+            this.colorPanel.get(1).setX(centerX);
+            this.colorPanel.get(1).setY(centerY-size);
+
+            this.colorPanel.get(2).setFitWidth(size);
+            this.colorPanel.get(2).setX(centerX-size);
+            this.colorPanel.get(2).setY(centerY);
+
+            this.colorPanel.get(3).setFitWidth(size);
+            this.colorPanel.get(3).setX(centerX);
+            this.colorPanel.get(3).setY(centerY);
+
+        }
+
+
+
+    }
+
+
+
+    void onPanelEntterd(ImageView panel)
+    {
+       panel.setEffect(new Bloom());
+    }
+
+    void onPanelExited(ImageView panel)
+    {
+        panel.setEffect(null);
+    }
+
+    void onPanelClicked(ImageView panel)
+    {
+        this.clikcedPanel=this.colorPanel.indexOf(panel);
+
+        for(int i=0;i<this.colorPanel.size();i++)
+        {
+            this.root.getChildren().remove(this.colorPanel.get(i));
+        }
+        this.colorPanel.clear();
+        this.isChoosingColor=false;
+        System.out.println(this.clikcedPanel);
+    }
 
 
 }

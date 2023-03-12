@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -405,8 +407,14 @@ public class GameView extends Application {
              ) {
             card.setFitWidth(this.cardWidth);
 
-            card.setX(startPostion+stepMove*i);
-            card.setY(cardHandPosY);
+            TranslateTransition translateTransition= new TranslateTransition();
+            translateTransition.setNode(card);
+            translateTransition.setDuration(Duration.millis(20));
+            translateTransition.setToX(startPostion+stepMove*i);
+            translateTransition.setToY(cardHandPosY);
+            translateTransition.play();
+         //   card.setX(startPostion+stepMove*i);
+           // card.setY(cardHandPosY);
             i++;
         }
 
@@ -529,6 +537,8 @@ public class GameView extends Application {
     {
         ImageView cardView = new ImageView(this.cardImages[this.getIndexOfmage(card)]);
         cardView.setPreserveRatio(true);
+        //cardView.setX(this.emptyCards[1].getX());
+       // cardView.setY(this.emptyCards[1].getY());
         this.cardsInHand.add(cardView);
         this.root.getChildren().add(cardView);
 
@@ -594,12 +604,20 @@ public class GameView extends Application {
 
     void onMouseOnCard(ImageView card)
     {
-        card.setY(this.cardHandPosY-this.cardWidth/1.5);
+        TranslateTransition translateTransition= new TranslateTransition();
+        translateTransition.setNode(card);
+        translateTransition.setDuration(Duration.millis(10));
+        translateTransition.setToY((this.cardHandPosY-this.cardWidth/1.5));
+       translateTransition.play();
       //  System.out.println("OnCard");
     }
     void onMouseOutsideCard(ImageView card)
     {
-        card.setY(this.cardHandPosY);
+        TranslateTransition translateTransition= new TranslateTransition();
+        translateTransition.setNode(card);
+        translateTransition.setDuration(Duration.millis(50));
+        translateTransition.setToY(this.cardHandPosY);
+        translateTransition.play();
         //System.out.println("OutisideCard");
     }
 
@@ -641,9 +659,9 @@ void onMouseOnButton()
     void onButtonRealsed()
     {
         onMouseOnButton();
-        //this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
-       // this.updateCardsInHandScale();
-        setOpponentsHand(2,true);
+        this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
+        this.updateCardsInHandScale();
+       // setOpponentsHand(2,true);
       //  System.out.println("click");
     }
 

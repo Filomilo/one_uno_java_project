@@ -30,9 +30,7 @@ GuiController extends Application {
             this.gameView= new GameView(this);
             this.gameView.iniit(primaryStage);
 
-            mainVew.iniit();
-            mainVew.addListiners(primaryStage);
-           // mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
+            mainVew.iniit(primaryStage);// mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
             primaryStage.setScene(mainVew.mainScene);
 
             primaryStage.show();

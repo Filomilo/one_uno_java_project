@@ -49,15 +49,8 @@ public class MainVew extends Application {
     Text textFieldsTitles[]= new Text[textFieldsTexts.length];
     TextField[] textFields = new TextField[textFieldsTexts.length];
     Line[] textFieldsLine=new Line[textFieldsTexts.length];
-
-
-
-
-
-
-
-
-
+    private Text connectionStatusText;
+    private Text readyStatusText;
 
 
     public static void main(String[] args) {
@@ -83,27 +76,8 @@ public class MainVew extends Application {
     public void start(Stage primaryStage) throws IOException {
         try {
 
-
-            root = new Group();
-
-            mainScene = new Scene(root, 1250, 720,true, SceneAntialiasing.BALANCED);
-
-
-
-
-
-
-           this.updateBackground();
-            primaryStage.setScene(mainScene);
-         //   primaryStage.setFullScreen(true);
-
-
-            this.setupImages();
-            this.setupButtons();
-            this.setupTextFields();
-            this.addListiners(primaryStage);
-
-
+            this.iniit(primaryStage);
+            primaryStage.setScene(this.mainScene);
             primaryStage.show();
         }
         catch (Exception e)
@@ -114,24 +88,53 @@ public class MainVew extends Application {
     }
 
 
-    void iniit() throws IOException {
+    void iniit(Stage primaryStage) throws IOException {
 
         root = new Group();
 
         mainScene = new Scene(root, 1250, 720,true, SceneAntialiasing.BALANCED);
-
-
-
-
-
-
         this.updateBackground();
-
-
         this.setupImages();
         this.setupButtons();
         this.setupTextFields();
+        this.setupStatusText();
+        this.addListiners(primaryStage);
         this.updateOnSize();
+    }
+
+    private void setupStatusText() {
+
+        this.connectionStatusText= new Text();
+        this.readyStatusText= new Text();
+
+        this.connectionStatusText.setFill(Color.WHITE);
+        this.readyStatusText.setFill(Color.WHITE);
+
+        this.root.getChildren().addAll(this.connectionStatusText,this.readyStatusText);
+
+        this.setPlayersReady(0,0);
+        this.setStatusDiscconnted();
+
+        
+    }
+
+
+    void setStatusConnected()
+    {
+        this.connectionStatusText.setText("Connected");
+        this.connectionStatusText.setFill(Color.GREEN);
+    }
+
+    void setStatusConnecting()
+    {
+        this.connectionStatusText.setText("Trying to connect");
+        this.connectionStatusText.setFill(Color.YELLOW);
+    }
+
+    void setStatusDiscconnted()
+    {
+        this.connectionStatusText.setText("Disconnected");
+        this.connectionStatusText.setFill(Color.RED);
     }
 
 
@@ -199,6 +202,11 @@ public class MainVew extends Application {
         }
 
 
+    }
+
+    void setPlayersReady(int ready, int connected)
+    {
+        this.readyStatusText.setText("Players ready " + ready + "/" + connected);
     }
 
     void setupTextField(TextField textField)
@@ -303,6 +311,15 @@ public class MainVew extends Application {
             }
         });
 
+        primaryStage.maximizedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        updateOnSize();
+                    }
+                }
+        );
+
 
         for (Rectangle button: this.buttons
              ) {
@@ -390,10 +407,27 @@ public class MainVew extends Application {
 
     void updateOnSize()
     {
+
         this.updateImagesSize();
     this.updateBackground();
     this.updateButtonsSize();
-    this.updateTextFieldsSize();
+    this.updateStatusText();
+        this.updateTextFieldsSize();
+
+    }
+
+    private void updateStatusText() {
+        double fontSize= this.textFields[0].getFont().getSize()/2;
+        Font font=new Font("Arial",fontSize );
+                this.connectionStatusText.setFont(font);
+        this.readyStatusText.setFont(font);
+
+
+        this.readyStatusText.setY(this.mainScene.getHeight() - this.readyStatusText.getBoundsInParent().getHeight()/2);
+        this.readyStatusText.setX(this.mainScene.getWidth() -this.readyStatusText.getBoundsInParent().getWidth() );
+
+        this.connectionStatusText.setX((this.buttons[0].getBoundsInParent().getMinX() +this.buttons[0].getBoundsInParent().getMaxX())/2 - this.connectionStatusText.getBoundsInParent().getWidth()/2  );
+        this.connectionStatusText.setY(this.buttons[0].getBoundsInParent().getMaxY()+ this.connectionStatusText.getBoundsInParent().getHeight()*1.3 );
     }
 
     void updateImagesSize()
@@ -525,7 +559,10 @@ text.setFill(Color.WHITE);
 
     void onButtonRankingClick()
     {
+
         System.out.println("RANKING");
+        this.setStatusConnected();
+        this.setPlayersReady(4,8);
     }
 
     void onButtonExitClick()

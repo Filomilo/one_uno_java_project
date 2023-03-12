@@ -349,6 +349,15 @@ public class GameView extends Application {
             }
         });
 
+        primaryStage.maximizedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        updateOnSize();
+                    }
+                }
+        );
+
 
         this.button.setOnMouseEntered(
                 new EventHandler<MouseEvent>() {

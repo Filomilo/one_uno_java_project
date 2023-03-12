@@ -1,5 +1,7 @@
 package org.example;
 
+import javafx.animation.Animation;
+import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -65,6 +67,8 @@ public class GameView extends Application {
     Rectangle button = new Rectangle();
     Text buttonText= new Text("Surrender");
 
+    Boolean isChoosingColor=false;
+
 
 
     public GameView(GuiController guiController) {
@@ -115,6 +119,7 @@ public class GameView extends Application {
         this.looadCardsInHand();
         this.updateBackground();
         this.addListiners(primaryStage);
+        //this.setStackPile(true);
     }
 
     @Override
@@ -123,7 +128,7 @@ public class GameView extends Application {
             this.iniit(primaryStage);
 
            primaryStage.setScene(mainScene);
-            //   primaryStage.setFullScreen(true);
+               //primaryStage.setFullScreen(true);
 
 
 
@@ -537,7 +542,8 @@ public class GameView extends Application {
     {
         ImageView cardView = new ImageView(this.cardImages[this.getIndexOfmage(card)]);
         cardView.setPreserveRatio(true);
-        //cardView.setX(this.emptyCards[1].getX());
+        cardView.setTranslateX(this.emptyCards[1].getX());
+        cardView.setTranslateY(this.emptyCards[1].getY());
        // cardView.setY(this.emptyCards[1].getY());
         this.cardsInHand.add(cardView);
         this.root.getChildren().add(cardView);
@@ -606,7 +612,7 @@ public class GameView extends Application {
     {
         TranslateTransition translateTransition= new TranslateTransition();
         translateTransition.setNode(card);
-        translateTransition.setDuration(Duration.millis(10));
+        translateTransition.setDuration(Duration.millis(5));
         translateTransition.setToY((this.cardHandPosY-this.cardWidth/1.5));
        translateTransition.play();
       //  System.out.println("OnCard");
@@ -623,17 +629,61 @@ public class GameView extends Application {
 
     void onCardClick(ImageView card)
     {
-        this.cardsInHand.remove(card);
+        this.playCard(card);
 
-
-
-
-        this.root.getChildren().remove(card);
-        this.updateCardsInHandScale();
        // System.out.println("Click");
     }
 
-void onMouseOnButton()
+    private void playCard(ImageView card) {
+        if(this.CanBePlayed(card))
+        {
+            double duration=50;
+            ImageView tmpCard= new ImageView(card.getImage());
+            tmpCard.setPreserveRatio(true);
+            tmpCard.setFitWidth(this.cardWidth);
+            tmpCard.setTranslateX(card.getTranslateX());
+            tmpCard.setTranslateY(card.getTranslateY());
+
+            TranslateTransition transition= new TranslateTransition();
+            transition.setDuration(Duration.millis(duration));
+            transition.setNode(tmpCard);
+            transition.setToX(this.emptyCards[0].getX());
+            transition.setToY(this.emptyCards[0].getY());
+            transition.play();
+
+            this.root.getChildren().add(tmpCard);
+
+
+            transition.statusProperty().addListener(
+                    new ChangeListener<Animation.Status>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                            if(newValue==Animation.Status.STOPPED)
+                                root.getChildren().remove(tmpCard);
+                                 setCardOnTable(card);
+                        }
+                    }
+            );
+
+
+            this.cardsInHand.remove(card);
+
+
+            this.root.getChildren().remove(card);
+            this.updateCardsInHandScale();
+
+        }
+
+
+
+
+    }
+
+    private boolean CanBePlayed(ImageView card) {
+        return  true;
+    }
+
+    void onMouseOnButton()
 {
     this.button.setFill(Color.WHITE);
     this.buttonText.setFill(Color.BLACK);
@@ -659,9 +709,10 @@ void onMouseOnButton()
     void onButtonRealsed()
     {
         onMouseOnButton();
-        this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
-        this.updateCardsInHandScale();
+       // this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
+     //   this.updateCardsInHandScale();
        // setOpponentsHand(2,true);
+        this.giveCardToOpponent(3);
       //  System.out.println("click");
     }
 
@@ -700,6 +751,52 @@ void onMouseOnButton()
             this.emptyCards[nbOfOppoenent+2].setImage(this.cardImages[this.cardImages.length-1]);
         }
     }
+
+    void setCardOnTable(UnoCard card)
+    {
+        this.emptyCards[0].setImage(this.cardImages[this.getIndexOfmage(card)]);
+    }
+
+    void setCardOnTable(ImageView card)
+    {
+        this.emptyCards[0].setImage(card.getImage());
+    }
+
+    void giveCardToOpponent(int nbOfOpponent)
+    {
+        double duration=80;
+        ImageView emptyCard= new ImageView(this.cardImages[(this.cardImages.length-2)]);
+        emptyCard.setPreserveRatio(true);
+        emptyCard.setFitWidth(this.cardWidth);
+        emptyCard.setTranslateX(this.emptyCards[1].getX());
+        emptyCard.setTranslateY(this.emptyCards[1].getY());
+
+        this.root.getChildren().add(emptyCard);
+
+        TranslateTransition translateTransition= new TranslateTransition();
+        translateTransition.setNode(emptyCard);
+        translateTransition.setToY(this.emptyCards[nbOfOpponent+2].getBoundsInParent().getMinY());
+        translateTransition.setToX(this.emptyCards[nbOfOpponent+2].getBoundsInParent().getMinX());
+        translateTransition.setDuration(Duration.millis(duration));
+
+        translateTransition.statusProperty().addListener(
+                new ChangeListener<Animation.Status>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                        if(newValue==Animation.Status.STOPPED)
+                        root.getChildren().remove(emptyCard);
+                    }
+                }
+        );
+
+
+
+
+        translateTransition.play();
+      // rotateTransition.play();
+
+    }
+
 
 
 }

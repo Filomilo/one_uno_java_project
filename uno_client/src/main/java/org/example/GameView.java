@@ -60,6 +60,10 @@ public class GameView extends Application {
 
     List<ImageView> cardsInHand = new ArrayList<ImageView>();
 
+    Rectangle button = new Rectangle();
+    Text buttonText= new Text("Surrender");
+
+
 
     public GameView(GuiController guiController) {
         this.guiController=guiController;
@@ -104,6 +108,7 @@ public class GameView extends Application {
         this.loadImages();
 
         this.setupEmptyCardsPostion();
+        this.setupButtonShape();
         this.setupNicks();
         this.looadCardsInHand();
         this.updateBackground();
@@ -256,7 +261,7 @@ public class GameView extends Application {
 
     int getAmtOfOpponets()
     {
-        return 9;
+        return 4;
     }
 
 
@@ -310,6 +315,42 @@ public class GameView extends Application {
         });
 
 
+        this.button.setOnMouseEntered(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOnButton();
+                    }
+                }
+        );
+
+
+        this.button.setOnMouseExited(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOutsideButton();
+                    }
+                }
+        );
+
+        this.button.setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonPresed();
+                    }
+                }
+        );
+        this.button.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRealsed();
+                    }
+                }
+        );
+
 
     }
 
@@ -319,7 +360,38 @@ public class GameView extends Application {
         this.updateCardScale();
         this.updateEmptyCard();
         this.updateCardsInHandScale();
+        this.upadateButtonShape();
         this.upadateText();
+    }
+
+    private void setupButtonShape()
+    {
+        this.buttonText.setFill(Color.WHITE);
+        this.button.setStrokeWidth(1.5);
+        this.button.setStroke(Color.WHITE);
+        this.button.setFill(tranparentColor);
+        this.root.getChildren().add(this.button);
+        this.root.getChildren().add(this.buttonText);
+
+    }
+
+    private void upadateButtonShape() {
+        double buttonWidth=this.mainScene.getWidth()/8;
+
+        this.button.setWidth(buttonWidth);
+        this.button.setHeight(buttonWidth/7);
+
+        this.button.setX(this.mainScene.getWidth()-this.button.getWidth());
+
+        this.button.setArcWidth(buttonWidth/15);
+        this.button.setArcHeight(buttonWidth/15);
+        Font font= new Font("Arial", buttonWidth/15);
+
+
+        this.buttonText.setFont(font);
+        this.buttonText.setX(this.button.getLayoutBounds().getMinX() + this.button.getLayoutBounds().getWidth()/2 - this.buttonText.getLayoutBounds().getWidth()/2);
+        this.buttonText.setY(this.button.getLayoutBounds().getHeight()/2 + this.buttonText.getLayoutBounds().getHeight()/3);
+
     }
 
     private void updateCardsInHandScale() {
@@ -531,9 +603,46 @@ public class GameView extends Application {
 
     void onCardClick(ImageView card)
     {
+        this.cardsInHand.remove(card);
+
+
+
+
+        this.root.getChildren().remove(card);
+        this.updateCardsInHandScale();
        // System.out.println("Click");
     }
 
+void onMouseOnButton()
+{
+    this.button.setFill(Color.WHITE);
+    this.buttonText.setFill(Color.BLACK);
+  //  System.out.println("On btton");
+
+}
+
+
+    void onMouseOutsideButton()
+    {
+        this.button.setFill(this.tranparentColor);
+        this.buttonText.setFill(Color.WHITE);
+      //  System.out.println("outiseed buttp");
+
+    }
+
+    void onButtonPresed()
+    {
+        this.button.setFill(Color.LIGHTGRAY);
+
+    }
+
+    void onButtonRealsed()
+    {
+        onMouseOnButton();
+        this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
+        this.updateCardsInHandScale();
+      //  System.out.println("click");
+    }
 
 
 }

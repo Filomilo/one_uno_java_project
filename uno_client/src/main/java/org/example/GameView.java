@@ -752,6 +752,7 @@ public class GameView extends Application {
         //   this.giveCardToOpponent(3);
       //  System.out.println("click");
         this.showChoiceColor();
+     //   this.playCardFromOppoent(5, new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.GREEN,0));
     }
 
     void setStackStable(boolean isFilled)
@@ -966,6 +967,39 @@ public class GameView extends Application {
         this.isChoosingColor=false;
         System.out.println(this.clikcedPanel);
     }
+
+    void playCardFromOppoent(int nbOfOppoonent, UnoCard card)
+    {
+        double duration=200;
+        ImageView cardTmp= new ImageView(this.cardImages[this.cardImages.length-2]);
+        cardTmp.setPreserveRatio(true);
+        cardTmp.setFitWidth(this.cardWidth);
+        cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinX());
+        cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinY());
+        this.root.getChildren().add(cardTmp);
+
+        TranslateTransition translate = new TranslateTransition();
+        translate.setNode(cardTmp);
+        translate.setToX(this.emptyCards[0].getX());
+        translate.setToY(this.emptyCards[0].getY());
+        translate.setDuration(Duration.millis(duration));
+        translate.play();
+
+        translate.statusProperty().addListener(
+                new ChangeListener<Animation.Status>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                        if(newValue == Animation.Status.STOPPED)
+                        {
+                            root.getChildren().remove(cardTmp);
+                            setCardOnTable(card);
+                        }
+                    }
+                }
+        );
+
+    }
+
 
 
 }

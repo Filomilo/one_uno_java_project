@@ -101,7 +101,7 @@ public class GameView extends Application {
     }
 
 
-    void iniit() throws FileNotFoundException {
+    void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
         mainScene = new Scene(root, 1250, 720, true, SceneAntialiasing.BALANCED);
@@ -112,19 +112,20 @@ public class GameView extends Application {
         this.setupNicks();
         this.looadCardsInHand();
         this.updateBackground();
+        this.addListiners(primaryStage);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
-            this.iniit();
+            this.iniit(primaryStage);
 
            primaryStage.setScene(mainScene);
             //   primaryStage.setFullScreen(true);
 
 
 
-            this.addListiners(primaryStage);
+
 
 
             primaryStage.show();
@@ -403,6 +404,7 @@ public class GameView extends Application {
         for (ImageView card: cardsInHand
              ) {
             card.setFitWidth(this.cardWidth);
+
             card.setX(startPostion+stepMove*i);
             card.setY(cardHandPosY);
             i++;
@@ -639,9 +641,46 @@ void onMouseOnButton()
     void onButtonRealsed()
     {
         onMouseOnButton();
-        this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
-        this.updateCardsInHandScale();
+        //this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
+       // this.updateCardsInHandScale();
+        setOpponentsHand(2,true);
       //  System.out.println("click");
+    }
+
+    void setStackStable(boolean isFilled)
+    {
+        if(isFilled)
+        {
+            this.emptyCards[0].setImage(this.cardImages[this.cardImages.length-2]);
+        }
+        else
+        {
+            this.emptyCards[0].setImage(this.cardImages[this.cardImages.length-1]);
+        }
+    }
+
+    void setStackPile(boolean isFilled)
+    {
+        if(isFilled)
+        {
+            this.emptyCards[1].setImage(this.cardImages[this.cardImages.length-2]);
+        }
+        else
+        {
+            this.emptyCards[1].setImage(this.cardImages[this.cardImages.length-1]);
+        }
+    }
+
+    void setOpponentsHand(int nbOfOppoenent, boolean isFilled)
+    {
+        if(isFilled)
+        {
+            this.emptyCards[nbOfOppoenent+2].setImage(this.cardImages[this.cardImages.length-2]);
+        }
+        else
+        {
+            this.emptyCards[nbOfOppoenent+2].setImage(this.cardImages[this.cardImages.length-1]);
+        }
     }
 
 

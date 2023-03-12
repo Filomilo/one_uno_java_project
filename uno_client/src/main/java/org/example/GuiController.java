@@ -28,7 +28,7 @@ GuiController extends Application {
             this.mainVew= new MainVew(this);
 
             this.gameView= new GameView(this);
-            this.gameView.iniit();
+            this.gameView.iniit(primaryStage);
 
             mainVew.iniit();
             mainVew.addListiners(primaryStage);
@@ -37,6 +37,7 @@ GuiController extends Application {
 
             primaryStage.show();
             mainVew.updateOnSize();
+
 
 
 
@@ -57,5 +58,6 @@ GuiController extends Application {
     void changeSceneToGame()
     {
         this.primaryStage.setScene(gameView.mainScene);
+        this.gameView.updateOnSize();
     }
 }

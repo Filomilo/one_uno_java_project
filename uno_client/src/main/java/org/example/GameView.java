@@ -3,11 +3,15 @@ package org.example;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
@@ -43,6 +47,7 @@ public class GameView extends Application {
     Image cardImages[]= new Image[56];
 
 
+
     ImageView[] emptyCards = new ImageView[2+this.getAmtOfOpponets()];
 
     Text nickText[]=new Text[this.getAmtOfOpponets()+1];
@@ -51,7 +56,9 @@ public class GameView extends Application {
     Text amtOfCardsText[]= new Text[this.getAmtOfOpponets()];
 
     double cardWidth=100;
+    double cardHandPosY=0;
 
+    List<ImageView> cardsInHand = new ArrayList<ImageView>();
 
 
     public GameView(GuiController guiController) {
@@ -90,11 +97,15 @@ public class GameView extends Application {
     }
 
 
-    void iniit()
-    {
+    void iniit() throws FileNotFoundException {
 
         root = new Group();
         mainScene = new Scene(root, 1250, 720, true, SceneAntialiasing.BALANCED);
+        this.loadImages();
+
+        this.setupEmptyCardsPostion();
+        this.setupNicks();
+        this.looadCardsInHand();
         this.updateBackground();
     }
 
@@ -102,10 +113,7 @@ public class GameView extends Application {
     public void start(Stage primaryStage) throws IOException {
         try {
             this.iniit();
-            this.loadImages();
 
-            this.setupEmptyCardsPostion();
-            this.setupNicks();
            primaryStage.setScene(mainScene);
             //   primaryStage.setFullScreen(true);
 
@@ -145,6 +153,22 @@ public class GameView extends Application {
             this.root.getChildren().add(this.nickText[i]);
 
         }
+
+
+
+
+        // amount of cards number
+        int [] amtOfCards=this.getAmtOfCards();
+        for (int i=0;i<this.amtOfCardsText.length;i++)
+        {
+            String txt="x";
+            txt+=amtOfCards[i];
+            this.amtOfCardsText[i]=new Text(txt);
+            this.amtOfCardsText[i].setFill(Color.WHITE);
+
+            this.root.getChildren().add(  this.amtOfCardsText[i]);
+        }
+
     }
 
     private void loadImages() throws FileNotFoundException {
@@ -198,7 +222,7 @@ public class GameView extends Application {
         loadCard(this.cardPrefix+"Black_plus4.png", iterator++);
         loadCard(this.cardPrefix+"CardBack.png", iterator++);
         loadCard(this.cardPrefix+"Empty.png", iterator++);
-        System.out.println("Size: " + iterator);
+      //  System.out.println("Size: " + iterator);
 
 
 
@@ -224,24 +248,6 @@ public class GameView extends Application {
 
 
 
-
-
-}
-
-static double[] cirlceToXY(double posX, double posY, double radius, double angle)
-{
-    double[] coordinates = new double[2];
-
-
-
-    coordinates[0] = radius * Math.sin(Math.PI * 2 * angle / 360);
-
-    coordinates[1] = radius * Math.cos(Math.PI * 2 * angle / 360);
-
-    coordinates[0] += posX;
-    coordinates[1]+=posY;
-
-    return  coordinates;
 
 
 }
@@ -312,7 +318,24 @@ static double[] cirlceToXY(double posX, double posY, double radius, double angle
         this.updateBackground();
         this.updateCardScale();
         this.updateEmptyCard();
+        this.updateCardsInHandScale();
         this.upadateText();
+    }
+
+    private void updateCardsInHandScale() {
+        int i=0;
+        double width=this.mainScene.getWidth()/3;
+        double startPostion=this.mainScene.getWidth()/2-width/2;
+        double stepMove=width/this.cardsInHand.size();
+        this.cardHandPosY=this.mainScene.getHeight()-this.cardWidth*0.7;
+        for (ImageView card: cardsInHand
+             ) {
+            card.setFitWidth(this.cardWidth);
+            card.setX(startPostion+stepMove*i);
+            card.setY(cardHandPosY);
+            i++;
+        }
+
     }
 
     private void upadateText() {
@@ -336,6 +359,18 @@ static double[] cirlceToXY(double posX, double posY, double radius, double angle
             this.textBox[i].setWidth(this.nickText[i].getLayoutBounds().getWidth()*1.1);
 
         }
+
+
+        for (int i=0;i<this.amtOfCardsText.length;i++)
+        {
+            //System.out.println(i);
+            this.amtOfCardsText[i].setFont(font);
+            this.amtOfCardsText[i].setX(this.nickText[i+1].getLayoutBounds().getMinX()+this.nickText[i+1].getLayoutBounds().getWidth()/2);
+            this.amtOfCardsText[i].setY(this.nickText[i+1].getLayoutBounds().getMaxY()+cardWidth*2);
+
+
+        }
+
 
 
     }
@@ -380,7 +415,7 @@ static double[] cirlceToXY(double posX, double posY, double radius, double angle
 
     List<String> getNick()
     {
-        String nickArr[]={"nick1","nick2","nick1","nick2","nick1","nick2","nick1","nick2","nick2" };
+        String nickArr[]={"nick5561","nick5556562","nic5656k1","nick2","nick1","nick2","nick1","nick2","nick2" };
         List<String> nicks= new ArrayList<String>(Arrays.asList(nickArr));
         return nicks;
     }
@@ -395,6 +430,111 @@ static double[] cirlceToXY(double posX, double posY, double radius, double angle
         int array[]={1,2,4,5,6,7,8,9,5,4,7,5,};
         return array;
     }
+
+
+    void looadCardsInHand()
+    {
+        List<UnoCard> cards;
+        cards = new ArrayList<UnoCard>();
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,0));
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.YELLOW,0));
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.COLOR, UnoCard.UNO_COLOR.BLACK,0));
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.PLUS2, UnoCard.UNO_COLOR.BLUE,0));
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.PLUS4, UnoCard.UNO_COLOR.BLACK,0));
+        cards.add(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.RED,5));
+
+        for (UnoCard card: cards
+             ) {
+            this.addCard(card);
+        }
+
+
+    }
+
+    void addCard(UnoCard card)
+    {
+        ImageView cardView = new ImageView(this.cardImages[this.getIndexOfmage(card)]);
+        cardView.setPreserveRatio(true);
+        this.cardsInHand.add(cardView);
+        this.root.getChildren().add(cardView);
+
+
+
+        cardView.setOnMouseMoved(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOnCard(cardView);
+                    }
+                }
+        );
+
+        cardView.setOnMouseExited(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOutsideCard(cardView);
+                    }
+                }
+        );
+
+
+
+
+
+        cardView.setOnMouseClicked(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onCardClick(cardView);
+                    }
+                }
+        );
+
+    }
+
+    int getIndexOfmage(UnoCard card)
+    {
+        switch (card.getType())
+        {
+            case COLOR: return 13*4+0;
+            case PLUS4: return 13*4+1;
+        }
+        int col=0;
+        switch (card.getColor())
+        {
+            case BLUE: col=0; break;
+            case GREEN: col=1; break;
+            case RED: col=2; break;
+            case YELLOW: col=3; break;
+        }
+        switch (card.getType())
+        {
+            case BLOCK: return col*13+10;
+            case PLUS2: return col*13+11;
+            case REVERSE: return col*13+12;
+        }
+        return col*13+card.getNumb();
+
+    }
+
+    void onMouseOnCard(ImageView card)
+    {
+        card.setY(this.cardHandPosY-this.cardWidth/1.5);
+      //  System.out.println("OnCard");
+    }
+    void onMouseOutsideCard(ImageView card)
+    {
+        card.setY(this.cardHandPosY);
+        //System.out.println("OutisideCard");
+    }
+
+    void onCardClick(ImageView card)
+    {
+       // System.out.println("Click");
+    }
+
+
 
 }
 

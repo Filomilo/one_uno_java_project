@@ -277,6 +277,25 @@ public class MainVew extends Application {
                 }
         );
 
+
+        primaryStage.maximizedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        updateOnSize();
+                    }
+                }
+        );
+
+        primaryStage.iconifiedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        updateOnSize();
+                    }
+                }
+        );
+
         primaryStage.maxHeightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {

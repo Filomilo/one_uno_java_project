@@ -214,6 +214,7 @@ public class MainVew extends Application {
 
     void setPlayersReady(int ready, int connected)
     {
+        System.out.println("SET PLAYER \n\n\n" + ready + "\n\n\n\n");
         this.readyStatusText.setText("Players ready " + ready + "/" + connected);
     }
 

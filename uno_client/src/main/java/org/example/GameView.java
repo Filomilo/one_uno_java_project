@@ -6,6 +6,7 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -30,6 +31,7 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.swing.text.StyledEditorKit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,7 +42,7 @@ import java.util.List;
 public class GameView extends Application {
     Scene mainScene;
 
-
+    Boolean isAssetLoaded=false;
 
     final int startH = 720;
     final int startW = 1280;
@@ -57,7 +59,7 @@ public class GameView extends Application {
 
 
 
-    ImageView[] emptyCards = new ImageView[2+this.getAmtOfOpponets()];
+    ImageView[] emptyCards ;
 
     Text nickText[]=new Text[this.getAmtOfOpponets()+1];
     Rectangle textBox[]=new Rectangle[this.getAmtOfOpponets()+1];
@@ -74,7 +76,7 @@ public class GameView extends Application {
 
     Boolean isChoosingColor=false;
 
-
+    int playersAtStart=0;
 
     public GameView(GuiController guiController) {
         this.guiController=guiController;
@@ -115,16 +117,19 @@ public class GameView extends Application {
     void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
-        mainScene = new Scene(root, 1250, 720, true, SceneAntialiasing.BALANCED);
+        mainScene = new Scene(root, 360, 360, true, SceneAntialiasing.BALANCED);
         this.loadImages();
 
+        this.emptyCards=  new ImageView[this.getAmtOfOpponets()+2];
         this.setupEmptyCardsPostion();
         this.setupButtonShape();
         this.setupNicks();
+
         //this.looadCardsInHand();
         this.updateBackground();
         this.addListiners(primaryStage);
         this.setStackPile(true);
+        this.isAssetLoaded=true;
     }
 
     @Override
@@ -296,7 +301,16 @@ public class GameView extends Application {
 
     int getAmtOfOpponets()
     {
-        return 9;
+        int amt=0;
+        try{
+            amt=this.guiController.clientApp.playersInORder.size();
+
+        }
+        catch (Exception e)
+        {
+
+        }
+        return amt;
     }
 
 
@@ -473,14 +487,24 @@ public class GameView extends Application {
 
         for(int i=1;i<this.nickText.length;i++)
         {
-            this.nickText[i].setFont(font);
-            this.nickText[i].setX((this.emptyCards[i+1].getBoundsInParent().getMinX()+this.emptyCards[i+1].getBoundsInParent().getMaxX())/2-this.nickText[i].getLayoutBounds().getWidth()/2);
-            this.nickText[i].setY(this.emptyCards[i+1].getBoundsInParent().getMinY());
+            try {
+                this.nickText[i].setFont(font);
+                this.nickText[i].setX((this.emptyCards[i + 1].getBoundsInParent().getMinX() + this.emptyCards[i + 1].getBoundsInParent().getMaxX()) / 2 - this.nickText[i].getLayoutBounds().getWidth() / 2);
+                this.nickText[i].setY(this.emptyCards[i + 1].getBoundsInParent().getMinY());
 
-            this.textBox[i].setY(this.nickText[i].getLayoutBounds().getMinY());
-            this.textBox[i].setX(this.nickText[i].getLayoutBounds().getMinX());
-            this.textBox[i].setHeight(this.nickText[i].getLayoutBounds().getHeight());
-            this.textBox[i].setWidth(this.nickText[i].getLayoutBounds().getWidth()*1.1);
+                this.textBox[i].setY(this.nickText[i].getLayoutBounds().getMinY());
+                this.textBox[i].setX(this.nickText[i].getLayoutBounds().getMinX());
+                this.textBox[i].setHeight(this.nickText[i].getLayoutBounds().getHeight());
+                this.textBox[i].setWidth(this.nickText[i].getLayoutBounds().getWidth() * 1.1);
+            }
+            catch (ArrayIndexOutOfBoundsException e)
+            {
+                e.printStackTrace();
+                System.out.println("this.nickText.length: " + this.nickText.length);
+                System.out.println("this.emptyCards: " + this.emptyCards.length);
+                System.out.println("i: " + i);
+                System.exit(-1);
+            }
 
         }
 
@@ -500,7 +524,13 @@ public class GameView extends Application {
     }
 
     private void updateEmptyCard() {
-        this.emptyCards[0].setFitWidth(cardWidth);
+        if(this.emptyCards.length<=2)
+        {
+            System.out.println("INALVID ARRAY SIZE\n");
+            System.out.println("getAmtOfOpponets(): "+ getAmtOfOpponets());
+            System.exit(-1);
+        }
+         this.emptyCards[0].setFitWidth(cardWidth);
         this.emptyCards[0].setX(this.mainScene.getWidth()/2-cardWidth/2);
         this.emptyCards[0].setY(this.mainScene.getHeight()/2- this.emptyCards[0].getLayoutBounds().getHeight()/2);
 
@@ -539,14 +569,14 @@ public class GameView extends Application {
 
     List<String> getNick()
     {
-        String nickArr[]={"nick5561","nick5556562","nic5656k1","nick2","nick1","nick2","nick1","nick2","nick2" };
+        String nickArr[]={"nick1","nick2","nic5656k1","nick2","nick1","nick2","nick1","nick2","nick2" };
         List<String> nicks= new ArrayList<String>(Arrays.asList(nickArr));
         return nicks;
     }
 
     String getPlayerNick()
     {
-        return "Player";
+        return this.guiController.clientApp.getNick();
     }
 
     int[] getAmtOfCards()
@@ -577,13 +607,24 @@ public class GameView extends Application {
 
     void addCard(UnoCard card)
     {
-        ImageView cardView = new ImageView(this.cardImages[this.getIndexOfmage(card)]);
-        cardView.setPreserveRatio(true);
-        cardView.setTranslateX(this.emptyCards[1].getX());
-        cardView.setTranslateY(this.emptyCards[1].getY());
-       // cardView.setY(this.emptyCards[1].getY());
-        this.cardsInHand.add(cardView);
-        this.root.getChildren().add(cardView);
+        ImageView cardView = new ImageView(cardImages[getIndexOfmage(card)]);
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                        cardView.setPreserveRatio(true);
+                        cardView.setFitWidth(cardWidth);
+                        cardView.setTranslateX(emptyCards[1].getX());
+                        cardView.setTranslateY(emptyCards[1].getY());
+                        // cardView.setY(this.emptyCards[1].getY());
+                        cardsInHand.add(cardView);
+                        root.getChildren().add(cardView);
+                        updateCardsInHandScale();
+
+                    }
+                }
+        );
 
 
 
@@ -674,6 +715,15 @@ public class GameView extends Application {
     private void playCard(ImageView card) {
         if(this.CanBePlayed(card))
         {
+            int index = this.cardsInHand.indexOf(card);
+
+            UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
+
+            this.guiController.clientApp.playCard(index+1,unoCard,false);
+
+
+
+
             double duration=50;
             ImageView tmpCard= new ImageView(card.getImage());
             tmpCard.setPreserveRatio(true);
@@ -769,13 +819,15 @@ public class GameView extends Application {
 
     void setStackPile(boolean isFilled)
     {
-        if(isFilled)
+        try {
+            if (isFilled) {
+                this.emptyCards[1].setImage(this.cardImages[this.cardImages.length - 2]);
+            } else {
+                this.emptyCards[1].setImage(this.cardImages[this.cardImages.length - 1]);
+            }
+        }catch (Exception e)
         {
-            this.emptyCards[1].setImage(this.cardImages[this.cardImages.length-2]);
-        }
-        else
-        {
-            this.emptyCards[1].setImage(this.cardImages[this.cardImages.length-1]);
+            e.printStackTrace();
         }
     }
 
@@ -804,34 +856,57 @@ public class GameView extends Application {
     void giveCardToOpponent(int nbOfOpponent)
     {
         double duration=80;
+
         ImageView emptyCard= new ImageView(this.cardImages[(this.cardImages.length-2)]);
         emptyCard.setPreserveRatio(true);
         emptyCard.setFitWidth(this.cardWidth);
         emptyCard.setTranslateX(this.emptyCards[1].getX());
         emptyCard.setTranslateY(this.emptyCards[1].getY());
 
-        this.root.getChildren().add(emptyCard);
-
-        TranslateTransition translateTransition= new TranslateTransition();
-        translateTransition.setNode(emptyCard);
-        translateTransition.setToY(this.emptyCards[nbOfOpponent+2].getBoundsInParent().getMinY());
-        translateTransition.setToX(this.emptyCards[nbOfOpponent+2].getBoundsInParent().getMinX());
-        translateTransition.setDuration(Duration.millis(duration));
-
-        translateTransition.statusProperty().addListener(
-                new ChangeListener<Animation.Status>() {
+        Platform.runLater(
+                new Runnable() {
                     @Override
-                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                        if(newValue==Animation.Status.STOPPED)
-                        root.getChildren().remove(emptyCard);
+                    public void run() {
+                        try {
+                            root.getChildren().add(emptyCard);
+
+                            TranslateTransition translateTransition = new TranslateTransition();
+                            translateTransition.setNode(emptyCard);
+                            translateTransition.setToY(emptyCards[nbOfOpponent + 1].getBoundsInParent().getMinY());
+                            translateTransition.setToX(emptyCards[nbOfOpponent + 1].getBoundsInParent().getMinX());
+                            translateTransition.setDuration(Duration.millis(duration));
+
+                            translateTransition.statusProperty().addListener(
+                                    new ChangeListener<Animation.Status>() {
+                                        @Override
+                                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                            if (newValue == Animation.Status.STOPPED)
+                                                root.getChildren().remove(emptyCard);
+                                        }
+                                    }
+                            );
+
+                            translateTransition.play();
+
+
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                            System.out.println("nbOfOpponent: " + nbOfOpponent);
+                            System.out.println("emptyCards: " + emptyCards.length);
+                            System.out.println("getAmtOfOpponets: " + getAmtOfOpponets());
+                            System.exit(-1);
+
+                        }
                     }
+
                 }
         );
 
 
 
 
-        translateTransition.play();
+
+
       // rotateTransition.play();
 
     }
@@ -976,27 +1051,40 @@ public class GameView extends Application {
         cardTmp.setFitWidth(this.cardWidth);
         cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinX());
         cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinY());
-        this.root.getChildren().add(cardTmp);
 
-        TranslateTransition translate = new TranslateTransition();
-        translate.setNode(cardTmp);
-        translate.setToX(this.emptyCards[0].getX());
-        translate.setToY(this.emptyCards[0].getY());
-        translate.setDuration(Duration.millis(duration));
-        translate.play();
-
-        translate.statusProperty().addListener(
-                new ChangeListener<Animation.Status>() {
+        Platform.runLater(
+                new Runnable() {
                     @Override
-                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                        if(newValue == Animation.Status.STOPPED)
-                        {
-                            root.getChildren().remove(cardTmp);
-                            setCardOnTable(card);
-                        }
+                    public void run() {
+                        root.getChildren().add(cardTmp);
+
+                        TranslateTransition translate = new TranslateTransition();
+                        translate.setNode(cardTmp);
+                        translate.setToX(emptyCards[0].getX());
+                        translate.setToY(emptyCards[0].getY());
+                        translate.setDuration(Duration.millis(duration));
+                        translate.play();
+
+                        translate.statusProperty().addListener(
+                                new ChangeListener<Animation.Status>() {
+                                    @Override
+                                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                        if(newValue == Animation.Status.STOPPED)
+                                        {
+                                            root.getChildren().remove(cardTmp);
+                                            setCardOnTable(card);
+                                        }
+                                    }
+                                }
+                        );
+
                     }
                 }
         );
+
+
+
+
 
     }
 

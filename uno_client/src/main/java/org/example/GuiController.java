@@ -9,6 +9,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
+
 public class
 GuiController extends Application {
 
@@ -51,8 +53,7 @@ GuiController extends Application {
             this.mainVew= new MainVew(this);
 
 
-            this.gameView= new GameView(this);
-            this.gameView.iniit(primaryStage);
+
 
             mainVew.iniit(primaryStage);// mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
 
@@ -63,7 +64,8 @@ GuiController extends Application {
 
 
             primaryStage.setScene(mainVew.mainScene);
-
+            primaryStage.setWidth(360);
+            primaryStage.setHeight(360);
             primaryStage.show();
             mainVew.updateOnSize();
 
@@ -155,11 +157,24 @@ GuiController extends Application {
     }
 
     public void startGame() {
+        this.gameView= new GameView(this);
+        try {
+
+            this.gameView.iniit(this.primaryStage);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
         Platform.runLater(
                 new Runnable() {
                     @Override
                     public void run() {
-                        primaryStage.setScene(gameView.mainScene);
+                        if(gameView.isAssetLoaded) {
+                            gameView.playersAtStart = clientApp.getReadyPlayers();
+                            gameView.playersAtStart = clientApp.connectedPlayers;
+                            primaryStage.setScene(gameView.mainScene);
+                            gameView.updateOnSize();
+                        }
                     }
                 }
 
@@ -167,4 +182,11 @@ GuiController extends Application {
 
     }
 
+    public void getCard(UnoCard unoCard) {
+        this.gameView.addCard(unoCard);
+    }
+
+    public void giveCardToOpponent(int nmbOFOppoennt) {
+        this.gameView.giveCardToOpponent(nmbOFOppoennt);
+    }
 }

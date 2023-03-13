@@ -58,15 +58,15 @@ public class ClientConnectionManager {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
         this.objectOutStream.reset();
-       // System.out.println("_____________________________________________send Messegae_______________________________1");
-       // System.out.println(messageFormat);
+        System.out.println("_____________________________________________send Messegae_______________________________");
+        System.out.println(messageFormat);
 
     }
 
     MessageFormat getMesseage() throws SocketTimeoutException, IOException, ClassNotFoundException {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
-    //    System.out.println("get meeaeg");
-      //  System.out.println(messageFormat);
+       System.out.println("_____________________________________________get Messegae_______________________________");
+       System.out.println(messageFormat);
         if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM)
         sendConfirm();
 
@@ -186,6 +186,7 @@ this.waitTillconfirmed();
                 else
                     this.clientApp.setConnectedPlayers(this.clientApp.getConnectedPlayers() - 1);
                 this.sendConfirm();
+                break;
             case READY:
 
                 this.clientApp.setReadyPlayers(messageFormat.number[0]);
@@ -193,14 +194,12 @@ this.waitTillconfirmed();
 
                     break;
             case RECIVECARDS:
-                this.clientApp.cardsInHand.add(messageFormat.unoCard);
+                this.clientApp.reciveCard(messageFormat.unoCard);
+
                 break;
             case RECIVEVARDCOMMUNICAT:
-                for (PlayerData player: this.clientApp.playersInORder
-                     ) {
-                    if(player.getNick()== messageFormat.text[0])
-                        player.amountOfCards++;
-                }
+                this.clientApp.giveCardToOpponent(messageFormat.text[0]);
+
                 break;
             case ORDER:
                 for (String nick:
@@ -210,6 +209,8 @@ this.waitTillconfirmed();
                     this.clientApp.playersInORder.add(playerData);
                 //    System.out.println(  this.clientApp.playersInORder);
                 }
+                System.out.println("\n\n\n\n\n");
+                System.out.println(this.clientApp.playersInORder);
                 break;
             case DISCONNECT:
                 this.reciverHandler.setShoudldRun(false);

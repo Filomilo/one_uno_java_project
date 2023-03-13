@@ -186,17 +186,19 @@ System.out.println("giving cards");
 
 
     void startGame() throws IOException, ClassNotFoundException {
-        try {
-            TimeUnit.SECONDS.sleep(4);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         Collections.sort(this.nicks);
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
-        connectionManger.sendToAll(messageFormat);
+
 
         this.sendPlayerOrder();
+        connectionManger.sendToAll(messageFormat);
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         this.createGame();
         try {
             this.dealCards();
@@ -204,6 +206,7 @@ System.out.println("giving cards");
             throw new RuntimeException(e);
         }
         this.setTopCard();
+
         this.setTurn();
 
     }

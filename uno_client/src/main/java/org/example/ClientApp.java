@@ -5,6 +5,7 @@ import sun.misc.Lock;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ClientApp {
 
@@ -41,6 +42,11 @@ public class ClientApp {
     }
 
     public void setGameStarted(boolean gameStarted) {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("----------------------------STARTING------------------------");
         this.guiController.startGame();
        // isGameStarted = gameStarted;
@@ -68,6 +74,7 @@ public class ClientApp {
     }
 
     public void setConnectedPlayers(int connectedPlayers) {
+        System.out.println("\n\n\n\n\n\n " + this.readyPlayers + "___" + this.readyPlayers);
         this.connectedPlayers = connectedPlayers;
         this.guiController.mainVew.setPlayersReady(this.readyPlayers, this.connectedPlayers);
     }
@@ -167,7 +174,7 @@ public class ClientApp {
     {
         if(!vaidateCard(this.cardsInHand.get(numbCard-1),changedColor) )
         {
-            //System.out.println("You cant play this card");
+            System.out.println("You cant play this card");
             return;
         }
 
@@ -234,11 +241,41 @@ public class ClientApp {
     void procesPlaycard(String nick, UnoCard card)
     {
         this.setCardOntop(card);
+        int index=0;
+        for (PlayerData player: this.playersInORder
+             ) {
+            if(player.getNick()==nick)
+                break;
+            index++;
+        }
+
+        this.guiController.gameView.playCardFromOppoent(index, card);
+
+
     }
 
 
     public void discconct() throws IOException, ClassNotFoundException, InterruptedException {
         this.clientConnectionManager.disconnetFromServer();
+    }
+
+    public void reciveCard(UnoCard unoCard) {
+        this.guiController.getCard(unoCard);
+        this.cardsInHand.add(unoCard);
+    }
+
+    public void giveCardToOpponent(String s) {
+        int i=0;
+        for (PlayerData player: playersInORder
+        ) {
+            if(player.getNick()== s) {
+                player.amountOfCards++;
+                break;
+            }
+            i++;
+        }
+
+        this.guiController.giveCardToOpponent(i);
     }
 }
 

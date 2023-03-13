@@ -32,7 +32,7 @@ public class ReciverHandler extends  Thread{
         {
             try {
                 messageFormat = this.clientConnectionManager.getMesseage();
-                System.out.println("recived");
+              //  System.out.println("recived");
                 clientConnectionManager.handleMesseage(messageFormat);
             }
             catch (SocketTimeoutException e)

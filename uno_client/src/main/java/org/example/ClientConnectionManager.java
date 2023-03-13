@@ -58,15 +58,15 @@ public class ClientConnectionManager {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
         this.objectOutStream.reset();
-        System.out.println("_____________________________________________send Messegae_______________________________1");
-        System.out.println(messageFormat);
+       // System.out.println("_____________________________________________send Messegae_______________________________1");
+       // System.out.println(messageFormat);
 
     }
 
     MessageFormat getMesseage() throws SocketTimeoutException, IOException, ClassNotFoundException {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
-        System.out.println("get meeaeg");
-        System.out.println(messageFormat);
+    //    System.out.println("get meeaeg");
+      //  System.out.println(messageFormat);
         if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM)
         sendConfirm();
 
@@ -106,7 +106,7 @@ public class ClientConnectionManager {
         this.sendMessage(message);
         this.reciverHandler.setShoudldRun(false);
         this.reciverHandler.join();
-        System.out.println("waiting");
+       // System.out.println("waiting");
         objectOutStream.close();
         objectInStream.close();
         inStream.close();
@@ -205,10 +205,10 @@ this.waitTillconfirmed();
             case ORDER:
                 for (String nick:
                      messageFormat.text) {
-                    System.out.println("-------------------------" + nick);
+                 //   System.out.println("-------------------------" + nick);
                     PlayerData playerData= new PlayerData(nick);
                     this.clientApp.playersInORder.add(playerData);
-                    System.out.println(  this.clientApp.playersInORder);
+                //    System.out.println(  this.clientApp.playersInORder);
                 }
                 break;
             case DISCONNECT:
@@ -243,7 +243,7 @@ this.waitTillconfirmed();
                 clientApp.procesPlaycard(messageFormat.text[0], messageFormat.unoCard);
 
         }
-        System.out.println(this.clientApp);
+      //  System.out.println(this.clientApp);
 
     }
 

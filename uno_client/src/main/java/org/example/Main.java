@@ -14,8 +14,8 @@ public class Main {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        InterfaceUi interfaceUi = new InterfaceUi(args[0]);
-    interfaceUi.starUi();
+      //  InterfaceUi interfaceUi = new InterfaceUi(args[0]);
+    //interfaceUi.starUi();
 
 
 

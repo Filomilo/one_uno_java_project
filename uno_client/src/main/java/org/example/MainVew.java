@@ -579,12 +579,14 @@ text.setFill(Color.WHITE);
             this.buttonTitles[1].setText("Ready");
             this.updateButtonsSize();
             this.guiController.sendNotReady();
+            this.isReady=false;
         }
         else
         {
             this.buttonTitles[1].setText("Not Ready");
             this.updateButtonsSize();
             this.guiController.sendReady();
+            this.isReady=true;
         }
         System.out.println("READY");
     }

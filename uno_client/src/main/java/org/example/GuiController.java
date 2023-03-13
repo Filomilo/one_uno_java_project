@@ -1,12 +1,13 @@
 package org.example;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
-
-import java.util.ServiceConfigurationError;
-import java.util.concurrent.TimeUnit;
 
 public class
 GuiController extends Application {
@@ -16,26 +17,51 @@ GuiController extends Application {
 
     Scene mainScene;
 
+    static String nick="";
+    String ip="localhost";
+    String port="25565";
 
+    ClientApp clientApp= new ClientApp(this);
 
-    ClientApp clientApp= new ClientApp();
+    BooleanProperty isStarted= new SimpleBooleanProperty(false);
 
 
     public static void main(String[] args) {
+
+
+        if(args.length>0)
+        GuiController.nick=args[0];
+        else
+            GuiController.nick="-";
+
+
+
         launch(args);
     }
-    Stage primaryStage;
+
+
+
+     Stage primaryStage;
     @Override
     public void start(Stage primaryStage) {
 
+    this.addListineres();
         try{
             this.primaryStage=primaryStage;
             this.mainVew= new MainVew(this);
+
 
             this.gameView= new GameView(this);
             this.gameView.iniit(primaryStage);
 
             mainVew.iniit(primaryStage);// mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
+
+
+            this.mainVew.textFields[0].setText(GuiController.nick);
+            this.mainVew.textFields[1].setText(this.ip);
+            this.mainVew.textFields[2].setText(this.port);
+
+
             primaryStage.setScene(mainVew.mainScene);
 
             primaryStage.show();
@@ -121,5 +147,24 @@ GuiController extends Application {
     }
 
 
+
+
+    void addListineres()
+    {
+
+    }
+
+    public void startGame() {
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        primaryStage.setScene(gameView.mainScene);
+                    }
+                }
+
+        );
+
+    }
 
 }

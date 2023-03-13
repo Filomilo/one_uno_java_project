@@ -1,14 +1,10 @@
 package org.example;
 
-import org.omg.CORBA.INTERNAL;
-import org.omg.CORBA.Object;
 import sun.misc.Lock;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class ClientApp {
 
@@ -29,13 +25,25 @@ public class ClientApp {
 
     final Lock confirmLock= new Lock();
 
+    GuiController guiController;
+
+    public ClientApp(GuiController guiController) {
+        this.guiController=guiController;
+    }
+
+    public ClientApp() {
+
+    }
+
 
     public boolean isGameStarted() {
         return isGameStarted;
     }
 
     public void setGameStarted(boolean gameStarted) {
-        isGameStarted = gameStarted;
+        System.out.println("----------------------------STARTING------------------------");
+        this.guiController.startGame();
+       // isGameStarted = gameStarted;
     }
 
     public String getNick() {
@@ -52,6 +60,7 @@ public class ClientApp {
 
     public void setReadyPlayers(int readyPlayers) {
         this.readyPlayers = readyPlayers;
+        this.guiController.mainVew.setPlayersReady(this.readyPlayers, this.connectedPlayers);
     }
 
     public int getConnectedPlayers() {
@@ -60,6 +69,7 @@ public class ClientApp {
 
     public void setConnectedPlayers(int connectedPlayers) {
         this.connectedPlayers = connectedPlayers;
+        this.guiController.mainVew.setPlayersReady(this.readyPlayers, this.connectedPlayers);
     }
 
 
@@ -157,7 +167,7 @@ public class ClientApp {
     {
         if(!vaidateCard(this.cardsInHand.get(numbCard-1),changedColor) )
         {
-            System.out.println("You cant play this card");
+            //System.out.println("You cant play this card");
             return;
         }
 

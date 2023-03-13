@@ -1,3 +1,5 @@
+//todo: repaier rproblmeoccutign hwen clint starts to connec t discconr ctonnt and then discconr again
+
 package org.example;
 
 import com.sun.xml.internal.ws.api.model.MEP;
@@ -102,7 +104,7 @@ public class ClientConnectionManager {
         MessageFormat message=new MessageFormat();
         message.type=MessageFormat.messegeTypes.DISCONNECT;
         this.sendMessage(message);
-
+        this.reciverHandler.setShoudldRun(false);
         this.reciverHandler.join();
         System.out.println("waiting");
         objectOutStream.close();

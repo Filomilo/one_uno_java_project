@@ -16,6 +16,11 @@ GuiController extends Application {
 
     Scene mainScene;
 
+
+
+    ClientApp clientApp= new ClientApp();
+
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -58,4 +63,63 @@ GuiController extends Application {
         this.primaryStage.setScene(gameView.mainScene);
         this.gameView.updateOnSize();
     }
+
+    boolean connectTosServer()
+    {
+        try {
+            String nick = this.mainVew.textFields[0].getText();
+            String ip = this.mainVew.textFields[1].getText();
+            String port = this.mainVew.textFields[2].getText();
+
+            this.clientApp.setNick(nick);
+            this.clientApp.setPort(Integer.parseInt(port));
+            this.clientApp.setIp(ip);
+
+            System.out.println(nick + " " + ip + " " + " " + port);
+            Boolean res=this.clientApp.connectWithServer();
+            if(res)
+                    this.updatePlayerAmt();
+            return res ;
+        }
+        catch (Exception e)
+        {
+            //e.printStackTrace();
+            return false;
+        }
+    }
+
+    void disconnectFromServer()
+    {
+        try {
+            this.clientApp.discconct();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        this.mainVew.setPlayersReady(0,0);
+    }
+
+
+    void sendReady()
+    {
+        this.clientApp.setReady(true);
+        this.updatePlayerAmt();
+    }
+
+    void sendNotReady()
+    {
+        this.clientApp.setReady(false);
+        this.updatePlayerAmt();
+    }
+
+
+    void updatePlayerAmt()
+    {
+        this.mainVew.setPlayersReady(this.clientApp.getReadyPlayers(), this.clientApp.getConnectedPlayers());
+    }
+
+
+
 }

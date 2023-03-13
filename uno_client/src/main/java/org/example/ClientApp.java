@@ -95,20 +95,19 @@ public class ClientApp {
     public void setReady(boolean ready) {
 
         isReady = ready;
-        try {
-            TimeUnit.SECONDS.sleep(4);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+
         if(ready){
-        this.setReadyPlayers(this.getReadyPlayers()+1);}
+        this.setReadyPlayers(this.getReadyPlayers()+1);
+            this.clientConnectionManager.sendReady(ready);
+        }
         else
         {
 
             this.setReadyPlayers(this.getReadyPlayers()-1);
-
+            this.clientConnectionManager.sendReady(false);
         }
-        this.clientConnectionManager.sendReady(ready);
+
     }
 
     boolean connectWithServer()
@@ -228,7 +227,9 @@ public class ClientApp {
     }
 
 
-
+    public void discconct() throws IOException, ClassNotFoundException, InterruptedException {
+        this.clientConnectionManager.disconnetFromServer();
+    }
 }
 
 

@@ -1,6 +1,7 @@
 package org.example;
 
 
+import javax.swing.text.StyledEditorKit;
 import java.io.*;
 import java.net.SocketTimeoutException;
 
@@ -51,12 +52,14 @@ public class ClientHandler extends  Thread{
                 synchronized (playerData) {
                     MessageFormat messageFormat;
                     messageFormat = this.serverConnectionManager.getMesseage(this.playerData);
-                    this.serverConnectionManager.handleMesseage(playerData, messageFormat);
+                    Boolean res= this.serverConnectionManager.handleMesseage(playerData, messageFormat);
+                    if(!res)
+                        return;
                 }
             }
             catch (IOException | ClassNotFoundException e) {
-                // TODO: 09.03.2023  habdle i cient disconnected
                 e.printStackTrace();
+                return;
             }
 
         }

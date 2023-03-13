@@ -163,7 +163,7 @@ public class ServerConnectionManager {
     }
 
     // this method is my client thread in order to proces te meessege they received
-    public void handleMesseage(PlayerData playerData, MessageFormat messageFormat) throws IOException, ClassNotFoundException {
+    public Boolean handleMesseage(PlayerData playerData, MessageFormat messageFormat) throws IOException, ClassNotFoundException {
         switch (messageFormat.type)
         {
             case CONNECT:
@@ -191,20 +191,17 @@ public class ServerConnectionManager {
              case PLAYCARD:
                  this.playCard(playerData,messageFormat.unoCard, messageFormat.number[0]);
 
-
-
-
-
-
-
                  break;
+
+            case DISCONNECT:
+                return false;
 
 
 
 
         }
 
-
+        return true;
     }
 
 //method that setups connections and data with new connecetd client

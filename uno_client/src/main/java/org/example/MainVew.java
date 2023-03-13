@@ -34,6 +34,8 @@ public class MainVew extends Application {
 
     Scene mainScene;
 
+    boolean isConnected=false;
+    Boolean isReady=false;
     final int startH=720;
     final int startW=1280;
     static final String resDir = "uno_client\\src\\main\\resources\\";
@@ -121,8 +123,11 @@ public class MainVew extends Application {
 
     void setStatusConnected()
     {
+        this.isConnected=true;
         this.connectionStatusText.setText("Connected");
         this.connectionStatusText.setFill(Color.GREEN);
+        this.buttonTitles[0].setText("Disconnect");
+        this.updateButtonsSize();
     }
 
     void setStatusConnecting()
@@ -133,8 +138,11 @@ public class MainVew extends Application {
 
     void setStatusDiscconnted()
     {
+        this.isConnected=false;
         this.connectionStatusText.setText("Disconnected");
         this.connectionStatusText.setFill(Color.RED);
+        this.buttonTitles[0].setText("Connect");
+        this.updateButtonsSize();
     }
 
 
@@ -548,12 +556,36 @@ text.setFill(Color.WHITE);
 
     void onButtonConnectClick()
     {
-        System.out.println("CONNECT");
+        if(!isConnected) {
+            this.setStatusConnecting();
+            System.out.println("CONNECT");
+            if (this.guiController.connectTosServer())
+                this.setStatusConnected();
+            else
+                this.setStatusDiscconnted();
+        }
+        else
+        {
+            this.setStatusDiscconnted();
+            this.guiController.disconnectFromServer();
+        }
     }
 
     void onButtonReadyClick()
     {
-        guiController.changeSceneToGame();
+       // guiController.changeSceneToGame();
+        if(isReady)
+        {
+            this.buttonTitles[1].setText("Ready");
+            this.updateButtonsSize();
+            this.guiController.sendNotReady();
+        }
+        else
+        {
+            this.buttonTitles[1].setText("Not Ready");
+            this.updateButtonsSize();
+            this.guiController.sendReady();
+        }
         System.out.println("READY");
     }
 
@@ -570,5 +602,7 @@ text.setFill(Color.WHITE);
         //System.out.println("EXIT");
         System.exit(1);
     }
+
+
 
 }

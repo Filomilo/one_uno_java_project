@@ -121,10 +121,10 @@ public class GameView extends Application {
         this.setupEmptyCardsPostion();
         this.setupButtonShape();
         this.setupNicks();
-        this.looadCardsInHand();
+        //this.looadCardsInHand();
         this.updateBackground();
         this.addListiners(primaryStage);
-        //this.setStackPile(true);
+        this.setStackPile(true);
     }
 
     @Override

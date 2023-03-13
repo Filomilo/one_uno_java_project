@@ -100,8 +100,15 @@ public class ClientApp {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        if(ready){
+        this.setReadyPlayers(this.getReadyPlayers()+1);}
+        else
+        {
+
+            this.setReadyPlayers(this.getReadyPlayers()-1);
+
+        }
         this.clientConnectionManager.sendReady(ready);
-        this.setReadyPlayers(this.getReadyPlayers()+1);
     }
 
     boolean connectWithServer()

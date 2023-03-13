@@ -92,13 +92,18 @@ public class InterfaceUi {
         {
             System.out.println(clientApp);
             System.out.println("Are you ready to play?");
-           // isReady=getYesNo();
-            isReady=true;
+            isReady=getYesNo();
+           // isReady=true;
             if(isReady)
             {
                 clientApp.setReady(true);
             }
         }
+
+        System.out.println("woul like to be not ready: ");
+        isReady=getYesNo();
+        if(isReady)
+            clientApp.setReady(false);
 
 
         while(this.clientApp.isGameStarted())

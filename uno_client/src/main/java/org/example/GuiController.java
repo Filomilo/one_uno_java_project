@@ -179,7 +179,7 @@ GuiController extends Application {
                 }
 
         );
-
+    this.gameView.updateOnSize();
     }
 
     public void getCard(UnoCard unoCard) {

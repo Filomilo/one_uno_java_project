@@ -54,6 +54,7 @@ public class DataBaseMangaer {
     {
         try {
             this.connection= DriverManager.getConnection("jdbc:oracle:thin:@"+this.dataBaseAdres + ":"+ this.dataBasePort +":"+this.dataBaseName , this.dataBaseUserName, this.dataBasePass);
+          //  this.connection= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:"+ +" as SYSDBA");
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -64,11 +65,17 @@ public class DataBaseMangaer {
 
     void resetDataBase()
     {
-        this.dropSeq();
-        this.dropTables();
-        this.createSeq();
-        this.createTables();
-        this.createBaseCards();
+
+      this.dropSeq();
+      System.out.println("droped seq");
+     this.dropTables();
+     this.createSeq();
+      this.createTables();
+        this.createProcedures();
+        this.createFunctions();
+      this.createViews();
+       this.createBaseCards();
+        System.out.println("fisned creat" );
     }
 
     void prepDataBase()
@@ -385,10 +392,19 @@ public class DataBaseMangaer {
             {
                 players.add(resultSet.getString("NICK"));
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLSyntaxErrorException e)
+        {
+            System.out.println("sqlcode: " + sqlCode);
+            e.printStackTrace();
+            System.exit(-1
+            );
+        }
+        catch (SQLException e) {
             System.out.println(sqlCode + "--------------didint execute porpely---------------");
             e.printStackTrace();
         }
+
         return players;
     }
 

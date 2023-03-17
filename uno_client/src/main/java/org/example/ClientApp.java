@@ -102,6 +102,7 @@ public class ClientApp {
     }
 
     public void setCardOntop(UnoCard cardOntop) {
+        this.guiController.gameView.setCardOnTable(cardOntop);
         this.cardOntop = cardOntop;
     }
 
@@ -175,7 +176,8 @@ public class ClientApp {
         if(!vaidateCard(this.cardsInHand.get(numbCard-1),changedColor) )
         {
             System.out.println("You cant play this card");
-            return;
+            System.out.println(card);
+            System.exit(-1);
         }
 
         this.cardsInHand.remove( numbCard-1);

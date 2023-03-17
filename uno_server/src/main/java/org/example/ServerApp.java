@@ -213,8 +213,9 @@ System.out.println("giving cards");
 
     void setTopCard()
     {
+        List<UnoCard> unoCardsTable = new ArrayList<UnoCard>();
         try {
-            List<UnoCard> unoCardsTable = this.dataBaseMangaer.selectTableStack();
+           unoCardsTable = this.dataBaseMangaer.selectTableStack();
             MessageFormat messageForm = new MessageFormat();
             messageForm.type = MessageFormat.messegeTypes.TOPCARD;
             messageForm.unoCard = unoCardsTable.get(0);
@@ -222,6 +223,10 @@ System.out.println("giving cards");
             setTopCard(unoCardsTable.get(0));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            System.out.printf("unoCardsTable: " + unoCardsTable.size());
         }
 
     }
@@ -244,8 +249,13 @@ System.out.println("giving cards");
             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + this.nicks);
             MessageFormat messageFormat = new MessageFormat();
             messageFormat.type = MessageFormat.messegeTypes.ORDER;
-            messageFormat.text = new String[nicks.size()];
-            messageFormat.text = nicks.toArray(messageFormat.text);
+            messageFormat.text = new String[this.nicks.size()];
+
+            for(int i=0;i<this.nicks.size();i++)
+            {
+                messageFormat.text[i]=this.nicks.get(i).getNick();
+            }
+
             this.connectionManger.sendMessage(player, messageFormat);
 
         }

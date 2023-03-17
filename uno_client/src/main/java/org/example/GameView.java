@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GameView extends Application {
     Scene mainScene;
@@ -61,10 +62,11 @@ public class GameView extends Application {
 
     ImageView[] emptyCards ;
 
-    Text nickText[]=new Text[this.getAmtOfOpponets()+1];
-    Rectangle textBox[]=new Rectangle[this.getAmtOfOpponets()+1];
+    Text nickText[];
+    Rectangle textBox[];
+    int amtOfOpponetsCards[];
 
-    Text amtOfCardsText[]= new Text[this.getAmtOfOpponets()];
+    Text amtOfCardsText[];
 
     double cardWidth=100;
     double cardHandPosY=0;
@@ -130,6 +132,7 @@ public class GameView extends Application {
         this.addListiners(primaryStage);
         this.setStackPile(true);
         this.isAssetLoaded=true;
+        this.updateOnSize();
     }
 
     @Override
@@ -152,44 +155,113 @@ public class GameView extends Application {
         }
     }
 
-    private void setupNicks() {
-        this.nickText[0]= new Text(this.getPlayerNick());
-        this.nickText[0].setX(0);
-        this.nickText[0].setFill(Color.WHITE);
+    void setEmpty(ImageView imageView)
+    {
+        imageView.setImage(this.cardImages[this.cardImages.length-1]);
+    }
 
+    void setNotEmpty(ImageView imageView)
+    {
+        imageView.setImage(this.cardImages[this.cardImages.length-2]);
+    }
 
-        this.textBox[0]= new Rectangle();
-        this.textBox[0].setFill(this.tranparentBlack);
-        this.textBox[0].setX(0);
-        this.root.getChildren().add(   this.textBox[0]);
-        this.root.getChildren().add(this.nickText[0]);
-        List<String> nicks = getNick();
-        for(int i=1;i<this.nickText.length;i++){
+    void updateAmtOfCards()
+    {
+        int amtOfCards[]= this.getAmtOfCards();
+        for (int i = 0; i < this.amtOfCardsText.length; i++) {
+            String txt = "x";
+            txt += amtOfCards[i];
+            System.out.println("\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@card: " + txt);
+            this.amtOfCardsText[i].setText(txt);
 
-            this.nickText[i]= new Text(nicks.get(i-1));
-            this.nickText[i].setFill(Color.WHITE);
-
-            this.textBox[i] = new Rectangle();
-            this.textBox[i].setFill(this.tranparentBlack);
-
-            this.root.getChildren().add(this.textBox[i]);
-            this.root.getChildren().add(this.nickText[i]);
 
         }
 
 
 
 
-        // amount of cards number
-        int [] amtOfCards=this.getAmtOfCards();
-        for (int i=0;i<this.amtOfCardsText.length;i++)
-        {
-            String txt="x";
-            txt+=amtOfCards[i];
-            this.amtOfCardsText[i]=new Text(txt);
-            this.amtOfCardsText[i].setFill(Color.WHITE);
+        this.updateOnSize();
+    }
 
-            this.root.getChildren().add(  this.amtOfCardsText[i]);
+    private void setupNicks() {
+        try {
+            this.textBox=new Rectangle[this.getAmtOfOpponets()+1];
+            this.nickText = new Text[this.getAmtOfOpponets() + 1];
+            this.amtOfCardsText = new Text[this.getAmtOfOpponets()];
+            this.amtOfOpponetsCards = new int[this.getAmtOfOpponets()];
+            this.nickText[0] = new Text(this.getPlayerNick());
+            this.nickText[0].setX(0);
+            this.nickText[0].setFill(Color.WHITE);
+            if (this.nickText.length <= 1) {
+                System.out.println("this.nickText.length): "+this.nickText.length);
+                System.out.println("this.getAmtOfOpponets(): " + this.getAmtOfOpponets() );
+                System.out.println("this.nickText[0]: " + this.nickText[0]);
+                System.out.println("-------");
+
+                System.exit(-1);
+            }
+
+            this.textBox[0] = new Rectangle();
+            this.textBox[0].setFill(this.tranparentBlack);
+            this.textBox[0].setX(0);
+            this.root.getChildren().add(this.textBox[0]);
+            this.root.getChildren().add(this.nickText[0]);
+            while(getNick().size()<1)
+            {
+                System.out.println("waiting for nick");
+                try {
+                    TimeUnit.MILLISECONDS.sleep(11);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            List<String> nicks = getNick();
+
+            for (int i = 1; i < this.nickText.length; i++) {
+
+                try {
+                    this.setNotEmpty(this.emptyCards[i+1]);
+                    this.nickText[i] = new Text(nicks.get(i - 1));
+                    this.nickText[i].setFill(Color.WHITE);
+
+                    this.textBox[i] = new Rectangle();
+                    this.textBox[i].setFill(this.tranparentBlack);
+
+                    this.root.getChildren().add(this.textBox[i]);
+                    this.root.getChildren().add(this.nickText[i]);
+                } catch (IndexOutOfBoundsException e )
+                {
+                    e.printStackTrace();
+                    System.out.println("this.nickText: "+ this.nickText.length);
+                    System.out.println("nicks size: " + nicks.size());
+                    System.out.println("this.textBox: " + this.textBox.length);
+                    System.out.println("i: " + i);
+                    System.exit(-1);
+                }
+
+            }
+
+
+            // amount of cards number
+            int[] amtOfCards = this.getAmtOfCards();
+            for (int i = 0; i < this.amtOfCardsText.length; i++) {
+                String txt = "x";
+                txt += amtOfCards[i];
+                this.amtOfCardsText[i] = new Text(txt);
+                this.amtOfCardsText[i].setFill(Color.WHITE);
+
+                this.root.getChildren().add(this.amtOfCardsText[i]);
+
+
+                this.amtOfOpponetsCards[i]=0;
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            e.printStackTrace();
+            System.out.println("this.nickText: "+ this.nickText.length);
+            System.exit(-1);
         }
 
     }
@@ -303,12 +375,17 @@ public class GameView extends Application {
     {
         int amt=0;
         try{
-            amt=this.guiController.clientApp.playersInORder.size();
-
+            amt=this.guiController.clientApp.getConnectedPlayers()-1;
+            if(amt==0)
+            {
+                System.out.println("Amount of playeers: " + amt);
+                System.exit(-1);
+            }
         }
         catch (Exception e)
         {
-
+            e.printStackTrace();
+            System.exit(-1);
         }
         return amt;
     }
@@ -569,8 +646,12 @@ public class GameView extends Application {
 
     List<String> getNick()
     {
-        String nickArr[]={"nick1","nick2","nic5656k1","nick2","nick1","nick2","nick1","nick2","nick2" };
-        List<String> nicks= new ArrayList<String>(Arrays.asList(nickArr));
+        List<String> nicks= new ArrayList<String>();
+        for (PlayerData player: this.guiController.clientApp.playersInORder
+             ) {
+            nicks.add(player.getNick());
+        }
+
         return nicks;
     }
 
@@ -581,8 +662,7 @@ public class GameView extends Application {
 
     int[] getAmtOfCards()
     {
-        int array[]={1,2,4,5,6,7,8,9,5,4,7,5,};
-        return array;
+        return this.amtOfOpponetsCards;
     }
 
 
@@ -713,18 +793,19 @@ public class GameView extends Application {
     }
 
     private void playCard(ImageView card) {
-        if(this.CanBePlayed(card))
-        {
-            int index = this.cardsInHand.indexOf(card);
+        int index = this.cardsInHand.indexOf(card);
 
-            UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
+        UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
+        if(this.CanBePlayed(unoCard))
+        {
+
 
             this.guiController.clientApp.playCard(index+1,unoCard,false);
 
 
 
 
-            double duration=50;
+            double duration=250;
             ImageView tmpCard= new ImageView(card.getImage());
             tmpCard.setPreserveRatio(true);
             tmpCard.setFitWidth(this.cardWidth);
@@ -766,8 +847,10 @@ public class GameView extends Application {
 
     }
 
-    private boolean CanBePlayed(ImageView card) {
-        return  true;
+    private boolean CanBePlayed(UnoCard card) {
+       if(this.guiController.clientApp.vaidateCard(card,false))
+           return true;
+           return false;
     }
 
     void onMouseOnButton()
@@ -855,7 +938,7 @@ public class GameView extends Application {
 
     void giveCardToOpponent(int nbOfOpponent)
     {
-        double duration=80;
+        double duration=250;
 
         ImageView emptyCard= new ImageView(this.cardImages[(this.cardImages.length-2)]);
         emptyCard.setPreserveRatio(true);
@@ -872,8 +955,8 @@ public class GameView extends Application {
 
                             TranslateTransition translateTransition = new TranslateTransition();
                             translateTransition.setNode(emptyCard);
-                            translateTransition.setToY(emptyCards[nbOfOpponent + 1].getBoundsInParent().getMinY());
-                            translateTransition.setToX(emptyCards[nbOfOpponent + 1].getBoundsInParent().getMinX());
+                            translateTransition.setToY(emptyCards[nbOfOpponent ].getBoundsInParent().getMinY());
+                            translateTransition.setToX(emptyCards[nbOfOpponent ].getBoundsInParent().getMinX());
                             translateTransition.setDuration(Duration.millis(duration));
 
                             translateTransition.statusProperty().addListener(
@@ -887,11 +970,15 @@ public class GameView extends Application {
                             );
 
                             translateTransition.play();
+                            amtOfOpponetsCards[nbOfOpponent-2]++;
 
+                            //System.out.println("Amount of cards: :\n"+amtOfOpponetsCards[0]);
+                            updateAmtOfCards();
 
                         } catch (ArrayIndexOutOfBoundsException e) {
                             e.printStackTrace();
                             System.out.println("nbOfOpponent: " + nbOfOpponent);
+                            System.out.println("amtOfOpponetsCards.: " + amtOfOpponetsCards.length);
                             System.out.println("emptyCards: " + emptyCards.length);
                             System.out.println("getAmtOfOpponets: " + getAmtOfOpponets());
                             System.exit(-1);
@@ -1045,42 +1132,62 @@ public class GameView extends Application {
 
     void playCardFromOppoent(int nbOfOppoonent, UnoCard card)
     {
-        double duration=200;
-        ImageView cardTmp= new ImageView(this.cardImages[this.cardImages.length-2]);
-        cardTmp.setPreserveRatio(true);
-        cardTmp.setFitWidth(this.cardWidth);
-        cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinX());
-        cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinY());
+        try {
+            double duration = 200;
+            ImageView cardTmp = new ImageView(this.cardImages[this.cardImages.length - 2]);
+            cardTmp.setPreserveRatio(true);
+            cardTmp.setFitWidth(this.cardWidth);
+            cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent  ].getBoundsInParent().getMinX());
+            cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent ].getBoundsInParent().getMinY());
 
-        Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        root.getChildren().add(cardTmp);
+            Platform.runLater(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            root.getChildren().add(cardTmp);
 
-                        TranslateTransition translate = new TranslateTransition();
-                        translate.setNode(cardTmp);
-                        translate.setToX(emptyCards[0].getX());
-                        translate.setToY(emptyCards[0].getY());
-                        translate.setDuration(Duration.millis(duration));
-                        translate.play();
+                            TranslateTransition translate = new TranslateTransition();
+                            translate.setNode(cardTmp);
+                            translate.setToX(emptyCards[0].getX());
+                            translate.setToY(emptyCards[0].getY());
+                            translate.setDuration(Duration.millis(duration));
+                            translate.play();
 
-                        translate.statusProperty().addListener(
-                                new ChangeListener<Animation.Status>() {
-                                    @Override
-                                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                                        if(newValue == Animation.Status.STOPPED)
-                                        {
-                                            root.getChildren().remove(cardTmp);
-                                            setCardOnTable(card);
+                            translate.statusProperty().addListener(
+                                    new ChangeListener<Animation.Status>() {
+                                        @Override
+                                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                            if (newValue == Animation.Status.STOPPED) {
+                                                root.getChildren().remove(cardTmp);
+                                                setCardOnTable(card);
+                                            }
                                         }
                                     }
-                                }
-                        );
+                            );
+try {
 
+    amtOfOpponetsCards[nbOfOppoonent - 2]--;
+}
+catch (ArrayIndexOutOfBoundsException e)
+{
+    e.printStackTrace();
+    System.out.println("amtOfOpponetsCards: " + amtOfOpponetsCards.length);
+    System.out.println("nbOfOppoonent: " + nbOfOppoonent);
+    System.exit(-1);
+}
+
+
+                        }
                     }
-                }
-        );
+            );
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            e.printStackTrace();
+            System.out.println("nbOfOppoonent: " + nbOfOppoonent);
+            System.out.println("emptyCards.length: " + emptyCards.length);
+            System.exit(-1);
+        }
 
 
 

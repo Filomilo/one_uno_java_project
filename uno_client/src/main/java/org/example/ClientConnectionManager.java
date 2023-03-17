@@ -206,9 +206,11 @@ this.waitTillconfirmed();
                      messageFormat.text) {
                  //   System.out.println("-------------------------" + nick);
                     PlayerData playerData= new PlayerData(nick);
+                    if(nick!= clientApp.getNick())
                     this.clientApp.playersInORder.add(playerData);
                 //    System.out.println(  this.clientApp.playersInORder);
                 }
+                
                 System.out.println("\n\n\n\n\n");
                 System.out.println(this.clientApp.playersInORder);
                 break;

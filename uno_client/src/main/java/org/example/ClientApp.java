@@ -16,6 +16,8 @@ public class ClientApp {
     boolean isConnected=false;
     boolean isReady;
 
+
+
     boolean isGameStarted= false;
     ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
 
@@ -210,6 +212,7 @@ public class ClientApp {
 
     public void setTurn(String turn) {
         this.turn = turn;
+        this.guiController.gameView.setTurn(turn);
     }
 
     @Override
@@ -270,11 +273,16 @@ public class ClientApp {
         int i=0;
         for (PlayerData player: playersInORder
         ) {
-            if(player.getNick()== s) {
+            if(player.getNick().equals(s)) {
                 player.amountOfCards++;
                 break;
             }
             i++;
+        }
+        if(i>=this.playersInORder.size())
+        {
+            System.out.println(i +"----" + this.playersInORder.size());
+            System.exit(-1);
         }
 
         this.guiController.giveCardToOpponent(i);

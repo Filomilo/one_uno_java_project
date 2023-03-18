@@ -33,6 +33,8 @@ public class DataBaseMangaer {
         this.dataBaseAdres = dataBaseAdres;
     }
 
+    final Object semaphore=new Object();
+
     DataBaseMangaer()
     {
         try {
@@ -247,166 +249,177 @@ public class DataBaseMangaer {
 
     private void executeProcedure(String sqlCode)
     {
-            try{
+        synchronized (this.semaphore) {
+            try {
                 Statement statement = connection.createStatement();
                 statement.execute(sqlCode);
             } catch (SQLException e) {
                 System.out.println(sqlCode + "--------------didint execute porpely---------------");
                 e.printStackTrace();
             }
+        }
     }
 
     private boolean executeProcedure(String sqlCode, String[] vars)
     {
-        try{
-            System.out.println("*********************************************************"+ sqlCode +"*******************************************" );
+        synchronized (this.semaphore) {
+            try {
+                System.out.println("*********************************************************" + sqlCode + "*******************************************");
 
-            PreparedStatement statement = connection.prepareStatement(sqlCode);
-            for (int i=1;i<=vars.length;i++)
-            {
-                statement.setString(i,vars[i-1]);
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                for (int i = 1; i <= vars.length; i++) {
+                    statement.setString(i, vars[i - 1]);
+                }
+                statement.executeQuery();
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                return false;
+                // e.printStackTrace();
             }
-            statement.executeQuery();
-        } catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-            return false;
-           // e.printStackTrace();
+            return true;
         }
-        return true;
     }
     private void executeProcedure(String sqlCode, String var, int numb )
     {
-        try{
-            System.out.println("*********************************************************"+ sqlCode +  "," +var + "," + numb + "*******************************************" );
-            PreparedStatement statement = connection.prepareStatement(sqlCode);
-            statement.setString(1,var);
-            statement.setInt(2,numb);
-            statement.executeQuery();
-        } catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-            // e.printStackTrace();
+        synchronized (this.semaphore) {
+            try {
+                System.out.println("*********************************************************" + sqlCode + "," + var + "," + numb + "*******************************************");
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                statement.setString(1, var);
+                statement.setInt(2, numb);
+                statement.executeQuery();
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                // e.printStackTrace();
+            }
         }
     }
 
     private int executeFunciton(String sqlCode )
     {
-        int result=-1;
-        try{
-            CallableStatement statement = connection.prepareCall(sqlCode);
-            statement.registerOutParameter(1, Types.INTEGER);
-            ResultSet resultSet=statement.executeQuery();
-            result=(int)statement.getInt(1);
-        } catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-             e.printStackTrace();
+        synchronized (this.semaphore) {
+            int result = -1;
+            try {
+                CallableStatement statement = connection.prepareCall(sqlCode);
+                statement.registerOutParameter(1, Types.INTEGER);
+                ResultSet resultSet = statement.executeQuery();
+                result = (int) statement.getInt(1);
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
+            }
+            return result;
         }
-        return result;
     }
 
     private int executeFunciton(String sqlCode, String var)
     {
-        int result=-1;
-        try{
-            CallableStatement statement = connection.prepareCall(sqlCode);
-            statement.registerOutParameter(1, Types.INTEGER);
-            statement.setString(2,var);
-            ResultSet resultSet=statement.executeQuery();
-            result=(int)statement.getInt(1);
-        } catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-            e.printStackTrace();
+        synchronized (this.semaphore) {
+            int result = -1;
+            try {
+                CallableStatement statement = connection.prepareCall(sqlCode);
+                statement.registerOutParameter(1, Types.INTEGER);
+                statement.setString(2, var);
+                ResultSet resultSet = statement.executeQuery();
+                result = (int) statement.getInt(1);
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
+            }
+            return result;
         }
-        return result;
     }
 
      private void executeArrayStatements(String [] statemnt)
      {
-         for (String sqlCode: statemnt) {
-             try{
-             Statement statement = connection.createStatement();
-             statement.execute(sqlCode);
-             } catch (SQLException e) {
-                System.out.println(sqlCode + "--------------didint execute porpely---------------");
-                e.printStackTrace();
-             }
+         synchronized (this.semaphore) {
+             for (String sqlCode : statemnt) {
+                 try {
+                     Statement statement = connection.createStatement();
+                     statement.execute(sqlCode);
+                 } catch (SQLException e) {
+                     System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                     e.printStackTrace();
+                 }
 
+             }
          }
      }
 
 
      private List<UnoCard> executeSelectCards(String sqlCode)
      {
-         List<UnoCard> cardStack= new ArrayList<UnoCard>();
-         try{
+         synchronized (this.semaphore) {
+             List<UnoCard> cardStack = new ArrayList<UnoCard>();
+             try {
 
-             Statement statement = connection.createStatement();
-             ResultSet resultSet=statement.executeQuery(sqlCode);
-             while (resultSet.next())
-             {
-                 UnoCard unoCard= new UnoCard(resultSet);
-                 cardStack.add(unoCard);
+                 Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sqlCode);
+                 while (resultSet.next()) {
+                     UnoCard unoCard = new UnoCard(resultSet);
+                     cardStack.add(unoCard);
+                 }
+             } catch (SQLException e) {
+                 System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                 e.printStackTrace();
              }
-         } catch (SQLException e) {
-             System.out.println(sqlCode + "--------------didint execute porpely---------------");
-             e.printStackTrace();
+             return cardStack;
          }
-         return cardStack;
      }
 
     private List<UnoCard> executeSelectCards(String sqlCode, String var)
     {
-        List<UnoCard> cardStack= new ArrayList<UnoCard>();
-        try{
+        synchronized (this.semaphore) {
+            List<UnoCard> cardStack = new ArrayList<UnoCard>();
+            try {
 
-            PreparedStatement statement = connection.prepareStatement(sqlCode);
-            statement.setString(1,var);
-            ResultSet resultSet=statement.executeQuery();
-            while (resultSet.next())
-            {
-                UnoCard unoCard= new UnoCard(resultSet);
-                cardStack.add(unoCard);
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                statement.setString(1, var);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    UnoCard unoCard = new UnoCard(resultSet);
+                    cardStack.add(unoCard);
+                }
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-            e.printStackTrace();
+            return cardStack;
         }
-        return cardStack;
     }
 
 
 
     private List<String> executeSelectPlayers(String sqlCode, String[] var)
     {
-        List<String> players= new ArrayList<String>();
-        try{
+        synchronized (this.semaphore) {
+            List<String> players = new ArrayList<String>();
+            try {
 
-            PreparedStatement statement = connection.prepareStatement(sqlCode);
-            int i=1;
-            for (String variable:var
-                 ) {
-                statement.setString(i,variable);
-                i++;
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                int i = 1;
+                for (String variable : var
+                ) {
+                    statement.setString(i, variable);
+                    i++;
+                }
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    players.add(resultSet.getString("NICK"));
+                    System.out.println("******************" + resultSet.getString("NICK"));
+                }
+            } catch (SQLSyntaxErrorException e) {
+                System.out.println("sqlcode: " + sqlCode);
+                e.printStackTrace();
+                System.exit(-1
+                );
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
             }
-            ResultSet resultSet=statement.executeQuery();
-            while (resultSet.next())
-            {
-                players.add(resultSet.getString("NICK"));
-                System.out.println("******************" + resultSet.getString("NICK"));
-            }
-        }
-        catch (SQLSyntaxErrorException e)
-        {
-            System.out.println("sqlcode: " + sqlCode);
-            e.printStackTrace();
-            System.exit(-1
-            );
-        }
-        catch (SQLException e) {
-            System.out.println(sqlCode + "--------------didint execute porpely---------------");
-            e.printStackTrace();
-        }
 
-        return players;
+            return players;
+        }
     }
 
 

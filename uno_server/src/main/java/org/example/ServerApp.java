@@ -242,6 +242,8 @@ System.out.println("giving cards");
         messageFormat.text= new String[1];
         messageFormat.text[0]=player.nick;
         this.connectionManger.sendToAll(messageFormat);
+
+
     }
 
     void sendPlayerOrder() throws IOException, ClassNotFoundException {
@@ -288,17 +290,31 @@ System.out.println("giving cards");
                 for (UnoCard card:hand
                      ) {
                     System.out.println(topCard +"====="+ card);
+
+
+
+                    if( card.getColor()== UnoCard.UNO_COLOR.BLACK ) {
+                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  BLACK COLOR");
+                        validation = 0;
+                        break;
+                    }
+
+
+
                     if( topCard.getType()==card.getType() && topCard.getType()!= UnoCard.UNO_TYPE.REGULAR) {
+                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@TYPE");
                         validation = 0;
                         break;
                     }
                     if(topCard.getType()==UnoCard.UNO_TYPE.REGULAR && card.getType()==UnoCard.UNO_TYPE.REGULAR && topCard.getNumb()==card.getNumb() )
                     {
+                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ NUMB");
                         validation = 0;
                         break;
                     }
                     if(topCard.getColor()==card.getColor())
                     {
+                        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@COLOR");
                         validation = 0;
                         break;
                     }

@@ -13,7 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
-import javafx.scene.effect.Bloom;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -44,6 +44,8 @@ public class GameView extends Application {
     Scene mainScene;
 
     Boolean isAssetLoaded=false;
+
+    boolean isYourTurn=false;
 
     final int startH = 720;
     final int startW = 1280;
@@ -126,6 +128,7 @@ public class GameView extends Application {
         this.setupEmptyCardsPostion();
         this.setupButtonShape();
         this.setupNicks();
+        this.setTopGlow(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.BLACK, 1));
 
         //this.looadCardsInHand();
         this.updateBackground();
@@ -498,6 +501,7 @@ public class GameView extends Application {
         this.upadateButtonShape();
         this.upadateText();
         this.updateColorPanelScale();
+        this.updateGlowSize();
     }
 
     private void setupButtonShape()
@@ -643,6 +647,57 @@ public class GameView extends Application {
         RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.greenStops);
         mainScene.setFill(gradient);
     }
+
+    void setTopGlow(UnoCard card)
+    {
+        Color color = Color.WHITE;
+        switch (card.getColor())
+        {
+            case GREEN: color= Color.LIGHTGREEN;
+            break;
+            case RED: color= Color.RED;
+                break;
+            case YELLOW: color= Color.YELLOW;
+                break;
+            case BLUE: color= Color.BLUE;
+                break;
+            case BLACK: color= Color.BLACK;
+                break;
+        }
+        DropShadow shadow=new DropShadow(10,color);
+
+        this.emptyCards[0].setEffect(shadow);
+        this.updateGlowSize();
+    }
+
+    void setTopGlow(UnoCard.UNO_COLOR col)
+    {
+        Color color = Color.WHITE;
+        switch (col)
+        {
+            case GREEN: color= Color.LIGHTGREEN;
+                break;
+            case RED: color= Color.RED;
+                break;
+            case YELLOW: color= Color.YELLOW;
+                break;
+            case BLUE: color= Color.BLUE;
+                break;
+            case BLACK: color= Color.BLACK;
+                break;
+        }
+        DropShadow shadow=new DropShadow(10,color);
+
+        this.emptyCards[0].setEffect(shadow);
+        this.updateGlowSize();
+    }
+
+    private void updateGlowSize() {
+        DropShadow shadow= (DropShadow) this.emptyCards[0].getEffect();
+        shadow.setRadius(this.cardWidth/5);
+        this.emptyCards[0].setEffect(shadow);
+    }
+
 
     List<String> getNick()
     {
@@ -796,7 +851,7 @@ public class GameView extends Application {
         int index = this.cardsInHand.indexOf(card);
 
         UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
-        if(this.CanBePlayed(unoCard))
+        if(this.CanBePlayed(unoCard)  && this.isYourTurn)
         {
             this.guiController.clientApp.playCard(index+1,unoCard,false);
             double duration=250;
@@ -822,7 +877,7 @@ public class GameView extends Application {
                         public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
                             if(newValue==Animation.Status.STOPPED)
                                 root.getChildren().remove(tmpCard);
-                                 setCardOnTable(card);
+                            setCardOnTable( guiController.clientApp.getCardOntop());
                         }
                     }
             );
@@ -841,10 +896,20 @@ public class GameView extends Application {
             TranslateTransition transition= new TranslateTransition();
             transition.setDuration(Duration.millis(duration));
             transition.setNode(this.cardsInHand.get(index));
-            transition.setByY(cardWidth/3);
+            transition.setByY(-cardWidth/3);
             transition.setAutoReverse(true);
             transition.setCycleCount(2);
             transition.play();
+
+            transition.statusProperty().addListener(
+                    new ChangeListener<Animation.Status>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                            if(newValue==Animation.Status.STOPPED)
+                                updateCardsInHandScale();
+                        }
+                    }
+            );
 
 
         }
@@ -935,12 +1000,10 @@ public class GameView extends Application {
     void setCardOnTable(UnoCard card)
     {
         this.emptyCards[0].setImage(this.cardImages[this.getIndexOfmage(card)]);
+        this.setTopGlow(card);
     }
 
-    void setCardOnTable(ImageView card)
-    {
-        this.emptyCards[0].setImage(card.getImage());
-    }
+
 
     void giveCardToOpponent(int nbOfOpponent)
     {
@@ -961,8 +1024,8 @@ public class GameView extends Application {
 
                             TranslateTransition translateTransition = new TranslateTransition();
                             translateTransition.setNode(emptyCard);
-                            translateTransition.setToY(emptyCards[nbOfOpponent ].getBoundsInParent().getMinY());
-                            translateTransition.setToX(emptyCards[nbOfOpponent ].getBoundsInParent().getMinX());
+                            translateTransition.setToY(emptyCards[nbOfOpponent +2].getBoundsInParent().getMinY());
+                            translateTransition.setToX(emptyCards[nbOfOpponent +2].getBoundsInParent().getMinX());
                             translateTransition.setDuration(Duration.millis(duration));
 
                             translateTransition.statusProperty().addListener(
@@ -976,9 +1039,9 @@ public class GameView extends Application {
                             );
 
                             translateTransition.play();
-                            amtOfOpponetsCards[nbOfOpponent-2]++;
+                            amtOfOpponetsCards[nbOfOpponent]++;
 
-                            //System.out.println("Amount of cards: :\n"+amtOfOpponetsCards[0]);
+                            System.out.println("Amount of cards " + nbOfOpponent + " : :\n"+amtOfOpponetsCards[nbOfOpponent]);
                             updateAmtOfCards();
 
                         } catch (ArrayIndexOutOfBoundsException e) {
@@ -1172,7 +1235,7 @@ public class GameView extends Application {
                             );
 try {
 
-    amtOfOpponetsCards[nbOfOppoonent - 2]--;
+    amtOfOpponetsCards[nbOfOppoonent-1]--;
 }
 catch (ArrayIndexOutOfBoundsException e)
 {
@@ -1199,6 +1262,37 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
 
+    }
+
+
+    void setTurnGlow(int index)
+    {
+        int i;
+        for(i=0;i<this.textBox.length;i++)
+        {
+            this.textBox[i].setEffect(null);
+        }
+        DropShadow dropShadow = new DropShadow(cardWidth/3,Color.WHITE);
+        this.textBox[index].setEffect(dropShadow);
+
+    }
+
+
+    void setTurn(String nick)
+    {
+        int index=0;
+
+        for(index=0;index<this.nickText.length;index++)
+        {
+            if(this.nickText[index].getText().equals(nick))
+                break;
+        }
+        if(index==0)
+            this.isYourTurn=true;
+        else
+            this.isYourTurn=false;
+
+        this.setTurnGlow(index);
     }
 
 

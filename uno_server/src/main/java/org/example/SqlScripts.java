@@ -260,7 +260,7 @@ public class SqlScripts {
                         "CURSOR STACK_CUR IS "+
                         "SELECT * FROM active_card_places "+
                         "WHERE PLACE_TYPE='STACK' "+
-                        "ORDER BY active_card_places.POSITION DESC; "+
+                        "ORDER BY active_card_places.POSITION ; "+
                         "iterator number(6):=1; "+
                         "BEGIN "+
                         "FOR card IN STACK_CUR "+
@@ -276,7 +276,7 @@ public class SqlScripts {
                         "CURSOR hand_cur IS "+
                         "SELECT * FROM active_card_places "+
                         "WHERE Nick=nick_var "+
-                        "ORDER BY active_card_places.POSITION DESC; "+
+                        "ORDER BY active_card_places.POSITION ; "+
                         "iterator number(6):=1; "+
                         "BEGIN "+
                         "FOR card IN hand_cur "+
@@ -460,9 +460,10 @@ public class SqlScripts {
                         "SET "+
                         "PLACE_TYPE='HAND', "+
                         "NICK=nick_var, "+
-                        "POSITION=LAST_NUM+1 "+
+                        "POSITION=-1 "+
                         "WHERE active_card_places.CARDS_ID=card.CARDS_ID; "+
                         "CLOSE STACK_CUR; "+
+                        "REORDER_HAND(nick_var); "+
                         "END; "+
                         "",
                 "CREATE OR REPLACE PROCEDURE RESHUFFLE_STACK  "+

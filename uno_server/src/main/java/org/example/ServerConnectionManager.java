@@ -105,7 +105,7 @@ public class ServerConnectionManager {
                 this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) + " - " + num +" = " + (this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num) + "\n");
 
 
-        this.serverApp.dataBaseMangaer.playCard(playerData.getNick(), this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num );
+        this.serverApp.dataBaseMangaer.playCard(playerData.getNick(), this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num +1);
 
         if(unoCard.getType()== UnoCard.UNO_TYPE.REVERSE)
         {

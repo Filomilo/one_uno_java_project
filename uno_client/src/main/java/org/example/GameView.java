@@ -7,6 +7,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -60,6 +61,8 @@ public class GameView extends Application {
 
     Image cardImages[]= new Image[56];
 
+
+    final Object colorChoiceBlock=new Object();
 
 
     ImageView[] emptyCards ;
@@ -842,80 +845,89 @@ public class GameView extends Application {
 
     void onCardClick(ImageView card)
     {
+
+
         this.playCard(card);
 
        // System.out.println("Click");
     }
 
     private void playCard(ImageView card) {
-        int index = this.cardsInHand.indexOf(card);
+        if(!isChoosingColor) {
+            int index = this.cardsInHand.indexOf(card);
 
-        UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
-        if(this.CanBePlayed(unoCard)  && this.isYourTurn)
-        {
-            this.guiController.clientApp.playCard(index+1,unoCard,false);
-            double duration=250;
-            ImageView tmpCard= new ImageView(card.getImage());
-            tmpCard.setPreserveRatio(true);
-            tmpCard.setFitWidth(this.cardWidth);
-            tmpCard.setTranslateX(card.getTranslateX());
-            tmpCard.setTranslateY(card.getTranslateY());
+            UnoCard unoCard = this.guiController.clientApp.cardsInHand.get(index);
+            if (this.CanBePlayed(unoCard) && this.isYourTurn) {
+                if (unoCard.getColor() == UnoCard.UNO_COLOR.BLACK)
+                    unoCard.setColor(this.getChoiceOfColor());
 
-            TranslateTransition transition= new TranslateTransition();
-            transition.setDuration(Duration.millis(duration));
-            transition.setNode(tmpCard);
-            transition.setToX(this.emptyCards[0].getX());
-            transition.setToY(this.emptyCards[0].getY());
-            transition.play();
+                this.waitForColorChoice();
 
-            this.root.getChildren().add(tmpCard);
+                this.guiController.clientApp.playCard(index + 1, unoCard, false);
+                double duration = 250;
+                ImageView tmpCard = new ImageView(card.getImage());
+                tmpCard.setPreserveRatio(true);
+                tmpCard.setFitWidth(this.cardWidth);
+                tmpCard.setTranslateX(card.getTranslateX());
+                tmpCard.setTranslateY(card.getTranslateY());
+
+                TranslateTransition transition = new TranslateTransition();
+                transition.setDuration(Duration.millis(duration));
+                transition.setNode(tmpCard);
+                transition.setToX(this.emptyCards[0].getX());
+                transition.setToY(this.emptyCards[0].getY());
+                transition.play();
+
+                this.root.getChildren().add(tmpCard);
 
 
-            transition.statusProperty().addListener(
-                    new ChangeListener<Animation.Status>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                            if(newValue==Animation.Status.STOPPED)
-                                root.getChildren().remove(tmpCard);
-                            setCardOnTable( guiController.clientApp.getCardOntop());
+                transition.statusProperty().addListener(
+                        new ChangeListener<Animation.Status>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                if (newValue == Animation.Status.STOPPED)
+                                    root.getChildren().remove(tmpCard);
+                                setCardOnTable(guiController.clientApp.getCardOntop());
+                            }
                         }
-                    }
-            );
+                );
 
 
-            this.cardsInHand.remove(card);
+                this.cardsInHand.remove(card);
 
 
-            this.root.getChildren().remove(card);
-            this.updateCardsInHandScale();
+                this.root.getChildren().remove(card);
+                this.updateCardsInHandScale();
+
+
+            } else {
+                double duration = 50;
+                TranslateTransition transition = new TranslateTransition();
+                transition.setDuration(Duration.millis(duration));
+                transition.setNode(this.cardsInHand.get(index));
+                transition.setByY(-cardWidth / 3);
+                transition.setAutoReverse(true);
+                transition.setCycleCount(2);
+                transition.play();
+
+                transition.statusProperty().addListener(
+                        new ChangeListener<Animation.Status>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                if (newValue == Animation.Status.STOPPED)
+                                    updateCardsInHandScale();
+                            }
+                        }
+                );
+
+
+            }
+
 
         }
-        else
-        {
-            double duration=50;
-            TranslateTransition transition= new TranslateTransition();
-            transition.setDuration(Duration.millis(duration));
-            transition.setNode(this.cardsInHand.get(index));
-            transition.setByY(-cardWidth/3);
-            transition.setAutoReverse(true);
-            transition.setCycleCount(2);
-            transition.play();
+    }
 
-            transition.statusProperty().addListener(
-                    new ChangeListener<Animation.Status>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                            if(newValue==Animation.Status.STOPPED)
-                                updateCardsInHandScale();
-                        }
-                    }
-            );
-
-
-        }
-
-
-
+    private void waitForColorChoice() {
     }
 
     private boolean CanBePlayed(UnoCard card) {
@@ -955,8 +967,36 @@ public class GameView extends Application {
        // setOpponentsHand(2,true);
         //   this.giveCardToOpponent(3);
       //  System.out.println("click");
-        this.showChoiceColor();
+
      //   this.playCardFromOppoent(5, new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.GREEN,0));
+    }
+
+    UnoCard.UNO_COLOR getChoiceOfColor()
+    {
+        isChoosingColor = true;
+        synchronized (colorChoiceBlock) {
+
+            this.showChoiceColor();
+            UnoCard.UNO_COLOR col = UnoCard.UNO_COLOR.BLACK;
+            switch (this.clikcedPanel) {
+                case 1:
+                    col = UnoCard.UNO_COLOR.BLUE;
+                    break;
+                case 2:
+                    col = UnoCard.UNO_COLOR.RED;
+                    break;
+                case 3:
+                    col = UnoCard.UNO_COLOR.YELLOW;
+                    break;
+                case 4:
+                    col = UnoCard.UNO_COLOR.GREEN;
+                    break;
+            }
+            isChoosingColor = false;
+            this.colorChoiceBlock.notify();
+            return col;
+        }
+
     }
 
     void setStackStable(boolean isFilled)
@@ -1079,7 +1119,7 @@ public class GameView extends Application {
     int clikcedPanel=0;
     int showChoiceColor()
     {
-        this.isChoosingColor=true;
+
 
         ImageView blue = new ImageView(this.colorChoicePanel[0]);
         ImageView green = new ImageView(this.colorChoicePanel[1]);

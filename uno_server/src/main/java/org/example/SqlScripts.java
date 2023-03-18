@@ -1,3 +1,5 @@
+///todo: napraiwc blad przekorczeonej ilosci kursow
+
 package org.example;
 
 public class SqlScripts {

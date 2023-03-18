@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -190,7 +191,7 @@ System.out.println("giving cards");
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
 
-
+        this.createGame();
         this.sendPlayerOrder();
         connectionManger.sendToAll(messageFormat);
         try {
@@ -199,7 +200,7 @@ System.out.println("giving cards");
             throw new RuntimeException(e);
         }
 
-        this.createGame();
+
         try {
             this.dealCards();
         } catch (InterruptedException e) {
@@ -246,16 +247,16 @@ System.out.println("giving cards");
     void sendPlayerOrder() throws IOException, ClassNotFoundException {
         for (PlayerData player : this.nicks) {
             List<String> nicks = this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + this.nicks);
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + nicks);
             MessageFormat messageFormat = new MessageFormat();
             messageFormat.type = MessageFormat.messegeTypes.ORDER;
-            messageFormat.text = new String[this.nicks.size()];
+            messageFormat.text = new String[nicks.size()];
 
-            for(int i=0;i<this.nicks.size();i++)
+            for(int i=0;i<nicks.size();i++)
             {
-                messageFormat.text[i]=this.nicks.get(i).getNick();
+                messageFormat.text[i]=nicks.get(i);
             }
-
+            System.out.println(nicks);
             this.connectionManger.sendMessage(player, messageFormat);
 
         }

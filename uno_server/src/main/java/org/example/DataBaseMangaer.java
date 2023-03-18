@@ -391,6 +391,7 @@ public class DataBaseMangaer {
             while (resultSet.next())
             {
                 players.add(resultSet.getString("NICK"));
+                System.out.println("******************" + resultSet.getString("NICK"));
             }
         }
         catch (SQLSyntaxErrorException e)

@@ -798,13 +798,7 @@ public class GameView extends Application {
         UnoCard unoCard= this.guiController.clientApp.cardsInHand.get(index);
         if(this.CanBePlayed(unoCard))
         {
-
-
             this.guiController.clientApp.playCard(index+1,unoCard,false);
-
-
-
-
             double duration=250;
             ImageView tmpCard= new ImageView(card.getImage());
             tmpCard.setPreserveRatio(true);
@@ -841,7 +835,19 @@ public class GameView extends Application {
             this.updateCardsInHandScale();
 
         }
+        else
+        {
+            double duration=50;
+            TranslateTransition transition= new TranslateTransition();
+            transition.setDuration(Duration.millis(duration));
+            transition.setNode(this.cardsInHand.get(index));
+            transition.setByY(cardWidth/3);
+            transition.setAutoReverse(true);
+            transition.setCycleCount(2);
+            transition.play();
 
+
+        }
 
 
 

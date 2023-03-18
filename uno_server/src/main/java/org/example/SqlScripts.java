@@ -66,18 +66,18 @@ public class SqlScripts {
                     " SELECT NICK, turn- (SELECT MAX(TURN) turn FROM PLAYER_ORDER "+
                     "    WHERE TURN>( "+
                     "        SELECT TURN FROM PLAYER_ORDER "+
-                    "        WHERE nick= ? "+
+                    "        WHERE nick=? "+
                     "        )) turn FROM PLAYER_ORDER "+
                     "    WHERE TURN>( "+
                     "        SELECT TURN FROM PLAYER_ORDER "+
-                    "        WHERE nick= ? "+
+                    "        WHERE nick=? "+
                     "        ) "+
                     "    ) "+
                     "UNION ( "+
                     "    SELECt NICK, turn FROM PLAYER_ORDER "+
                     "    WHERE TURN<( "+
                     "        SELECT TURN FROM PLAYER_ORDER "+
-                    "        WHERE nick= ? "+
+                    "        WHERE nick=? "+
                     "    ) "+
                     "     "+
                     ") "+

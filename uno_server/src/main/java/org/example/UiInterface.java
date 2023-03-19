@@ -50,7 +50,7 @@ public class UiInterface {
             this.serverApp.dataBaseMangaer.setDataBasePort(input);
 
             System.out.println("What is name of your Data base");
-            input="xe";
+            input="orcl";
             //input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseName(input);
 
@@ -88,7 +88,7 @@ public class UiInterface {
     boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
-        boolean res=false;//this.getYesNo();
+        boolean res=true;//this.getYesNo();
 
         if(res)
         {

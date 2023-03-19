@@ -113,13 +113,17 @@ public class SqlScripts {
                     ""
     };
     static String[] DropTablecSripts={
+            "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT cards_nick_fk" ,
+                    "ALTER TABLE GAMES DROP CONSTRAINT games_nick_fk" ,
+            "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT card_id_fk" ,
             "DROP TABLE ACTIVE_CARD_PLACES "+
                 "",
                 "DROP TABLE CARDS "+
                         "",
-                "DROP TABLE GAMES "+
+
+                "DROP TABLE PLAYERS "+
                         "",
-                "DROP TABLE PLAYERS "
+                "DROP TABLE  GAMES"
     };
 
     static String[] DeleteAllScripts=

@@ -143,9 +143,9 @@ public class ClientApp {
 
     }
 
-    boolean vaidateCard(UnoCard unoCard, boolean changedColor)
+    boolean vaidateCard(UnoCard unoCard)
     {
-        if(changedColor)
+        if(unoCard.getType()== UnoCard.UNO_TYPE.COLOR || unoCard.getType()== UnoCard.UNO_TYPE.PLUS4)
             return true;
 
         if(unoCard.getType()!= UnoCard.UNO_TYPE.REGULAR)
@@ -173,9 +173,9 @@ public class ClientApp {
 
         return false;
     }
-    void playCard(int numbCard, UnoCard card, boolean changedColor)
+    void playCard(int numbCard, UnoCard card )
     {
-        if(!vaidateCard(this.cardsInHand.get(numbCard-1),changedColor) )
+        if(!vaidateCard(this.cardsInHand.get(numbCard-1)) )
         {
             System.out.println("You cant play this card");
             System.out.println(card);

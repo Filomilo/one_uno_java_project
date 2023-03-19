@@ -70,13 +70,14 @@ public class DataBaseMangaer {
 
       this.dropSeq();
       System.out.println("droped seq");
-     this.dropTables();
-     this.createSeq();
+     this.dropTables(); this.createSeq();
       this.createTables();
         this.createProcedures();
         this.createFunctions();
       this.createViews();
        this.createBaseCards();
+
+
         System.out.println("fisned creat" );
     }
 

@@ -845,11 +845,28 @@ public class GameView extends Application {
 
     void onCardClick(ImageView card)
     {
+        Image playedImage=card.getImage();
+        int index=0;
+        for (Image image: this.cardImages
+             ) {
+            if(image==playedImage)
+                break;
+            index++;
+        }
 
-
-        this.playCard(card);
+        if(index>13*4-1)
+            this.playBlackCard(card);
+        else
+            this.playCard(card);
 
        // System.out.println("Click");
+    }
+
+    private void playBlackCard(ImageView card) {
+        if(!isYourTurn)
+            this.playCard(card);
+        else
+          this.showChoiceColor(card);
     }
 
     private void playCard(ImageView card) {
@@ -858,12 +875,14 @@ public class GameView extends Application {
 
             UnoCard unoCard = this.guiController.clientApp.cardsInHand.get(index);
             if (this.CanBePlayed(unoCard) && this.isYourTurn) {
-                if (unoCard.getColor() == UnoCard.UNO_COLOR.BLACK)
+               /* if (unoCard.getColor() == UnoCard.UNO_COLOR.BLACK)
                     unoCard.setColor(this.getChoiceOfColor());
 
                 this.waitForColorChoice();
 
-                this.guiController.clientApp.playCard(index + 1, unoCard, false);
+                */
+
+                this.guiController.clientApp.playCard(index + 1, unoCard);
                 double duration = 250;
                 ImageView tmpCard = new ImageView(card.getImage());
                 tmpCard.setPreserveRatio(true);
@@ -931,7 +950,7 @@ public class GameView extends Application {
     }
 
     private boolean CanBePlayed(UnoCard card) {
-       if(this.guiController.clientApp.vaidateCard(card,false))
+       if(this.guiController.clientApp.vaidateCard(card))
            return true;
            return false;
     }
@@ -971,12 +990,14 @@ public class GameView extends Application {
      //   this.playCardFromOppoent(5, new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.GREEN,0));
     }
 
+
+    /*
     UnoCard.UNO_COLOR getChoiceOfColor()
     {
         isChoosingColor = true;
         synchronized (colorChoiceBlock) {
 
-            this.showChoiceColor();
+            //this.showChoiceColor();
             UnoCard.UNO_COLOR col = UnoCard.UNO_COLOR.BLACK;
             switch (this.clikcedPanel) {
                 case 1:
@@ -998,6 +1019,8 @@ public class GameView extends Application {
         }
 
     }
+
+     */
 
     void setStackStable(boolean isFilled)
     {
@@ -1117,10 +1140,10 @@ public class GameView extends Application {
     Image colorChoicePanel[];
     List<ImageView> colorPanel= new ArrayList<ImageView>();
     int clikcedPanel=0;
-    int showChoiceColor()
+    int showChoiceColor(ImageView card)
     {
 
-
+        this.isChoosingColor=true;
         ImageView blue = new ImageView(this.colorChoicePanel[0]);
         ImageView green = new ImageView(this.colorChoicePanel[1]);
         ImageView red = new ImageView(this.colorChoicePanel[2]);
@@ -1165,7 +1188,7 @@ public class GameView extends Application {
                     new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
-                            onPanelClicked(panel);
+                            onPanelClicked(panel, card);
                         }
                     }
 
@@ -1226,7 +1249,7 @@ public class GameView extends Application {
         panel.setEffect(null);
     }
 
-    void onPanelClicked(ImageView panel)
+    void onPanelClicked(ImageView panel, ImageView card)
     {
         this.clikcedPanel=this.colorPanel.indexOf(panel);
 
@@ -1235,8 +1258,26 @@ public class GameView extends Application {
             this.root.getChildren().remove(this.colorPanel.get(i));
         }
         this.colorPanel.clear();
+
+
+        int index=this.cardsInHand.indexOf(card);
+
+        UnoCard playedCard=this.guiController.clientApp.cardsInHand.get(index);
+        switch (this.clikcedPanel)
+        {
+            case 0: playedCard.setColor(UnoCard.UNO_COLOR.BLUE);
+                break;
+            case 1: playedCard.setColor(UnoCard.UNO_COLOR.GREEN);
+                break;
+            case 2: playedCard.setColor(UnoCard.UNO_COLOR.RED);
+                break;
+            case 3: playedCard.setColor(UnoCard.UNO_COLOR.YELLOW);
+                break;
+        }
         this.isChoosingColor=false;
-        System.out.println(this.clikcedPanel);
+        this.playCard(card);
+
+
     }
 
     void playCardFromOppoent(int nbOfOppoonent, UnoCard card)

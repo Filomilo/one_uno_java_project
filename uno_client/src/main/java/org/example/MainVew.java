@@ -329,7 +329,7 @@ public class MainVew extends Application {
                 }
         );
 
-
+        int i=0;
         for (Rectangle button: this.buttons
              ) {
             button.setOnMouseMoved(
@@ -341,6 +341,17 @@ public class MainVew extends Application {
                         }
                     }
             );
+            this.buttonTitles[i].setOnMouseMoved(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonMoved(button);
+                        }
+                    }
+            );
+
+
 
             button.setOnMouseExited(
 
@@ -353,6 +364,19 @@ public class MainVew extends Application {
 
             );
 
+            this.buttonTitles[i].setOnMouseExited(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonMovedOutside(button);
+                        }
+                    }
+
+            );
+
+
+
             button.setOnMousePressed(
 
                     new EventHandler<MouseEvent>() {
@@ -362,6 +386,16 @@ public class MainVew extends Application {
                         }
                     }
             );
+            this.buttonTitles[i].setOnMousePressed(
+
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            onButtonBasicClick(button);
+                        }
+                    }
+            );
+            i++;
 
 
         }

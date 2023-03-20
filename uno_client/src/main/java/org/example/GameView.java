@@ -928,16 +928,18 @@ public class GameView extends Application {
                 transition.setAutoReverse(true);
                 transition.setCycleCount(2);
                 transition.play();
-
+/*
                 transition.statusProperty().addListener(
                         new ChangeListener<Animation.Status>() {
                             @Override
                             public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
                                 if (newValue == Animation.Status.STOPPED)
-                                    updateCardsInHandScale();
+
                             }
                         }
                 );
+
+ */
 
 
             }

@@ -21,6 +21,7 @@ public class MessageFormat implements Serializable {
         PLAYCARD,
         TURN,
         REVERSE,
+        SHUFFLE,
 
     }
     messegeTypes type;

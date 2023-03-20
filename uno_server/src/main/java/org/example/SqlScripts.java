@@ -10,6 +10,7 @@ public class SqlScripts {
     static String MainStackViewScript=
             "SELECT * FROM stack_view";
 
+
     static String AddPlayerScript =
             "{call ADD_PLAYER(?)}";
 
@@ -43,6 +44,9 @@ public class SqlScripts {
             "{call CLEAR_GAME}";
 
 
+
+    static String GetCardAmtOnStack=
+            "{? = call GET_AMT_STACK}";
     static String GetPlayerCountScript=
     "{? = call GET_PLAYER_COUNT}";
 
@@ -248,7 +252,14 @@ public class SqlScripts {
                     "END IF; "+
                     "END lOOP; "+
                     "RETURN res; "+
-                    "END; "
+                    "END; ",
+            "CREATE OR REPLACE FUNCTION GET_AMT_STACK () RETURN NUMBER AS\n" +
+                    "val NUMBER (6);\n" +
+                    "BEGIN\n" +
+                    "SELECT count(*) INTO val FROM ACTIVE_CARD_PLACES\n" +
+                    "WHERE PLACE_TYPE='STACK';\n" +
+                    "RETURN val;\n" +
+                    "END;"
     };
 
 

@@ -212,6 +212,11 @@ public class DataBaseMangaer {
         return executeFunciton(SqlScripts.GetPlayerCountScript);
     }
 
+    int getNmOnStack()
+    {
+        return executeFunciton(SqlScripts.GetCardAmtOnStack);
+    }
+
     int getNumbOntheTable()
     {
         return executeFunciton(SqlScripts.GetNumberOnTableScript);

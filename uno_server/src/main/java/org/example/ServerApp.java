@@ -342,11 +342,33 @@ System.out.println("giving cards");
 
     private void drawCard(PlayerData playerData) {
         try {
+
+
+            // TODO: add check if stack is empty
+            if( this.dataBaseMangaer.getNmOnStack()==0)
+                this.reshuffleDeck();
+
+
+
             System.out.println("################################################"+this.dataBaseMangaer.selectMainStack());
             this.giveCard(this.dataBaseMangaer.selectMainStack().get(0),playerData );
             this.dataBaseMangaer.drawCard(playerData.getNick());
         } catch (IOException | ClassNotFoundException e) {
            e.printStackTrace();
+        }
+
+
+    }
+
+    private void reshuffleDeck() {
+        this.dataBaseMangaer.reshuffleDeck();
+
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.SHUFFLE;
+        try {
+            this.connectionManger.sendToAll(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
 

@@ -88,7 +88,7 @@ public class UiInterface {
     boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
-        boolean res=true;//this.getYesNo();
+        boolean res=false;//this.getYesNo();
 
         if(res)
         {

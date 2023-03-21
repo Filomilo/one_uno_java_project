@@ -69,7 +69,7 @@ public class GameView extends Application {
 
     Text nickText[];
     Rectangle textBox[];
-    int amtOfOpponetsCards[];
+    Integer amtOfOpponetsCards[];
 
     Text amtOfCardsText[];
 
@@ -173,7 +173,7 @@ public class GameView extends Application {
 
     void updateAmtOfCards()
     {
-        int amtOfCards[]= this.getAmtOfCards();
+        Integer amtOfCards[]= this.getAmtOfCards();
         for (int i = 0; i < this.amtOfCardsText.length; i++) {
             String txt = "x";
             txt += amtOfCards[i];
@@ -194,7 +194,7 @@ public class GameView extends Application {
             this.textBox=new Rectangle[this.getAmtOfOpponets()+1];
             this.nickText = new Text[this.getAmtOfOpponets() + 1];
             this.amtOfCardsText = new Text[this.getAmtOfOpponets()];
-            this.amtOfOpponetsCards = new int[this.getAmtOfOpponets()];
+            this.amtOfOpponetsCards = new Integer[this.getAmtOfOpponets()];
             this.nickText[0] = new Text(this.getPlayerNick());
             this.nickText[0].setX(0);
             this.nickText[0].setFill(Color.WHITE);
@@ -250,7 +250,7 @@ public class GameView extends Application {
 
 
             // amount of cards number
-            int[] amtOfCards = this.getAmtOfCards();
+            Integer[] amtOfCards = this.getAmtOfCards();
             for (int i = 0; i < this.amtOfCardsText.length; i++) {
                 String txt = "x";
                 txt += amtOfCards[i];
@@ -718,7 +718,7 @@ public class GameView extends Application {
         return this.guiController.clientApp.getNick();
     }
 
-    int[] getAmtOfCards()
+    Integer[] getAmtOfCards()
     {
         return this.amtOfOpponetsCards;
     }
@@ -1104,7 +1104,7 @@ public class GameView extends Application {
                             );
 
                             translateTransition.play();
-                            amtOfOpponetsCards[nbOfOpponent]++;
+                            amtOfOpponetsCards[nbOfOpponent]=amtOfOpponetsCards[nbOfOpponent]+1;
 
                             System.out.println("Amount of cards " + nbOfOpponent + " : :\n"+amtOfOpponetsCards[nbOfOpponent]);
                             updateAmtOfCards();
@@ -1318,7 +1318,7 @@ public class GameView extends Application {
                             );
 try {
 
-    amtOfOpponetsCards[nbOfOppoonent-1]--;
+    amtOfOpponetsCards[nbOfOppoonent-2]=amtOfOpponetsCards[nbOfOppoonent-2]-1;
 }
 catch (ArrayIndexOutOfBoundsException e)
 {

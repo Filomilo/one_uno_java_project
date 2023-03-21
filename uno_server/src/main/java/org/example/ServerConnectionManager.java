@@ -158,8 +158,20 @@ public class ServerConnectionManager {
         }
 
 
+        System.out.println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()"+this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick()));
+        if(this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick())==0)
+            this.procesFinished(playerData);
 
 
+
+
+
+
+    }
+
+    private void procesFinished(PlayerData playerData) {
+        System.out.println("FINSHED \n\n\n\n");
+        System.exit(1);
     }
 
     // this method is my client thread in order to proces te meessege they received

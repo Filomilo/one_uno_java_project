@@ -59,6 +59,10 @@ public class SqlScripts {
     static String ValidateHand=
             "{? = call VALIDATE_HAND(?)}";
 
+    static String GetAMtOfCardInHands=
+            "Select count(*) from Active_card_places " +
+                    "WHERE Active_card_places.NICK LIKE ?";
+
     static String SelectCardsFromHandScript=
             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
                     "WHERE ACTIVE_CARD_PLACES.NICK= ? AND "+

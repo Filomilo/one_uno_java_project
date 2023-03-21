@@ -185,6 +185,8 @@ public class ClientApp {
         this.cardsInHand.remove( numbCard-1);
 
         MessageFormat messageForma = new MessageFormat();
+
+
         messageForma.type= MessageFormat.messegeTypes.PLAYCARD;
         messageForma.number= new int[1];
         messageForma.number[0]=numbCard;

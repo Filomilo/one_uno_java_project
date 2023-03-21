@@ -344,7 +344,6 @@ System.out.println("giving cards");
         try {
 
 
-            // TODO: add check if stack is empty
             if( this.dataBaseMangaer.getNmOnStack()==0)
                 this.reshuffleDeck();
 

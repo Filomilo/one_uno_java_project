@@ -217,6 +217,12 @@ public class DataBaseMangaer {
         return executeFunciton(SqlScripts.GetCardAmtOnStack);
     }
 
+    int getAmtInHand(String nick)
+    {
+        String[] arr={nick};
+        return executeSelectInt(SqlScripts.GetAMtOfCardInHands,arr );
+    }
+
     int getNumbOntheTable()
     {
         return executeFunciton(SqlScripts.GetNumberOnTableScript);
@@ -394,6 +400,40 @@ public class DataBaseMangaer {
         }
     }
 
+
+    private int executeSelectInt(String sqlCode, String[] var)
+    {
+        synchronized (this.semaphore) {
+            int res=-1;
+            try {
+
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                int i = 1;
+                for (String variable : var
+                ) {
+                    statement.setString(i, variable);
+                    i++;
+                }
+                ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
+                res=resultSet.getInt(1);
+            } catch (SQLSyntaxErrorException e) {
+                System.out.println("sqlcode: " + sqlCode);
+                e.printStackTrace();
+                System.exit(-1
+                );
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
+            }
+            if(res==-1)
+            {
+                System.out.println("ERRO GETING INT");
+                System.exit(-1);
+            }
+            return res;
+        }
+    }
 
 
     private List<String> executeSelectPlayers(String sqlCode, String[] var)

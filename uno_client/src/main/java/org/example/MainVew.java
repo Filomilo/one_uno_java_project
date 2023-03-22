@@ -410,7 +410,26 @@ public class MainVew extends Application {
                 }
         );
 
+        this.buttonTitles[0].setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonConnectClick();
+                        onButtonMoved(buttons[0]);
+                    }
+                }
+        );
+
         this.buttons[1].setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonReadyClick();
+                        onButtonMoved(buttons[1]);
+                    }
+                }
+        );
+        this.buttonTitles[1].setOnMousePressed(
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -430,6 +449,15 @@ public class MainVew extends Application {
                     }
                 }
         );
+        this.buttonTitles[2].setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRankingClick();
+                        onButtonMoved(buttons[2]);
+                    }
+                }
+        );
 
         this.buttons[3].setOnMouseReleased(
                 new EventHandler<MouseEvent>() {
@@ -440,7 +468,15 @@ public class MainVew extends Application {
                     }
                 }
         );
-
+        this.buttonTitles[3].setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonExitClick();
+                        onButtonMoved(buttons[3]);
+                    }
+                }
+        );
 
 
 

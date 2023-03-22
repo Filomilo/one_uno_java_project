@@ -10,6 +10,9 @@ public class SqlScripts {
     static String MainStackViewScript=
             "SELECT * FROM stack_view";
 
+    static String getResult=
+            "SELECT * FROM RESULTS";
+
 
     static String AddPlayerScript =
             "{call ADD_PLAYER(?)}";
@@ -62,6 +65,11 @@ public class SqlScripts {
     static String GetAMtOfCardInHands=
             "Select count(*) from Active_card_places " +
                     "WHERE Active_card_places.NICK LIKE ?";
+
+    static String GetAmtOfActivePlayers="SELECT count(*)  FROM GAMES " +
+            "WHERE GAMES_ID = GET_ACTIVE_GAME_ID " +
+            "AND RANK=0 " +
+            "ORDER BY NICK";
 
     static String SelectCardsFromHandScript=
             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
@@ -118,7 +126,12 @@ public class SqlScripts {
                     "NICK VARCHAR(30) CONSTRAINT cards_nick_fk REFERENCES PLAYERS(NICK), "+
                     "POSITION INTEGER "+
                     ") "+
-                    ""
+                    "",
+            "CREATE OR REPLACE VIEW RESULTS AS " +
+                    "SELECT * FROM GAMES " +
+                    "WHERE GAMES_ID = GET_ACTIVE_GAME_ID " +
+                    "AND RANK != 0 " +
+                    "ORDER BY RANK"
     };
     static String[] DropTablecSripts={
             "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT cards_nick_fk" ,
@@ -257,13 +270,13 @@ public class SqlScripts {
                     "END lOOP; "+
                     "RETURN res; "+
                     "END; ",
-            "CREATE OR REPLACE FUNCTION GET_AMT_STACK () RETURN NUMBER AS\n" +
-                    "val NUMBER (6);\n" +
-                    "BEGIN\n" +
-                    "SELECT count(*) INTO val FROM ACTIVE_CARD_PLACES\n" +
-                    "WHERE PLACE_TYPE='STACK';\n" +
-                    "RETURN val;\n" +
-                    "END;"
+            "CREATE OR REPLACE FUNCTION GET_AMT_STACK RETURN NUMBER AS " +
+                    "val NUMBER (6); " +
+                    "BEGIN " +
+                    "SELECT count(*) INTO val FROM ACTIVE_CARD_PLACES " +
+                    "WHERE PLACE_TYPE='STACK'; " +
+                    "RETURN val; " +
+                    "END; "
     };
 
 
@@ -432,7 +445,7 @@ public class SqlScripts {
                         "OPEN ACTIVE_CARDS_CUR; "+
                         "FOR person in ACTIVE_PLAYERS "+
                         "LOOP "+
-                        "FOR iterator in 1..7 "+
+                        "FOR iterator in 1..3 "+
                         "LOOP "+
                         "FETCH ACTIVE_CARDS_CUR INTO card; "+
                         "UPDATE active_card_places  "+

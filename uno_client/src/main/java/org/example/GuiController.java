@@ -10,12 +10,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.ResultSet;
 
 public class
 GuiController extends Application {
 
     GameView gameView;
     MainVew mainVew;
+    ResultView resultView;
 
     Scene mainScene;
 
@@ -189,4 +192,28 @@ GuiController extends Application {
     public void giveCardToOpponent(int nmbOFOppoennt) {
         this.gameView.giveCardToOpponent(nmbOFOppoennt);
     }
+
+    public void switchSceneToResult()
+    {
+        GuiController guiController=  this;
+        System.out.println();
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        resultView = new ResultView(guiController);
+                        try {
+                            resultView.iniit(primaryStage);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        primaryStage.setScene(resultView.mainScene);
+                    }
+                }
+
+
+        );
+
+    }
+
 }

@@ -10,6 +10,8 @@ public class PlayerData implements Comparable<PlayerData> {
 
     boolean confirmedMesseage=false;
 
+    boolean inGame=true;
+
     Socket socket;
     ObjectOutputStream objectOutputStream;
 
@@ -30,8 +32,13 @@ public class PlayerData implements Comparable<PlayerData> {
     }
 
 
+    public boolean isInGame() {
+        return inGame;
+    }
 
-
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
+    }
 
     public String getNick() {
         return nick;
@@ -88,6 +95,9 @@ public class PlayerData implements Comparable<PlayerData> {
                 ", isReady=" + isReady +
                 '}';
     }
+
+
+
 
 
     public boolean isConfirmedMesseage() {

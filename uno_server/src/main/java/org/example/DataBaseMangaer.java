@@ -223,6 +223,17 @@ public class DataBaseMangaer {
         return executeSelectInt(SqlScripts.GetAMtOfCardInHands,arr );
     }
 
+    int getAmtActivePlayers()
+    {
+        String[] arr=new String[0];
+        return executeSelectInt(SqlScripts.GetAmtOfActivePlayers, arr);
+    }
+    List<String> getResults()
+    {
+        String[] arr= new String[0];
+        return executeSelectPlayers(SqlScripts.getResult, arr);
+    }
+
     int getNumbOntheTable()
     {
         return executeFunciton(SqlScripts.GetNumberOnTableScript);

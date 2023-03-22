@@ -244,6 +244,13 @@ this.waitTillconfirmed();
 
             case PLAYCARD:
                 clientApp.procesPlaycard(messageFormat.text[0], messageFormat.unoCard);
+                break;
+                case FINAL:
+                    clientApp.managePlayerFinale(messageFormat.text[0]);
+                    break;
+            case ENDGAME:
+                this.clientApp.finishGame(messageFormat.text);
+
 
         }
       //  System.out.println(this.clientApp);

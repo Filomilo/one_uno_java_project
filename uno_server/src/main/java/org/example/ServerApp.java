@@ -164,7 +164,7 @@ System.out.println("giving cards");
             System.out.println(player.getNick());
             List<UnoCard> unoCardList= this.dataBaseMangaer.selectFromHand(player.getNick());
             for(UnoCard card: unoCardList) {
-                TimeUnit.MILLISECONDS.sleep(20);
+                TimeUnit.MILLISECONDS.sleep(200);
               this.giveCard(card, player);
             }
 
@@ -236,14 +236,15 @@ System.out.println("giving cards");
     void setTurn() throws IOException {
         System.out.println("TURA: " + this.turn);
         PlayerData player= this.nicks.get(this.turn);
-        validateHand(player);
-        MessageFormat messageFormat = new MessageFormat();
-        messageFormat.type= MessageFormat.messegeTypes.TURN;
-        messageFormat.text= new String[1];
-        messageFormat.text[0]=player.nick;
-        this.connectionManger.sendToAll(messageFormat);
+            validateHand(player);
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type = MessageFormat.messegeTypes.TURN;
+            messageFormat.text = new String[1];
+            messageFormat.text[0] = player.nick;
+            this.connectionManger.sendToAll(messageFormat);
 
-
+            /////////////////////////////temporary
+        //this.connectionManger.finishGame();
     }
 
     void sendPlayerOrder() throws IOException, ClassNotFoundException {

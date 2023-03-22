@@ -107,28 +107,41 @@ public class ServerConnectionManager {
 
         this.serverApp.dataBaseMangaer.playCard(playerData.getNick(), this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num +1);
 
+        System.out.println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()"+this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick()));
+        if(this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick())==0)
+            this.procesFinished(playerData);
+
+
+        if(this.serverApp.dataBaseMangaer.getAmtActivePlayers()==1)
+        {
+            this.finishGame();
+        }
+
+
+
+
         if(unoCard.getType()== UnoCard.UNO_TYPE.REVERSE)
         {
             System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ REVERSE");
             this.serverApp.clockOrder=!this.serverApp.clockOrder;
         }
 
-        if(this.serverApp.clockOrder)
-            this.serverApp.incrTurn();
-        else
-            this.serverApp.decrTurn();
 
-        if (unoCard.getType()== UnoCard.UNO_TYPE.BLOCK)
-                if(this.serverApp.clockOrder)
-                    this.serverApp.incrTurn();
-                else
-                    this.serverApp.decrTurn();
 
-        MessageFormat messageFormat = new MessageFormat();
-        messageFormat.type= MessageFormat.messegeTypes.PLAYCARD;
-        messageFormat.text= new String[1];
-        messageFormat.text[0]= playerData.getNick();
-        messageFormat.unoCard = unoCard;
+
+
+        this.setupNextTurn();
+
+            if (unoCard.getType() == UnoCard.UNO_TYPE.BLOCK)
+                this.setupNextTurn();
+
+
+
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type = MessageFormat.messegeTypes.PLAYCARD;
+            messageFormat.text = new String[1];
+            messageFormat.text[0] = playerData.getNick();
+            messageFormat.unoCard = unoCard;
 
 
 
@@ -157,21 +170,58 @@ public class ServerConnectionManager {
             e.printStackTrace();
         }
 
+    }
 
-        System.out.println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()"+this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick()));
-        if(this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick())==0)
-            this.procesFinished(playerData);
+    public void finishGame() {
+        for (PlayerData player: this.serverApp.nicks
+             ) {
+            if(player.isInGame())
+            {
+                serverApp.dataBaseMangaer.setRank(player.getNick());
+            }
+        }
+        List<String> results= serverApp.dataBaseMangaer.getResults();
 
 
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.ENDGAME;
+        messageFormat.text = new String[results.size()];
+        int i=0;
+        for (String nick: results
+             ) {
+            messageFormat.text[i]=nick;
+            i++;
+        }
 
 
+        try {
+            this.sendToAll(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
 
-    private void procesFinished(PlayerData playerData) {
-        System.out.println("FINSHED \n\n\n\n");
-        System.exit(1);
+    private void setupNextTurn() {
+        if (this.serverApp.clockOrder)
+        this.serverApp.incrTurn();
+    else
+        this.serverApp.decrTurn();
+    if(!this.serverApp.nicks.get(this.serverApp.turn).isInGame())
+        this.setupNextTurn();
+    }
+
+
+    private void procesFinished(PlayerData playerData) throws IOException {
+        this.serverApp.dataBaseMangaer.setRank(playerData.getNick());
+        playerData.setInGame(false);
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.FINAL;
+        messageFormat.text=new String[1];
+        messageFormat.text[0]= playerData.getNick();
+        this.sendToAll(messageFormat);
+
     }
 
     // this method is my client thread in order to proces te meessege they received

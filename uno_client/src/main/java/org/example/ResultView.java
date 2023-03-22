@@ -51,18 +51,18 @@ public class ResultView extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
-            this.iniit();
+            this.iniit(primaryStage);
 
 
 
 
-            this.updateBackground();
+
             primaryStage.setScene(mainScene);
              //primaryStage.setFullScreen(true);
 
 
 
-            this.addListiners(primaryStage);
+
 
 
             primaryStage.show();
@@ -74,7 +74,7 @@ public class ResultView extends Application {
     }
 
 
-    void iniit() throws IOException {
+    void iniit(Stage primaryStage) throws IOException {
 
         root = new Group();
 
@@ -91,6 +91,8 @@ public class ResultView extends Application {
 
 
         this.updateOnSize();
+        this.addListiners(primaryStage);
+        this.updateBackground();
     }
 
     private void setupRanking() {
@@ -124,7 +126,8 @@ public class ResultView extends Application {
 
 
 
-    public ResultView() {
+    public ResultView(GuiController guiController) {
+        this.guiController=guiController;
     }
 
     void addListiners(Stage primaryStage) {
@@ -270,16 +273,8 @@ public class ResultView extends Application {
 
     List<String> getResults()
     {
-        List<String> results= new ArrayList<String>();
-        results.add("111");
-        results.add("2222");
-        results.add("333");
-        results.add("444444");
-        results.add("555");
-        //results.add("6666");
-       // results.add("7777");
-       // results.add("8888888");
-      //  results.add("9999");
+        List<String> results= this.guiController.clientApp.getResults();
+
         return results;
     }
 

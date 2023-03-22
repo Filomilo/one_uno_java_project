@@ -1318,7 +1318,7 @@ public class GameView extends Application {
                             );
 try {
 
-    amtOfOpponetsCards[nbOfOppoonent-2]=amtOfOpponetsCards[nbOfOppoonent-2]-1;
+    amtOfOpponetsCards[nbOfOppoonent]=amtOfOpponetsCards[nbOfOppoonent]-1;
 }
 catch (ArrayIndexOutOfBoundsException e)
 {
@@ -1379,6 +1379,8 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-
+    public void setPlayerEmptyPile(int indexPLayer) {
+    this.setEmpty(this.emptyCards[2+indexPLayer]);
+    }
 }
 

@@ -22,6 +22,8 @@ public class MessageFormat implements Serializable {
         TURN,
         REVERSE,
         SHUFFLE,
+        FINAL,
+        ENDGAME,
 
     }
     messegeTypes type;

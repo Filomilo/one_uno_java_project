@@ -4,6 +4,8 @@ import sun.misc.Lock;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +18,7 @@ public class ClientApp {
     boolean isConnected=false;
     boolean isReady;
 
-
+    List<String>lastReults;
 
     boolean isGameStarted= false;
     ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
@@ -251,7 +253,7 @@ public class ClientApp {
         int index=0;
         for (PlayerData player: this.playersInORder
              ) {
-            if(player.getNick()==nick)
+            if(player.getNick().equals(nick))
                 break;
             index++;
         }
@@ -288,6 +290,32 @@ public class ClientApp {
         }
 
         this.guiController.giveCardToOpponent(i);
+    }
+
+    public void managePlayerFinale(String s) {
+     int indexOfPlayer=0;
+        for (PlayerData player: this.playersInORder
+             ) {
+            if(player.getNick().equals(s))
+                break;
+            indexOfPlayer++;
+        }
+        if(!s.equals(this.nick))
+        this.guiController.gameView.setPlayerEmptyPile(indexOfPlayer);
+
+
+    }
+
+    public void finishGame(String arrayResult[]) {
+
+
+        this.lastReults= new ArrayList<String>();
+        Collections.addAll(lastReults, arrayResult);
+        this.guiController.switchSceneToResult();
+    }
+
+    public List<String> getResults() {
+        return this.lastReults;
     }
 }
 

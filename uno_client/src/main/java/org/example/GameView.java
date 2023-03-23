@@ -124,7 +124,8 @@ public class GameView extends Application {
     void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
-        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), true, SceneAntialiasing.BALANCED);
+        mainScene = new Scene(root);
+        //mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), true, SceneAntialiasing.BALANCED);
         this.loadImages();
 
         this.emptyCards=  new ImageView[this.getAmtOfOpponets()+2];

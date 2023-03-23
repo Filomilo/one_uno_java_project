@@ -218,6 +218,47 @@ public class ResultView extends Application {
 
 
 
+        this.buttonText.setOnMouseEntered(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMoveOnButton();
+                    }
+                }
+
+        );
+
+
+        this.buttonText.setOnMouseExited(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMoveOutsideButton();
+                    }
+                }
+        );
+
+        this.buttonText.setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonPush();
+                    }
+                }
+        );
+
+        this.buttonText.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRelease();
+                    }
+                }
+        );
+
+
+
+
     }
 
 
@@ -303,6 +344,7 @@ public class ResultView extends Application {
     {
         //System.out.println("realse");
         this.button.setFill(Color.WHITE);
+        this.guiController.switchScenetoMain();
     }
 
 

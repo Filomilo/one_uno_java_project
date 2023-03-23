@@ -398,7 +398,7 @@ System.out.println("giving cards");
             this.nextTurn();
             this.setTurn();
         }
-
+        this.connectionManger.checkFinishGame();
 
 
     }

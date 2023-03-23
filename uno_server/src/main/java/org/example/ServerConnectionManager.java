@@ -112,10 +112,10 @@ public class ServerConnectionManager {
             this.procesFinished(playerData);
 
 
-        if(this.serverApp.dataBaseMangaer.getAmtActivePlayers()==1)
-        {
-            this.finishGame();
-        }
+
+        this.checkFinishGame();
+
+
 
 
 
@@ -170,6 +170,13 @@ public class ServerConnectionManager {
             e.printStackTrace();
         }
 
+    }
+
+    public void checkFinishGame() {
+        if(this.serverApp.dataBaseMangaer.getAmtActivePlayers()==1)
+        {
+            this.finishGame();
+        }
     }
 
     public void finishGame() {

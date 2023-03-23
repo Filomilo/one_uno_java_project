@@ -228,4 +228,14 @@ GuiController extends Application {
 
     }
 
+    public void switchScenetoMain() {
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        primaryStage.setScene(mainVew.mainScene);
+                    }
+                }
+        );
+    }
 }

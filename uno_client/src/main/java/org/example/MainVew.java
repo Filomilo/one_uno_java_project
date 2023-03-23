@@ -94,7 +94,7 @@ public class MainVew extends Application {
 
         root = new Group();
 
-        mainScene = new Scene(root, 1250, 720,true, SceneAntialiasing.BALANCED);
+        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
         this.updateBackground();
         this.setupImages();
         this.setupButtons();

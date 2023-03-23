@@ -445,7 +445,7 @@ public class SqlScripts {
                         "OPEN ACTIVE_CARDS_CUR; "+
                         "FOR person in ACTIVE_PLAYERS "+
                         "LOOP "+
-                        "FOR iterator in 1..3 "+
+                        "FOR iterator in 1..7 "+
                         "LOOP "+
                         "FETCH ACTIVE_CARDS_CUR INTO card; "+
                         "UPDATE active_card_places  "+
@@ -529,30 +529,34 @@ public class SqlScripts {
                         "REORDER_STACK; "+
                         "END; "+
                         "",
-                "CREATE OR REPLACE PROCEDURE SET_RANK(nick_var VARCHAR) "+
-                        "AS "+
-                        "place_var NUMBER(6); "+
-                        "game_id_var NUMBER(6); "+
-                        "BEGIN "+
-                        "place_var:=GET_CURR_LOWEST_PLACE; "+
-                        "game_id_var:=GET_ACTIVE_GAME_ID; "+
-                        "UPDATE GAMES  "+
-                        "SET "+
-                        "RANK=place_var+1 "+
-                        "WHERE "+
-                        "GAMES_ID=game_id_var "+
-                        "AND "+
-                        "NICK=nick_var; "+
-                        "UPDATE ACTIVE_CARD_PLACES "+
-                        "SET "+
-                        "POSITION=POSITION-2000, "+
-                        "PLACE_TYPE='STACK', "+
-                        "nick=NULL "+
-                        "WHERE "+
-                        "nick=nick_var; "+
-                        "REORDER_STACK; "+
-                        "END; "+
-                        "",
+                "CREATE OR REPLACE PROCEDURE SET_RANK(nick_var VARCHAR) " +
+                        "AS " +
+                        "game_id_var NUMBER(6); " +
+                        "amt_of_players NUMBER(6); " +
+                        "iter NUMBER(6); " +
+                        "tmp NUMBER(6); " +
+                        "new_rank NUMBER(6); " +
+                        "BEGIN " +
+                        "game_id_var:=GET_ACTIVE_GAME_ID; " +
+                        "amt_of_players:=GET_PLAYER_COUNT; " +
+                        "FOR iter IN 1..amt_of_players  " +
+                        "LOOP " +
+                        "SELECT COUNT(*) INTO tmp FROM GAMES " +
+                        "WHERE " +
+                        "rank=iter; " +
+                        "IF tmp=0 THEN " +
+                        "new_rank:=iter; " +
+                        "Exit; " +
+                        "END IF; " +
+                        "END LOOP; " +
+                        "UPDATE GAMES  " +
+                        "SET " +
+                        "RANK=new_rank " +
+                        "WHERE " +
+                        "GAMES_ID=game_id_var " +
+                        "AND " +
+                        "NICK=nick_var; " +
+                        "END;",
                 "CREATE OR REPLACE PROCEDURE SURRENDER(nick_var VARCHAR) "+
                         "AS "+
                         "game_id_var NUMBER(6); "+
@@ -570,6 +574,7 @@ public class SqlScripts {
                         "rank=iter; "+
                         "IF tmp=0 THEN "+
                         "new_rank:=iter; "+
+                        "EXIT;"+
                         "END IF; "+
                         "END LOOP; "+
                         "UPDATE GAMES  "+

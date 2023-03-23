@@ -6,7 +6,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
@@ -50,9 +53,10 @@ GuiController extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-    this.addListineres();
+
         try{
             this.primaryStage=primaryStage;
+            this.addListineres();
             this.mainVew= new MainVew(this);
 
 
@@ -67,7 +71,7 @@ GuiController extends Application {
 
 
             primaryStage.setScene(mainVew.mainScene);
-            primaryStage.setWidth(360);
+            primaryStage.setWidth(640);
             primaryStage.setHeight(360);
             primaryStage.show();
             mainVew.updateOnSize();
@@ -156,7 +160,15 @@ GuiController extends Application {
 
     void addListineres()
     {
+        this.primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            System.out.println("KEY PResed: "+ event.getCode());
+            if(KeyCode.F10.equals(event.getCode()))
+            {
 
+                primaryStage.setFullScreen(true);
+            }
+
+        });
     }
 
     public void startGame() {

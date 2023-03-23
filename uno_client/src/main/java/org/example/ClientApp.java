@@ -317,6 +317,34 @@ public class ClientApp {
     public List<String> getResults() {
         return this.lastReults;
     }
+
+    public void surrender() {
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type =MessageFormat.messegeTypes.SURRENDER;
+        try {
+            this.clientConnectionManager.sendMessage(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    int getIndexOfPlayer(String nick)
+    {
+        int indexOfPlayer=0;
+        for (PlayerData player: this.playersInORder
+        ) {
+            if(player.getNick().equals(nick))
+                break;
+            indexOfPlayer++;
+        }
+        return indexOfPlayer;
+    }
+    public void handleSurrender(String s) {
+        int index= getIndexOfPlayer(s);
+        this.guiController.gameView.handleSurrender(index);
+
+
+    }
 }
 
 

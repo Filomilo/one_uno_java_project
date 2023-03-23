@@ -279,6 +279,13 @@ System.out.println("giving cards");
         if(this.turn<0)
             this.turn=this.nicks.size()-1;
     }
+    void nextTurn()
+    {
+        if(this.clockOrder)
+            incrTurn();
+        else
+            this.decrTurn();
+    }
 
 
     void validateHand(PlayerData playerData)
@@ -374,4 +381,25 @@ System.out.println("giving cards");
 
     }
 
+    public void surrender(PlayerData playerData) throws IOException {
+        this.dataBaseMangaer.surrender(playerData.getNick());
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.SURRENDER;
+        messageFormat.text = new String[1];
+        messageFormat.text[0]=playerData.getNick();
+        try {
+            this.connectionManger.sendExclusice(messageFormat,playerData);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        playerData.setInGame(false);
+        if(this.turn==this.nicks.indexOf(playerData))
+        {
+            this.nextTurn();
+            this.setTurn();
+        }
+
+
+
+    }
 }

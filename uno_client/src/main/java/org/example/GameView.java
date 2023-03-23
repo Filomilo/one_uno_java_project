@@ -124,7 +124,7 @@ public class GameView extends Application {
     void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
-        mainScene = new Scene(root, 360, 360, true, SceneAntialiasing.BALANCED);
+        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), true, SceneAntialiasing.BALANCED);
         this.loadImages();
 
         this.emptyCards=  new ImageView[this.getAmtOfOpponets()+2];
@@ -493,6 +493,49 @@ public class GameView extends Application {
         );
 
 
+
+
+
+        this.buttonText.setOnMouseEntered(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOnButton();
+                    }
+                }
+        );
+
+
+        this.buttonText.setOnMouseExited(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onMouseOutsideButton();
+                    }
+                }
+        );
+
+        this.buttonText.setOnMousePressed(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonPresed();
+                    }
+                }
+        );
+        this.buttonText.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRealsed();
+                    }
+                }
+        );
+
+
+
+
+
     }
 
 
@@ -671,6 +714,7 @@ public class GameView extends Application {
 
         this.emptyCards[0].setEffect(shadow);
         this.updateGlowSize();
+        this.updateOnSize();
     }
 
     void setTopGlow(UnoCard.UNO_COLOR col)
@@ -990,6 +1034,39 @@ public class GameView extends Application {
       //  System.out.println("click");
 
      //   this.playCardFromOppoent(5, new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.GREEN,0));
+    this.surrenderButton();
+    }
+
+    private void surrenderButton() {
+        this.guiController.clientApp.surrender();
+
+        for (ImageView card: this.cardsInHand
+             ) {
+            TranslateTransition transition = new TranslateTransition();
+            transition.setToY(this.emptyCards[1].getY());
+            transition.setToX(this.emptyCards[1].getX());
+            transition.setNode(card);
+            transition.setDuration(Duration.millis(200));
+            transition.play();
+
+            transition.statusProperty().addListener(
+                    new ChangeListener<Animation.Status>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                            if(newValue == Animation.Status.STOPPED)
+                            {
+                                root.getChildren().remove(card);
+                                cardsInHand.remove(card);
+                                updateCardsInHandScale();
+                            }
+                        }
+                    }
+            );
+
+
+        }
+
+
     }
 
 
@@ -1381,6 +1458,36 @@ catch (ArrayIndexOutOfBoundsException e)
 
     public void setPlayerEmptyPile(int indexPLayer) {
     this.setEmpty(this.emptyCards[2+indexPLayer]);
+    }
+
+    public void handleSurrender(int index) {
+        this.amtOfOpponetsCards[index]=0;
+        this.updateAmtOfCards();
+        ImageView tmpCard= new ImageView(this.cardImages[this.cardImages.length-2]);
+        tmpCard.setX(emptyCards[index+2].getX());
+        tmpCard.setY(emptyCards[index+2].getY());
+        root.getChildren().remove(tmpCard);
+
+        TranslateTransition transition = new TranslateTransition();
+        transition.setToX(emptyCards[1].getX());
+        transition.setToY(emptyCards[1].getY());
+        transition.setNode(tmpCard);
+        transition.setDuration(Duration.millis(200));
+        transition.statusProperty().addListener(
+                new ChangeListener<Animation.Status>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                        if(newValue == Animation.Status.PAUSED)
+                        {
+                            root.getChildren().remove(tmpCard);
+                        }
+                    }
+                }
+        );
+
+        this.setEmpty(emptyCards[index+2]);
+
+
     }
 }
 

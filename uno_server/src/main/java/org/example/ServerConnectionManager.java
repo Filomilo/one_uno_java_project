@@ -258,6 +258,10 @@ public class ServerConnectionManager {
             case DISCONNECT:
                 return false;
 
+            case SURRENDER:
+                this.serverApp.surrender(playerData);
+                break;
+
 
 
 

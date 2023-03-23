@@ -250,6 +250,9 @@ this.waitTillconfirmed();
                     break;
             case ENDGAME:
                 this.clientApp.finishGame(messageFormat.text);
+                break;
+            case SURRENDER:
+                this.clientApp.handleSurrender(messageFormat.text[0]);
 
 
         }

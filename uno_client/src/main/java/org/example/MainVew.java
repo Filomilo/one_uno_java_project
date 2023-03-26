@@ -45,6 +45,8 @@ public class MainVew extends Application {
     Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
 
+    boolean activeControles [];
+
 
 
     String[] textFieldsTexts={"Nick","Ip","Port"};
@@ -102,6 +104,34 @@ public class MainVew extends Application {
         this.setupStatusText();
         this.addListiners(primaryStage);
         this.updateOnSize();
+        this.setupLock();
+    }
+
+    private void setupLock() {
+       this.activeControles = new boolean[]{true, true, true, true, false, false, true};
+    //    this.activeControles = new boolean[]{false, false, false, false, false, false, false};
+        this.updateLocks();
+    }
+
+    private void updateLocks() {
+        for(int i=0;i<3;i++)
+        {
+            this.textFields[i].setEditable(this.activeControles[i]);
+        }
+
+        for(int i = 0;i<4;i++) {
+
+            if (!activeControles[i + 3]) {
+                this.buttonTitles[i].setFill(Color.GREY);
+                this.buttons[i].setStroke(Color.GREY);
+            } else {
+                this.buttonTitles[i].setFill(Color.WHITE);
+                this.buttons[i].setStroke(Color.WHITE);
+            }
+        }
+
+
+
     }
 
     private void setupStatusText() {
@@ -497,7 +527,7 @@ public class MainVew extends Application {
     }
 
     private void updateStatusText() {
-        double fontSize= this.textFields[0].getFont().getSize()/2;
+        double fontSize= this.buttonTitles[0].getFont().getSize()/2;
         Font font=new Font("Arial",fontSize );
                 this.connectionStatusText.setFont(font);
         this.readyStatusText.setFont(font);
@@ -606,75 +636,97 @@ text.setFill(Color.WHITE);
         mainScene.setFill(gradient);
     }
 
+    int getButtonINdex(Rectangle button)
+    {
+        int index=0;
+        for(index=0;index<this.buttons.length;index++)
+        {
+            if(button.equals(this.buttons[index]))
+                break;
+
+        }
+        return index;
+    }
     void onButtonMoved(Rectangle button)
     {
-        button.setFill(Color.WHITE);
-        int index= Arrays.asList(this.buttons).indexOf(button);
-        this.buttonTitles[index].setFill(Color.BLACK);
+
+        int index=getButtonINdex(button);
+        if(this.activeControles[index+3]) {
+            button.setFill(Color.WHITE);
+            this.buttonTitles[index].setFill(Color.BLACK);
+        }
     }
 
     void onButtonMovedOutside(Rectangle button)
     {
-        button.setFill(this.tranparentColor);
-        int index= Arrays.asList(this.buttons).indexOf(button);
-        this.buttonTitles[index].setFill(Color.WHITE);
+        int index=getButtonINdex(button);
+        if(this.activeControles[index+3]) {
+            button.setFill(this.tranparentColor);
+            this.buttonTitles[index].setFill(Color.WHITE);
+        }
     }
 
     void onButtonBasicClick(Rectangle button)
     {
-        button.setFill(Color.LIGHTGRAY);
+        int index=getButtonINdex(button);
+        if(this.activeControles[index+3]) {
+            button.setFill(Color.LIGHTGRAY);
+        }
 
     }
 
     void onButtonConnectClick()
     {
-        if(!isConnected) {
-            this.setStatusConnecting();
-            System.out.println("CONNECT");
-            if (this.guiController.connectTosServer())
-                this.setStatusConnected();
-            else
+        if(this.activeControles[3]) {
+            if (!isConnected) {
+                this.setStatusConnecting();
+                this.updateOnSize();
+                System.out.println("CONNECT");
+                if (this.guiController.connectTosServer())
+                    this.setStatusConnected();
+                else
+                    this.setStatusDiscconnted();
+            } else {
                 this.setStatusDiscconnted();
-        }
-        else
-        {
-            this.setStatusDiscconnted();
-            this.guiController.disconnectFromServer();
+                this.guiController.disconnectFromServer();
+            }
         }
     }
 
     void onButtonReadyClick()
     {
-       // guiController.changeSceneToGame();
-        if(isReady)
-        {
-            this.buttonTitles[1].setText("Ready");
-            this.updateButtonsSize();
-            this.guiController.sendNotReady();
-            this.isReady=false;
+        if(this.activeControles[4]) {
+            // guiController.changeSceneToGame();
+            if (isReady) {
+                this.buttonTitles[1].setText("Ready");
+                this.updateButtonsSize();
+                this.guiController.sendNotReady();
+                this.isReady = false;
+            } else {
+                this.buttonTitles[1].setText("Not Ready");
+                this.updateButtonsSize();
+                this.guiController.sendReady();
+                this.isReady = true;
+            }
+            System.out.println("READY");
         }
-        else
-        {
-            this.buttonTitles[1].setText("Not Ready");
-            this.updateButtonsSize();
-            this.guiController.sendReady();
-            this.isReady=true;
-        }
-        System.out.println("READY");
     }
 
     void onButtonRankingClick()
     {
-
-        System.out.println("RANKING");
-        this.setStatusConnected();
-        this.setPlayersReady(4,8);
-    }
+        if(this.activeControles[6]) {
+            System.out.println("RANKING");
+           // this.setStatusConnected();
+            //this.setPlayersReady(4, 8);
+        }
+        }
 
     void onButtonExitClick()
     {
-        //System.out.println("EXIT");
-        System.exit(1);
+        if(this.activeControles[6]) {
+            //System.out.println("EXIT");
+            System.exit(1);
+        }
     }
 
 

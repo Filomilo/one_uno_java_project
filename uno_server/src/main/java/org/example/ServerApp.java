@@ -335,14 +335,14 @@ System.out.println("giving cards");
             {
               break;
             }
+
+            this.drawCard(playerData);
+
             try {
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(450);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            this.drawCard(playerData);
-
-
 
         }
 

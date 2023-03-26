@@ -1367,8 +1367,8 @@ public class GameView extends Application {
             ImageView cardTmp = new ImageView(this.cardImages[this.cardImages.length - 2]);
             cardTmp.setPreserveRatio(true);
             cardTmp.setFitWidth(this.cardWidth);
-            cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent  ].getBoundsInParent().getMinX());
-            cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent ].getBoundsInParent().getMinY());
+            cardTmp.setTranslateX(this.emptyCards[nbOfOppoonent+2].getBoundsInParent().getMinX());
+            cardTmp.setTranslateY(this.emptyCards[nbOfOppoonent +2].getBoundsInParent().getMinY());
 
             Platform.runLater(
                     new Runnable() {
@@ -1397,6 +1397,7 @@ public class GameView extends Application {
 try {
 
     amtOfOpponetsCards[nbOfOppoonent]=amtOfOpponetsCards[nbOfOppoonent]-1;
+    updateAmtOfCards();
 }
 catch (ArrayIndexOutOfBoundsException e)
 {

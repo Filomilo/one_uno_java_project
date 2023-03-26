@@ -50,7 +50,7 @@ public class UiInterface {
             this.serverApp.dataBaseMangaer.setDataBasePort(input);
 
             System.out.println("What is name of your Data base");
-            input="orcl";
+            input="xe";
             //input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseName(input);
 

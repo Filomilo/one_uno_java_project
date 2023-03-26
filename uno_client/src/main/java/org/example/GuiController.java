@@ -6,15 +6,18 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.util.concurrent.TimeUnit;
 
 public class
 GuiController extends Application {
@@ -74,7 +77,6 @@ GuiController extends Application {
             primaryStage.setWidth(640);
             primaryStage.setHeight(360);
             primaryStage.show();
-            mainVew.updateOnSize();
 
 
 
@@ -169,6 +171,7 @@ GuiController extends Application {
             }
 
         });
+
     }
 
     public void startGame() {

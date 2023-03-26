@@ -55,7 +55,7 @@ public class DataBaseMangaer {
     boolean connectWithDataBase()
     {
         try {
-            this.connection= DriverManager.getConnection("jdbc:oracle:thin:@"+this.dataBaseAdres + ":"+ this.dataBasePort +":"+this.dataBaseName , this.dataBaseUserName, this.dataBasePass);
+            this.connection= DriverManager.getConnection("jdbc:oracle:thin:@"+this.dataBaseAdres + ":"+ this.dataBasePort +"/"+this.dataBaseName , this.dataBaseUserName, this.dataBasePass);
           //  this.connection= DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:"+ +" as SYSDBA");
         } catch (SQLException e) {
             e.printStackTrace();

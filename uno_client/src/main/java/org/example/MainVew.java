@@ -332,6 +332,7 @@ public class MainVew extends Application {
         int i=0;
         for (Rectangle button: this.buttons
              ) {
+            
             button.setOnMouseMoved(
 
                     new EventHandler<MouseEvent>() {

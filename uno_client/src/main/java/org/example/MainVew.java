@@ -97,6 +97,7 @@ public class MainVew extends Application {
         root = new Group();
 
         mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
+        this.setupLock();
         this.updateBackground();
         this.setupImages();
         this.setupButtons();
@@ -104,13 +105,14 @@ public class MainVew extends Application {
         this.setupStatusText();
         this.addListiners(primaryStage);
         this.updateOnSize();
-        this.setupLock();
+        this.updateLocks();
+
     }
 
     private void setupLock() {
        this.activeControles = new boolean[]{true, true, true, true, false, false, true};
     //    this.activeControles = new boolean[]{false, false, false, false, false, false, false};
-        this.updateLocks();
+       // this.updateLocks();
     }
 
     private void updateLocks() {
@@ -154,10 +156,20 @@ public class MainVew extends Application {
     void setStatusConnected()
     {
         this.isConnected=true;
+        this.activeControles[0]=false;
+        this.activeControles[1]=false;
+        this.activeControles[2]=false;
+        this.activeControles[4]=true;
+        this.activeControles[5]=true;
+        this.updateLocks();
+
+
         this.connectionStatusText.setText("Connected");
         this.connectionStatusText.setFill(Color.GREEN);
         this.buttonTitles[0].setText("Disconnect");
+
         this.updateButtonsSize();
+
     }
 
     void setStatusConnecting()
@@ -169,6 +181,14 @@ public class MainVew extends Application {
     void setStatusDiscconnted()
     {
         this.isConnected=false;
+        this.activeControles[0]=true;
+        this.activeControles[1]=true;
+        this.activeControles[2]=true;
+        this.activeControles[4]=false;
+        this.activeControles[5]=false;
+        this.updateLocks();
+
+
         this.connectionStatusText.setText("Disconnected");
         this.connectionStatusText.setFill(Color.RED);
         this.buttonTitles[0].setText("Connect");

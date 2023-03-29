@@ -2,6 +2,9 @@
   <artifact type="jar" name="uno_server:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/uno_server_jar</output-path>
     <root id="archive" name="uno_server.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="uno_server" />
       <element id="module-output" name="Shared" />
       <element id="extracted-dir" path="$PROJECT_DIR$/uno_server/src/main/java/org/example/ojdbc8.jar" path-in-jar="/" />

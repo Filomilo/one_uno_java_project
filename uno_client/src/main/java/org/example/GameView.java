@@ -32,10 +32,12 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.midi.Soundbank;
 import javax.swing.text.StyledEditorKit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,8 +58,8 @@ public class GameView extends Application {
     Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
     GuiController guiController;
 
-    String cardPrefix=  "uno_client\\src\\main\\resources\\Cards\\unoCards_";
-    String colorPrefix="uno_client\\src\\main\\resources\\ColorChoicePanel\\Circle_";
+    String cardPrefix=  "Cards/unoCards_";
+    String colorPrefix="ColorChoicePanel/Circle_";
 
     Image cardImages[]= new Image[56];
 
@@ -328,23 +330,23 @@ public class GameView extends Application {
 
         String url=colorPrefix + "Blue.png";
         try {
-            FileInputStream fileInputStream;
-            fileInputStream= new FileInputStream(url);
+            InputStream inputStream=getClass().getClassLoader().getResourceAsStream(url);
             this.colorChoicePanel = new Image[4];
-            this.colorChoicePanel[0] = new Image(fileInputStream);
+            this.colorChoicePanel[0] = new Image(inputStream);
             url=colorPrefix + "Green.png";
-            fileInputStream= new FileInputStream(url);
-            this.colorChoicePanel[1] = new Image(fileInputStream);
+            inputStream=getClass().getClassLoader().getResourceAsStream(url);
+            this.colorChoicePanel[1] = new Image(inputStream);
             url=colorPrefix + "Red.png";
-            fileInputStream= new FileInputStream(url);
-            this.colorChoicePanel[2] = new Image(fileInputStream);
+            inputStream=getClass().getClassLoader().getResourceAsStream(url);
+            this.colorChoicePanel[2] = new Image(inputStream);
             url=colorPrefix + "Yellow.png";
-            fileInputStream= new FileInputStream(url);
-            this.colorChoicePanel[3] = new Image(fileInputStream);
+            inputStream=getClass().getClassLoader().getResourceAsStream(url);
+            this.colorChoicePanel[3] = new Image(inputStream);
         }
         catch (Exception e)
         {
             System.out.println("problem laoding: " + url);
+            System.exit(-1);
             e.printStackTrace();
         }
 
@@ -354,13 +356,18 @@ public class GameView extends Application {
     void loadCard(String url, int positonInTable)
     {
         try{
-            FileInputStream fileInputStream = new FileInputStream(url);
-            this.cardImages[positonInTable] = new Image(fileInputStream);
+            InputStream inputStream=getClass().getClassLoader().getResourceAsStream(url);
+           // FileInputStream fileInputStream = new FileInputStream(url);
+            this.cardImages[positonInTable] = new Image(inputStream);
          //   System.out.println(url);
         }
         catch (Exception e)
         {
+
+            e.printStackTrace();
+            System.out.println("ERROO LODIAN CARD: ");
             System.out.println(url);
+           // System.exit(-1);
         }
 
     }
@@ -911,6 +918,7 @@ public class GameView extends Application {
         if(!isYourTurn)
             this.playCard(card);
         else
+            if(!isChoosingColor)
           this.showChoiceColor(card);
     }
 

@@ -38,7 +38,9 @@ public class ServerApp {
         try {
             connectionManger.setupServerConnections(this.port);
         } catch (IOException e) {
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
+            System.out.println("COULS NOT ESTABLISH CONNECTIONS\n");
+            System.exit(-1);
         }
     }
 

@@ -25,8 +25,11 @@ import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 
@@ -92,7 +95,7 @@ public class MainVew extends Application {
     }
 
 
-    void iniit(Stage primaryStage) throws IOException {
+    void iniit(Stage primaryStage) throws IOException, URISyntaxException {
 
         root = new Group();
 
@@ -282,9 +285,10 @@ public class MainVew extends Application {
         line.setStrokeLineCap(StrokeLineCap.ROUND);
     }
 
-    private void setupImages() throws IOException {
-        FileInputStream fileInputStream= new FileInputStream(MainVew.resDir + "one_logo.png");
-        this.unoLogo = new Image(fileInputStream);
+    private void setupImages() throws IOException, URISyntaxException {
+        //FileInputStream fileInputStream= new FileInputStream(getResource("one_logo.png"));
+        InputStream inputStream=getClass().getClassLoader().getResourceAsStream("one_logo.png");
+        this.unoLogo = new Image(inputStream);
 
         this.unoLogoView= new ImageView(unoLogo);
         this.unoLogoView.setPreserveRatio(true);

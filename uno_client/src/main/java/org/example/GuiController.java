@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -40,6 +41,7 @@ GuiController extends Application {
     public static void main(String[] args) {
 
 
+
         if(args.length>0)
         GuiController.nick=args[0];
         else
@@ -61,7 +63,7 @@ GuiController extends Application {
             this.primaryStage=primaryStage;
             this.addListineres();
             this.mainVew= new MainVew(this);
-
+            this.primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("one_icon.png")));
 
 
 

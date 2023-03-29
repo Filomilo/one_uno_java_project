@@ -2,6 +2,9 @@
   <artifact type="jar" name="uno_client:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/uno_client_jar</output-path>
     <root id="archive" name="uno_client.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/uno_server/src/main/resources/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="uno_client" />
       <element id="module-output" name="Shared" />
     </root>

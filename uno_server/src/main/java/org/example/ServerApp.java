@@ -29,7 +29,7 @@ public class ServerApp {
 
     List<PlayerData> nicks =new ArrayList<PlayerData>();
     DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
-    private boolean gameStarted=false;
+    public boolean gameStarted=false;
 
     ServerApp()
     {
@@ -243,6 +243,7 @@ System.out.println("giving cards");
 
     void setTopCard()
     {
+
         List<UnoCard> unoCardsTable = new ArrayList<UnoCard>();
         try {
            unoCardsTable = this.dataBaseMangaer.selectTableStack();

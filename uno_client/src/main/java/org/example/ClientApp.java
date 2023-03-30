@@ -311,6 +311,12 @@ public class ClientApp {
 
         this.lastReults= new ArrayList<String>();
         Collections.addAll(lastReults, arrayResult);
+        this.setReady(false);
+        this.readyPlayers=0;
+
+        this.guiController.mainVew.isReady=false;
+        this.guiController.mainVew.setButtonReady();
+        this.guiController.mainVew.updateOnSize();
         this.guiController.switchSceneToResult();
     }
 

@@ -208,7 +208,7 @@ public class ServerConnectionManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        this.serverApp.gameStarted=false;
 
     }
 

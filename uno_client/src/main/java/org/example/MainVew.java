@@ -724,18 +724,31 @@ text.setFill(Color.WHITE);
         }
     }
 
+
+    void setButtonReady()
+    {
+        this.buttonTitles[1].setText("Ready");
+        this.updateButtonsSize();
+    }
+
+    void setButtonNotReady()
+    {
+        this.buttonTitles[1].setText("Not Ready");
+        this.updateButtonsSize();
+    }
+
+
     void onButtonReadyClick()
     {
         if(this.activeControles[4]) {
             // guiController.changeSceneToGame();
             if (isReady) {
-                this.buttonTitles[1].setText("Ready");
-                this.updateButtonsSize();
+                setButtonReady();
                 this.guiController.sendNotReady();
                 this.isReady = false;
             } else {
-                this.buttonTitles[1].setText("Not Ready");
-                this.updateButtonsSize();
+                setButtonNotReady();
+
                 this.guiController.sendReady();
                 this.isReady = true;
             }

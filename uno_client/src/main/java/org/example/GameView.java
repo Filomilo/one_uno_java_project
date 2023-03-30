@@ -354,6 +354,7 @@ public class GameView extends Application {
         }
 
 
+
     }
 
     void loadCard(String url, int positonInTable)

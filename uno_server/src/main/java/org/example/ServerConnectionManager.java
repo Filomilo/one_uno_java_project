@@ -38,7 +38,7 @@ public class ServerConnectionManager {
     }
 
     //static funciton fo receving object messege form chosen stream
-    static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException {
+    static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException,SocketTimeoutException {
             MessageFormat messageFormat = new MessageFormat();
             messageFormat = (MessageFormat) objectInputStream.readObject();
             if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM) {
@@ -53,7 +53,9 @@ public class ServerConnectionManager {
 //method to get meege form specif player, after getting messege auntamtl send confimation messee to seder
      MessageFormat getMesseage(PlayerData playerData) throws IOException, ClassNotFoundException, SocketException {
         System.out.println("from: " + playerData.getNick());
+         ;
         MessageFormat messageFormat = ServerConnectionManager.getMesseage(playerData.getObjectInputStream());
+         System.out.println(messageFormat);
         if(messageFormat.type!= org.example.MessageFormat.messegeTypes.CONFIRM)
         {
             sendConfirm(playerData);
@@ -247,10 +249,14 @@ public class ServerConnectionManager {
 
             case READY:
 
-                if(messageFormat.number[0]==1)
-                    serverApp.setPlayersReady(serverApp.getPlayersReady()+1);
-                else
-                    serverApp.setPlayersReady(serverApp.getPlayersReady()-1);
+                if(messageFormat.number[0]==1) {
+                    serverApp.setPlayersReady(serverApp.getPlayersReady() + 1);
+                    playerData.setReady(true);
+                }
+                else {
+                    serverApp.setPlayersReady(serverApp.getPlayersReady() - 1);
+                    playerData.setReady(false);
+                }
 
                 messageFormat.number = new int[1];
                 messageFormat.number[0]=serverApp.getPlayersReady();

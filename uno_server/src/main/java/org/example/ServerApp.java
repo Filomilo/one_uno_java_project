@@ -113,10 +113,11 @@ public class ServerApp {
         messageFormat.text[0]= pLayerData.getNick();
         messageFormat.number = new int[1];
         int newAmtReady=this.getPlayersReady();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~playeres reasy: " + newAmtReady);
         if(pLayerData.isReady)
         {
             messageFormat.number[0]=1;
-            newAmtReady=-1;
+            newAmtReady-=1;
         }
         else {
             messageFormat.number[0] = 0;

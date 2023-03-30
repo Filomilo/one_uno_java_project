@@ -717,6 +717,9 @@ text.setFill(Color.WHITE);
             } else {
                 this.setStatusDiscconnted();
                 this.guiController.disconnectFromServer();
+                this.buttonTitles[1].setText("Ready");
+                this.updateButtonsSize();
+                this.isReady = false;
             }
         }
     }

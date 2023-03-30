@@ -112,17 +112,17 @@ public class ServerApp {
         messageFormat.text= new String[1];
         messageFormat.text[0]= pLayerData.getNick();
         messageFormat.number = new int[1];
+        int newAmtReady=this.getPlayersReady();
         if(pLayerData.isReady)
         {
             messageFormat.number[0]=1;
-            setPlayersReady(this.getPlayersReady()-1);
+            newAmtReady=-1;
         }
         else {
             messageFormat.number[0] = 0;
-            setPlayersReady(this.getPlayersReady());
         }
         this.connectionManger.sendToAll(messageFormat);
-
+        setPlayersReady(newAmtReady);
     }
 
 

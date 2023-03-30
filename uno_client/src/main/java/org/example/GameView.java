@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -244,6 +245,7 @@ public class GameView extends Application {
                     e.printStackTrace();
                     System.out.println("this.nickText: "+ this.nickText.length);
                     System.out.println("nicks size: " + nicks.size());
+                    System.out.println("nicks: "  + nicks);
                     System.out.println("this.textBox: " + this.textBox.length);
                     System.out.println("i: " + i);
                     System.exit(-1);
@@ -270,6 +272,7 @@ public class GameView extends Application {
         {
             e.printStackTrace();
             System.out.println("this.nickText: "+ this.nickText.length);
+            System.out.println();
             System.exit(-1);
         }
 

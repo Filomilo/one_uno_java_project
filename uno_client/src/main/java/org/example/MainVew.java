@@ -97,6 +97,10 @@ public class MainVew extends Application {
 
     void iniit(Stage primaryStage) throws IOException, URISyntaxException {
 
+
+
+
+
         root = new Group();
 
         mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);

@@ -345,6 +345,16 @@ public class ClientApp {
 
 
     }
+
+    public void handleDisconnect(String disconnectedNikc, int wasReady) {
+        this.connectedPlayers--;
+        if(wasReady==1)
+        {
+            this.readyPlayers--;
+        }
+
+        this.guiController.mainVew.setPlayersReady(this.readyPlayers,this.connectedPlayers);
+    }
 }
 
 

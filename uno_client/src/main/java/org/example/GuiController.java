@@ -60,8 +60,21 @@ GuiController extends Application {
 
 
         try{
+
+
+
+
             this.primaryStage=primaryStage;
-            this.addListineres();
+
+            primaryStage.setOnCloseRequest(
+                    new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            System.exit(1);
+                        }
+                    }
+            );
+
             this.mainVew= new MainVew(this);
             this.primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("one_icon.png")));
 

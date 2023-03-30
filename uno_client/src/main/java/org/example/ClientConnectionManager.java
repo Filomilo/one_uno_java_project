@@ -67,7 +67,7 @@ public class ClientConnectionManager {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
        System.out.println("_____________________________________________get Messegae_______________________________");
        System.out.println(messageFormat);
-        if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM)
+        if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM && messageFormat.type != MessageFormat.messegeTypes.DISCONNECT)
         sendConfirm();
 
         return messageFormat;
@@ -215,19 +215,7 @@ this.waitTillconfirmed();
                 System.out.println(this.clientApp.playersInORder);
                 break;
             case DISCONNECT:
-                this.reciverHandler.setShoudldRun(false);
-                try {
-                    this.reciverHandler.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    this.socket.close();
-                } catch (IOException e) {
-                   e.printStackTrace();
-                }
-
-                System.exit(1);
+                this.clientApp.handleDisconnect(messageFormat.text[0],messageFormat.number[0]);
                 break;
             case TOPCARD:
                 this.clientApp.setCardOntop(messageFormat.unoCard);

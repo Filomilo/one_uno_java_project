@@ -1,5 +1,7 @@
 package org.example;
 
+import com.sun.xml.internal.ws.api.model.MEP;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLOutput;
@@ -100,10 +102,27 @@ public class ServerApp {
 
 
 
-    void disconnectPlayer(PlayerData pLayerData)
-    {
+
+    void disconnectPlayer(PlayerData pLayerData) throws IOException {
         this.nicks.remove(pLayerData);
         this.playersConnected--;
+
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.DISCONNECT;
+        messageFormat.text= new String[1];
+        messageFormat.text[0]= pLayerData.getNick();
+        messageFormat.number = new int[1];
+        if(pLayerData.isReady)
+        {
+            messageFormat.number[0]=1;
+            setPlayersReady(this.getPlayersReady()-1);
+        }
+        else {
+            messageFormat.number[0] = 0;
+            setPlayersReady(this.getPlayersReady());
+        }
+        this.connectionManger.sendToAll(messageFormat);
+
     }
 
 
@@ -189,6 +208,13 @@ System.out.println("giving cards");
 
 
     void startGame() throws IOException, ClassNotFoundException {
+
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         Collections.sort(this.nicks);
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;

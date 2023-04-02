@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 
 public class RankView extends Application {
     Scene mainScene;
@@ -53,9 +55,11 @@ public class RankView extends Application {
 
     Text columnsHeadersText[] = new Text[3];
     String columnsTextFill[] = new String[] {"nb.", "Nick","wins"};
-
+    Line linesMainSeparetor[];
     Text nicksRank[];
     Text amtOfWinsText[];
+    Text rankNbText[];
+    Line rowLineSeperator[];
 
 
     Rectangle rankViewBase;
@@ -98,7 +102,6 @@ public class RankView extends Application {
         this.updateBackground();
 
         this.setupRankView();
-        this.setupMask();
         this.setupButton();
         this.addListiners(primaryStage);
 
@@ -115,6 +118,38 @@ public class RankView extends Application {
 ;    }
 
     private void setupRankView() {
+
+
+
+        String nicks[] =this.getNicksArray();
+        int amtOfwins[]= this.getScoreArray();
+        this.nicksRank = new Text[nicks.length];
+        this.amtOfWinsText = new Text[nicks.length];
+        this.rankNbText = new Text[nicks.length];
+        this.rowLineSeperator = new Line[nicks.length];
+
+        for(int i=0; i<nicks.length;i++)
+        {
+            this.nicksRank[i] = new Text(nicks[i]);
+            this.amtOfWinsText[i] = new Text(Integer.toString(amtOfwins[i]) );
+            this.rankNbText[i] = new Text(Integer.toString(i+1) );
+            this.rowLineSeperator[i] = new Line();
+            this.nicksRank[i].setFill(Color.WHITE);
+            this.amtOfWinsText[i].setFill(Color.WHITE);
+            this.rankNbText[i].setFill(Color.WHITE);
+            this.rowLineSeperator[i].setStroke(Color.WHITE);
+            this.rowLineSeperator[i].setStrokeWidth(1);
+            this.root.getChildren().add(  rowLineSeperator[i]);
+            this.root.getChildren().add(   this.rankNbText[i]);
+            this.root.getChildren().add( this.nicksRank[i]);
+            this.root.getChildren().add( this.amtOfWinsText[i]);
+        }
+
+        this.setupMask();
+
+
+
+
 
         this.rankViewBase= new Rectangle();
         this.rankViewBase.setFill(tranparentColor);
@@ -137,20 +172,16 @@ public class RankView extends Application {
             this.root.getChildren().addAll( this.columnsHeadersText[i]);
         }
 
+        this.linesMainSeparetor = new Line[4];
+        for(int i=0;i<linesMainSeparetor.length;i++){
 
-        String nicks[] =this.getNicksArray();
-        int amtOfwins[]= this.getScoreArray();
-        this.nicksRank = new Text[nicks.length];
-        this.amtOfWinsText = new Text[nicks.length];
-        for(int i=0; i<nicks.length;i++)
-        {
-            this.nicksRank[i] = new Text(nicks[i]);
-            this.amtOfWinsText[i] = new Text(Integer.toString(amtOfwins[i]) );
-            this.nicksRank[i].setFill(Color.WHITE);
-            this.amtOfWinsText[i].setFill(Color.WHITE);
-            this.root.getChildren().add( this.nicksRank[i]);
-            this.root.getChildren().add( this.amtOfWinsText[i]);
+            linesMainSeparetor[i] = new Line();
+            linesMainSeparetor[i] .setStroke(Color.WHITE);
+            linesMainSeparetor[i] .setStrokeWidth(5);
+            linesMainSeparetor[i].setStrokeLineCap(StrokeLineCap.SQUARE);
+            this.root.getChildren().add( linesMainSeparetor[i] );
         }
+
 
 
     }
@@ -275,6 +306,55 @@ public class RankView extends Application {
                     }
                 }
         );
+
+        for (Line line: this. rowLineSeperator
+             ) {
+            line.setOnScroll(
+                    new EventHandler<ScrollEvent>() {
+                        @Override
+                        public void handle(ScrollEvent event) {
+                            onScrollMainRank(event);
+                        }
+                    }
+            );;
+        }
+
+        for (Text text: this.rankNbText
+             ) {
+            text.setOnScroll(
+                    new EventHandler<ScrollEvent>() {
+                        @Override
+                        public void handle(ScrollEvent event) {
+                            onScrollMainRank(event);
+                        }
+                    }
+            );;
+        }
+        for (Text text: this.amtOfWinsText
+        ) {
+            text.setOnScroll(
+                    new EventHandler<ScrollEvent>() {
+                        @Override
+                        public void handle(ScrollEvent event) {
+                            onScrollMainRank(event);
+                        }
+                    }
+            );;
+        }
+        for (Text text: this.nicksRank
+        ) {
+            text.setOnScroll(
+                    new EventHandler<ScrollEvent>() {
+                        @Override
+                        public void handle(ScrollEvent event) {
+                            onScrollMainRank(event);
+                        }
+                    }
+            );;
+        }
+
+
+
 
 
         primaryStage.maximizedProperty().addListener(
@@ -410,42 +490,123 @@ public class RankView extends Application {
         this.updateHeaderTextSize();
         this.updateRecordsTextSize();
 
+
     }
 
     private void updateMask()
     {
         int index = this.root.getChildren().indexOf(this.mask);
-        Shape shape= new Rectangle(this.mainScene.getWidth()+100,this.mainScene.getHeight()+100);
-
-        this.mask = Shape.subtract(shape,this.rankViewBase);
+        Shape screen= new Rectangle(this.mainScene.getWidth()+100,this.mainScene.getHeight()+100);
+        Rectangle headerMask = new Rectangle(this.rankViewBase.getWidth(),this.linesMainSeparetor[2].getEndY()- this.rankViewBase.getY());
+        headerMask.setX(this.rankViewBase.getX());
+        headerMask.setY(this.rankViewBase.getY());
+        Shape toCut= Shape.subtract(this.rankViewBase,headerMask);
+        this.mask = Shape.subtract(screen,toCut);
         mask.setFill(this.gradient);
         this.root.getChildren().set(index,this.mask);
     }
 
     private void updateRecordsTextSize() {
+
         Font font = this.columnsHeadersText[0].getFont();
-        for (Text tx: this.nicksRank
-             ) {
-            tx.setFont(font);
+
+        double rankColumnCenter= (this.columnsHeadersText[0].getLayoutBounds().getMinX()+this.columnsHeadersText[0].getLayoutBounds().getMaxX())/2;
+        double nickColumnCenter= (this.columnsHeadersText[1].getLayoutBounds().getMinX()+this.columnsHeadersText[1].getLayoutBounds().getMaxX())/2;
+        double winsColumnCenter= (this.columnsHeadersText[2].getLayoutBounds().getMinX()+this.columnsHeadersText[2].getLayoutBounds().getMaxX())/2;
+
+        double fontHeight=font.getSize()*1.2;
+
+        double scorllLock=((fontHeight+1.1)*this.rowLineSeperator.length)-(this.rankViewBase.getLayoutBounds().getMaxY()-this.linesMainSeparetor[2].getEndY());
+        if(scorllLock<0)
+            scorllLock=0;
+       // System.out.println(this.scrollAmount);
+        //System.out.println(scorllLock+ "\n");
+        if(abs(this.scrollAmount)>scorllLock)
+        {
+            this.scrollAmount=-scorllLock;
         }
 
-        for (Text tx: this.amtOfWinsText
-        ) {
-            tx.setFont(font);
+
+        for(int i=0;i<this.amtOfWinsText.length;i++)
+        {
+            /////////////// font setup
+            this.rankNbText[i].setFont(font);
+            this.amtOfWinsText[i].setFont(font);
+            this.nicksRank[i].setFont(font);
+            double rowHEight=this.linesMainSeparetor[2].getEndY()+(1.1*fontHeight)+fontHeight*i+this.scrollAmount;
+            ////////////// rank number updae
+            this.rankNbText[i].setX(rankColumnCenter-this.rankNbText[i].getLayoutBounds().getWidth()/2.1);
+            this.rankNbText[i].setY(rowHEight);
+            ////////////////// nick udpdate
+
+            double preferdWidth=this.linesMainSeparetor[1].getStartX()-this.linesMainSeparetor[0].getStartX();
+            if(this.nicksRank[i].getLayoutBounds().getWidth()>preferdWidth)
+            {
+                Font newFont= new Font("Arila", this.nicksRank[i].getFont().getSize()*((preferdWidth/this.nicksRank[i].getLayoutBounds().getWidth())*0.7));
+                  this.nicksRank[i].setFont(newFont);
+            }
+            this.nicksRank[i].setX(nickColumnCenter-this.nicksRank[i].getLayoutBounds().getWidth()/2.1);
+            this.nicksRank[i].setY(rowHEight);
+            ////////////////////// number of wins update
+            this.amtOfWinsText[i].setX(winsColumnCenter-this.amtOfWinsText[i].getLayoutBounds().getWidth()/2);
+            this.amtOfWinsText[i].setY(rowHEight);
+            ///////////////////////// seproatting lines
+            rowHEight=rowHEight+fontHeight/4;
+            this.rowLineSeperator[i].setStartX(0);
+            this.rowLineSeperator[i].setEndX(this.mainScene.getWidth());
+            this.rowLineSeperator[i].setStartY(rowHEight);
+            this.rowLineSeperator[i].setEndY(rowHEight);
+
         }
+
+
+
+
+
+
 
     }
 
     private void updateHeaderTextSize() {
         double scaleGuide=this.mainScene.getWidth()>this.mainScene.getHeight()?this.mainScene.getHeight():this.mainScene.getWidth();
-        double fontSize= scaleGuide/1.2;
+        double fontSize= scaleGuide/20;
         Font font = new Font("Arial", fontSize);
         for (Text tx: this.columnsHeadersText
              ) {
             tx.setFont(font);
         }
-        
-        
+    ///////////////// first column
+        double headerHright= this.rankViewBase.getY()+fontSize*1.2;
+        this.columnsHeadersText[0].setY(headerHright);
+        this.columnsHeadersText[0].setX(this.rankViewBase.getX()+this.columnsHeadersText[0].getLayoutBounds().getWidth());
+
+        this.linesMainSeparetor[0].setStartY(this.rankViewBase.getY()+this.linesMainSeparetor[0].getStrokeWidth()/2);
+        this.linesMainSeparetor[0].setEndY(this.rankViewBase.getY()+this.rankViewBase.getHeight()-this.linesMainSeparetor[0].getStrokeWidth()/2);
+        double lineVerticalX= this.columnsHeadersText[0].getLayoutBounds().getMaxX()+this.columnsHeadersText[0].getLayoutBounds().getWidth();
+        this.linesMainSeparetor[0].setStartX(lineVerticalX);
+        this.linesMainSeparetor[0].setEndX(lineVerticalX);
+        //////////////////////////////////// third column
+
+        this.columnsHeadersText[2].setY(headerHright);
+        this.columnsHeadersText[2].setX(this.rankViewBase.getWidth()+this.rankViewBase.getX()-this.columnsHeadersText[0].getLayoutBounds().getWidth()*2);
+
+        this.linesMainSeparetor[1].setStartY(this.rankViewBase.getY()+this.linesMainSeparetor[1].getStrokeWidth()/2);
+        this.linesMainSeparetor[1].setEndY(this.rankViewBase.getY()+this.rankViewBase.getHeight()-this.linesMainSeparetor[1].getStrokeWidth()/2);
+        lineVerticalX= this.columnsHeadersText[2].getLayoutBounds().getMinX()-this.columnsHeadersText[2].getLayoutBounds().getWidth()/2;
+        this.linesMainSeparetor[1].setStartX(lineVerticalX);
+        this.linesMainSeparetor[1].setEndX(lineVerticalX);
+        //////////////////////////////////// second column
+        this.columnsHeadersText[1].setY(headerHright);
+        this.columnsHeadersText[1].setX((this.linesMainSeparetor[0].getStartX()+this.linesMainSeparetor[1].getStartX())/2.0-this.columnsHeadersText[1].getLayoutBounds().getWidth()/2.5);
+        ////////////////// header separetor
+        this.linesMainSeparetor[2].setStartX(this.rankViewBase.getX()+this.linesMainSeparetor[2].getStrokeWidth()/2);
+        this.linesMainSeparetor[2].setEndX(this.rankViewBase.getX()+this.rankViewBase.getWidth()-this.linesMainSeparetor[2].getStrokeWidth()/2);
+        double lineHeight=this.columnsHeadersText[0].getLayoutBounds().getMaxY()*1.1;
+        this.linesMainSeparetor[2].setStartY(lineHeight);
+        this.linesMainSeparetor[2].setEndY(lineHeight);
+
+
+
     }
 
 
@@ -518,17 +679,24 @@ public class RankView extends Application {
     private void onScrollMainRank(ScrollEvent event)
     {
         this.scrollAmount+=event.getDeltaY();
-       // System.out.println("scrollonign: " + this.scrollAmount);
+        if(scrollAmount>0)
+            scrollAmount=0;
+       //System.out.println("scrollonign: " + this.scrollAmount);
+        this.updateRecordsTextSize();
     }
 
     int[] getScoreArray()
     {
-        return new int[]{10,5,8,4,1,2,8,1000};
+       return new int[]{10,5,8,4,1,2,8,1000,10,5,8,4,1,2,8,1000,10,5,8,4,1,2,8,1000};
+      //  return new int[]{10,5};
+
     }
 
     String[] getNicksArray()
     {
-        return new String[]{"sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg"};
+       return new String[]{"sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg","sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg","sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg"};
+       // return new String[]{"sdfdsfdsf","asdasdwwww"};
+
     }
 
 }

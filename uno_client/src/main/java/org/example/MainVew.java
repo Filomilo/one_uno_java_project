@@ -1,8 +1,12 @@
 package org.example;
 
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -23,6 +27,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 
 import java.io.File;
@@ -31,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainVew extends Application {
@@ -249,10 +256,47 @@ public class MainVew extends Application {
         double fontSize= this.textFields[0].getFont().getSize()/2;
 
         Font font=new Font("Arial",fontSize);
-        for(int i=0;i<this.textFieldsTexts.length;i++)
+
+
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i=0;i<textFields.length;i++)
+                        {
+
+                            textFields[i].setPrefSize(width,height);
+                            textFields[i].setFont(buttonTitles[0].getFont());
+
+
+
+                            textFieldsLine[i].setStartX(textFields[i].getLayoutBounds().getMinX()+textFields[i].getLayoutX());
+                            textFieldsLine[i].setStartY(textFields[i].getLayoutBounds().getMaxY()+textFields[i].getLayoutY());
+                            textFieldsLine[i].setEndX(textFields[i].getLayoutBounds().getMaxX()+textFields[i].getLayoutX());
+                            textFieldsLine[i].setEndY(textFields[i].getLayoutBounds().getMaxY()+textFields[i].getLayoutY());
+
+
+                            textFieldsTitles[i].setFont(font);
+                            textFieldsTitles[i].setX(textFieldsLine[i].getStartX());
+                            textFieldsTitles[i].setY(textFieldsLine[i].getEndY()+ textFieldsTitles[i].getLayoutBounds().getHeight()/1);
+
+
+
+
+
+                        }
+                    }
+                }
+
+        );
+
+/*
+        for(int i=0;i<this.textFields.length;i++)
         {
+
             this.textFields[i].setPrefSize(width,height);
             this.textFields[i].setFont(this.buttonTitles[0].getFont());
+
 
 
             this.textFieldsLine[i].setStartX(this.textFields[i].getLayoutBounds().getMinX()+this.textFields[i].getLayoutX());
@@ -260,12 +304,17 @@ public class MainVew extends Application {
             this.textFieldsLine[i].setEndX(this.textFields[i].getLayoutBounds().getMaxX()+this.textFields[i].getLayoutX());
             this.textFieldsLine[i].setEndY(this.textFields[i].getLayoutBounds().getMaxY()+this.textFields[i].getLayoutY());
 
+
             this.textFieldsTitles[i].setFont(font);
             this.textFieldsTitles[i].setX(this.textFieldsLine[i].getStartX());
             this.textFieldsTitles[i].setY(this.textFieldsLine[i].getEndY()+ this.textFieldsTitles[i].getLayoutBounds().getHeight()/1);
 
-        }
 
+
+
+
+        }
+*/
 
     }
 
@@ -317,7 +366,14 @@ public class MainVew extends Application {
                new ChangeListener<Number>() {
                    @Override
                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                       updateOnSize();
+                       Platform.runLater(
+                               new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       updateOnSize();
+                                   }
+                               }
+                       );
                    }
                }
        );
@@ -327,7 +383,17 @@ public class MainVew extends Application {
                new ChangeListener<Number>() {
                    @Override
                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                       updateOnSize();
+                      Platform.runLater(
+                              new Runnable() {
+                                  @Override
+                                  public void run() {
+                                      updateOnSize();
+                                  }
+                              }
+                      );
+
+
+
                    }
                }
 
@@ -337,7 +403,14 @@ public class MainVew extends Application {
                 new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        updateOnSize();
+                        Platform.runLater(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateOnSize();
+                                    }
+                                }
+                        );
                     }
                 }
 
@@ -386,6 +459,37 @@ public class MainVew extends Application {
                     }
                 }
         );
+
+        primaryStage.setOnShown(
+                new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        updateOnSize();
+                        updateOnSize();
+                    }
+                }
+
+        );
+
+        primaryStage.maximizedProperty().addListener(
+                new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
+                        Platform.runLater(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateOnSize();
+                                    }
+                                }
+                        );
+
+                    }
+                }
+        );
+
+
 
         int i=0;
         for (Rectangle button: this.buttons
@@ -545,12 +649,29 @@ public class MainVew extends Application {
 
     void updateOnSize()
     {
+        int miliSec=10;
+        PauseTransition delay= new PauseTransition(Duration.millis(miliSec));
+                delay.setOnFinished(
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                updateImagesSize();
+                                updateBackground();
+                                updateButtonsSize();
+                                updateStatusText();
+                                updateTextFieldsSize();
 
-        this.updateImagesSize();
-    this.updateBackground();
-    this.updateButtonsSize();
-    this.updateStatusText();
-        this.updateTextFieldsSize();
+
+
+                            }
+                        }
+
+                );
+
+delay.play();
+        delay.setDuration(Duration.millis(miliSec*100));
+        delay.play();
+
 
     }
 

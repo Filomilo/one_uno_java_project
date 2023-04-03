@@ -40,8 +40,7 @@ import static java.lang.Math.abs;
 public class RankView extends Application {
     Scene mainScene;
 
-    boolean isConnected=false;
-    Boolean isReady=false;
+
     final int startH=720;
     final int startW=1280;
     static final String resDir = "uno_client\\src\\main\\resources\\";

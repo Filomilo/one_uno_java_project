@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
 
+import javax.swing.text.View;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,6 +33,8 @@ GuiController extends Application {
 
     RankView rankView;
 
+    InstructionView instructionView;
+
     Scene mainScene;
 
     static String nick="";
@@ -41,6 +44,8 @@ GuiController extends Application {
     ClientApp clientApp= new ClientApp(this);
 
     BooleanProperty isStarted= new SimpleBooleanProperty(false);
+
+    Scene previousScene;
 
 
     public static void main(String[] args) {
@@ -82,7 +87,8 @@ GuiController extends Application {
 
             this.mainVew= new MainVew(this);
             this.primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("one_icon.png")));
-
+            this.instructionView = new InstructionView(this);
+            this.instructionView.iniit(primaryStage);
 
 
             mainVew.iniit(primaryStage);// mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
@@ -287,11 +293,7 @@ GuiController extends Application {
 
 
 
-    public void  switchScenetoRanking()
-    {
 
-
-    }
 
     private void setScaneToRanking()
     {
@@ -306,6 +308,17 @@ GuiController extends Application {
         }
     }
 
+
+    public void ReturnScene()
+    {
+        this.primaryStage.setScene(this.previousScene);
+    }
+
+    public void switchSceneToInstruction() {
+        this.previousScene= this.primaryStage.getScene();
+        this.primaryStage.setScene(this.instructionView.mainScene);
+
+    }
 }
 
 

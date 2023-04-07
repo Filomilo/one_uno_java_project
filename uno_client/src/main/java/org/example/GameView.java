@@ -28,6 +28,7 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -66,6 +67,10 @@ public class GameView extends Application {
 
 
     final Object colorChoiceBlock=new Object();
+
+
+    Rectangle helpButton;
+    Text helpButtonText;
 
 
     ImageView[] emptyCards ;
@@ -135,6 +140,7 @@ public class GameView extends Application {
         this.setupEmptyCardsPostion();
         this.setupButtonShape();
         this.setupNicks();
+        this.setupHelpButton();
         this.setTopGlow(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.BLACK, 1));
 
         //this.looadCardsInHand();
@@ -545,7 +551,83 @@ public class GameView extends Application {
         );
 
 
+        helpButton.setOnMouseMoved(
 
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMoved();
+                    }
+                }
+        );
+        helpButtonText.setOnMouseMoved(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMoved();
+                    }
+                }
+        );
+
+
+
+        helpButton.setOnMouseExited(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMovedOutside();
+                    }
+                }
+
+        );
+
+        helpButtonText.setOnMouseExited(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMovedOutside();
+                    }
+                }
+
+        );
+
+
+
+        helpButton.setOnMousePressed(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpBasicClick();
+                    }
+                }
+        );
+        this.helpButton.setOnMousePressed(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpBasicClick();
+                    }
+                }
+        );
+
+        this.helpButtonText.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                onHelpReelased();
+            }
+        });
+
+        this.helpButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                onHelpReelased();
+            }
+        });
 
 
     }
@@ -557,6 +639,7 @@ public class GameView extends Application {
         this.updateEmptyCard();
         this.updateCardsInHandScale();
         this.upadateButtonShape();
+        this.updateHelpButtonSize();
         this.upadateText();
         this.updateColorPanelScale();
         this.updateGlowSize();
@@ -1218,6 +1301,7 @@ public class GameView extends Application {
 
 
 
+
       // rotateTransition.play();
 
     }
@@ -1503,5 +1587,77 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
     }
+
+
+
+
+    void onHelpMoved()
+    {
+        helpButton.setFill(Color.WHITE);
+        helpButtonText.setFill(Color.BLACK);
+
+    }
+
+    void onHelpMovedOutside()
+    {
+
+
+        helpButton.setFill(this.tranparentColor);
+        this.helpButtonText.setFill(Color.WHITE);
+
+    }
+
+    void onHelpBasicClick()
+    {
+
+
+        helpButton.setFill(Color.LIGHTGRAY);
+
+
+    }
+
+    void onHelpReelased()
+    {
+        this.guiController.switchSceneToInstruction();
+        onHelpMovedOutside();
+
+
+    }
+
+
+
+    private void setupHelpButton() {
+        this.helpButton = new Rectangle();
+        this.helpButton.setFill(this.tranparentColor);
+        this.helpButton.setStrokeWidth(1);
+        this.helpButtonText= new Text("?");
+        this.helpButtonText.setFill(Color.WHITE);
+        this.helpButtonText.setBoundsType(TextBoundsType.VISUAL);
+        this.helpButton.setStroke(Color.WHITE);
+
+        this.root.getChildren().addAll(this.helpButton,this.helpButtonText);
+        this.updateHelpButtonSize();
+
+    }
+
+    private void updateHelpButtonSize() {
+
+        double screenRation=25;
+        double size=this.mainScene.getHeight()>this.mainScene.getWidth()?this.mainScene.getWidth()/screenRation:this.mainScene.getHeight()/screenRation;
+        this.helpButton.setHeight(size);
+        this.helpButton.setWidth(size);
+        this.helpButton.setStrokeWidth(size/20);
+        this.helpButton.setX(this.helpButton.getStrokeWidth());
+        this.helpButton.setY(this.helpButton.getStrokeWidth());
+        this.helpButton.setArcHeight(size/2);
+        this.helpButton.setArcWidth(size/2);
+
+        Font font = new Font("Arial", size);
+        this.helpButtonText.setFont(font);
+        this.helpButtonText.setX(this.helpButtonText.getLayoutBounds().getWidth()/2+this.helpButton.getX() );
+        this.helpButtonText.setY(this.helpButton.getHeight()/2 +  this.helpButton.getY() + this.helpButtonText.getLayoutBounds().getHeight()/2);
+
+    }
+
 }
 

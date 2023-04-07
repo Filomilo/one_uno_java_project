@@ -25,6 +25,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
@@ -83,6 +84,16 @@ public class MainVew extends Application {
     final float buttonSizeRatio=9;
     final float buttonHeightToScreenRatio=12;
 
+
+
+
+    Rectangle helpButton;
+    Text helpButtonText;
+
+
+
+
+
     Group root;
 
     GuiController guiController;
@@ -115,11 +126,45 @@ public class MainVew extends Application {
         this.updateBackground();
         this.setupImages();
         this.setupButtons();
+        this.setupHelpButton();
         this.setupTextFields();
         this.setupStatusText();
         this.addListiners(primaryStage);
         this.updateOnSize();
         this.updateLocks();
+
+    }
+
+    private void setupHelpButton() {
+        this.helpButton = new Rectangle();
+        this.helpButton.setFill(this.tranparentColor);
+        this.helpButton.setStrokeWidth(1);
+        this.helpButtonText= new Text("?");
+        this.helpButtonText.setFill(Color.WHITE);
+        this.helpButtonText.setBoundsType(TextBoundsType.VISUAL);
+        this.helpButton.setStroke(Color.WHITE);
+
+        this.root.getChildren().addAll(this.helpButton,this.helpButtonText);
+        this.updateHelpButtonSize();
+
+    }
+
+    private void updateHelpButtonSize() {
+
+        double screenRation=25;
+        double size=this.mainScene.getHeight()>this.mainScene.getWidth()?this.mainScene.getWidth()/screenRation:this.mainScene.getHeight()/screenRation;
+        this.helpButton.setHeight(size);
+        this.helpButton.setWidth(size);
+        this.helpButton.setStrokeWidth(size/20);
+        this.helpButton.setX(this.helpButton.getStrokeWidth());
+        this.helpButton.setY(this.helpButton.getStrokeWidth());
+        this.helpButton.setArcHeight(size/2);
+        this.helpButton.setArcWidth(size/2);
+
+        Font font = new Font("Arial", size);
+        this.helpButtonText.setFont(font);
+        this.helpButtonText.setX(this.helpButtonText.getLayoutBounds().getWidth()/2+this.helpButton.getX() );
+        this.helpButtonText.setY(this.helpButton.getHeight()/2 +  this.helpButton.getY() + this.helpButtonText.getLayoutBounds().getHeight()/2);
 
     }
 
@@ -644,6 +689,88 @@ public class MainVew extends Application {
 
 
 
+
+
+
+        helpButton.setOnMouseMoved(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMoved();
+                    }
+                }
+        );
+        helpButtonText.setOnMouseMoved(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMoved();
+                    }
+                }
+        );
+
+
+
+        helpButton.setOnMouseExited(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMovedOutside();
+                    }
+                }
+
+        );
+
+        helpButtonText.setOnMouseExited(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpMovedOutside();
+                    }
+                }
+
+        );
+
+
+
+        helpButton.setOnMousePressed(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpBasicClick();
+                    }
+                }
+        );
+        this.helpButton.setOnMousePressed(
+
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onHelpBasicClick();
+                    }
+                }
+        );
+
+        this.helpButtonText.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                onHelpReelased();
+            }
+        });
+
+        this.helpButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                onHelpReelased();
+            }
+        });
+
+
     }
 
 
@@ -660,7 +787,7 @@ public class MainVew extends Application {
                                 updateButtonsSize();
                                 updateStatusText();
                                 updateTextFieldsSize();
-
+                                updateHelpButtonSize();
 
 
                             }
@@ -896,6 +1023,41 @@ text.setFill(Color.WHITE);
         }
     }
 
+
+
+
+    void onHelpMoved()
+    {
+            helpButton.setFill(Color.WHITE);
+            helpButtonText.setFill(Color.BLACK);
+
+    }
+
+    void onHelpMovedOutside()
+    {
+
+
+            helpButton.setFill(this.tranparentColor);
+            this.helpButtonText.setFill(Color.WHITE);
+
+    }
+
+    void onHelpBasicClick()
+    {
+
+
+            helpButton.setFill(Color.LIGHTGRAY);
+
+
+    }
+
+void onHelpReelased()
+{
+    this.guiController.switchSceneToInstruction();
+    onHelpMovedOutside();
+
+
+}
 
 
 }

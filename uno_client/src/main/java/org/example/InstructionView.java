@@ -84,6 +84,10 @@ public class InstructionView extends Application {
             "\t\n";
     Text instructionText;
 
+    public InstructionView(GuiController guiController) {
+        this.guiController = guiController;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -342,7 +346,14 @@ public class InstructionView extends Application {
                     }
                 }
         );
-
+        this.buttonText.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRelease();
+                    }
+                }
+        );
 
 
 
@@ -444,7 +455,7 @@ public class InstructionView extends Application {
     {
         //System.out.println("realse");
         this.button.setFill(Color.WHITE);
-        this.guiController.switchScenetoMain();
+        this.guiController.ReturnScene();
     }
 
     private void onMoveOnButton()

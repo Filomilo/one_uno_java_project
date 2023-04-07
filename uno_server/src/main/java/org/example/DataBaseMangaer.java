@@ -447,6 +447,19 @@ public class DataBaseMangaer {
     }
 
 
+    List<String> getListofNicksRanking()
+    {
+        String var[] = {};
+        List<String> nicks= executeSelectPlayers(SqlScripts.SelectNicksRankingInOrder, var);
+        return nicks;
+    }
+
+    List<Integer> getAmtOfWinsRaning()
+    {
+        List<Integer> wins= executeSelectNumbers(SqlScripts.SelectWinsRankingInOrder);
+        return wins;
+    }
+
     private List<String> executeSelectPlayers(String sqlCode, String[] var)
     {
         synchronized (this.semaphore) {
@@ -476,6 +489,32 @@ public class DataBaseMangaer {
             }
 
             return players;
+        }
+    }
+
+    private List<Integer> executeSelectNumbers(String sqlCode)
+    {
+        synchronized (this.semaphore) {
+            List<Integer> numbers = new ArrayList<Integer>();
+            try {
+
+                PreparedStatement statement = connection.prepareStatement(sqlCode);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    numbers.add(resultSet.getInt(1));
+                   // System.out.println("******************" + resultSet.getString("NICK"));
+                }
+            } catch (SQLSyntaxErrorException e) {
+                System.out.println("sqlcode: " + sqlCode);
+                e.printStackTrace();
+                System.exit(-1
+                );
+            } catch (SQLException e) {
+                System.out.println(sqlCode + "--------------didint execute porpely---------------");
+                e.printStackTrace();
+            }
+
+            return numbers;
         }
     }
 

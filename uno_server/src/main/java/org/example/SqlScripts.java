@@ -78,6 +78,23 @@ public class SqlScripts {
                     "ORDER BY POSITION DESC ";
 
 
+    static String SelectNicksRankingInOrder =
+      "SELECT NICK FROM(\n" +
+              "SELECT  NICK, sum(RANK) wins FROM (\n" +
+              "    SELECT NICK, CASE RANK WHEN 1 THEN 1 ELSE 0 END AS RANK FROM GAMES\n" +
+              "                                                        )\n" +
+              "GROUP BY NICK)\n" +
+              "ORDER BY WINS DESC";
+
+    static String SelectWinsRankingInOrder =
+"SELECT wins FROM(\n" +
+        "SELECT  NICK, sum(RANK) wins FROM (\n" +
+        "    SELECT NICK, CASE RANK WHEN 1 THEN 1 ELSE 0 END AS RANK FROM GAMES\n" +
+        "                                                        )\n" +
+        "GROUP BY NICK)\n" +
+        "ORDER BY WINS DESC";
+
+
     static String SelectOrderForPlayer=
             "SELECT * FROM( "+
                     "SELECT * FROM( "+

@@ -12,11 +12,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,8 @@ GuiController extends Application {
     GameView gameView;
     MainVew mainVew;
     ResultView resultView;
+
+    RankView rankView;
 
     Scene mainScene;
 
@@ -65,7 +70,7 @@ GuiController extends Application {
 
 
             this.primaryStage=primaryStage;
-
+            this.addListineres();
             primaryStage.setOnCloseRequest(
                     new EventHandler<WindowEvent>() {
                         @Override
@@ -187,6 +192,30 @@ GuiController extends Application {
 
         });
 
+        System.out.println("ADDDL ISTINER BOOLEAN");
+            this.clientApp.isRankingLoaded.addListener(
+
+                    new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            System.out.printf("RANKING RECIVED\\n\n\n\n\n");
+                            if (newValue == true && oldValue == false) {
+
+                                Platform.runLater(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                setScaneToRanking();
+                                                clientApp.isRankingLoaded.set(false);
+                                            }
+                                        }
+                                );
+
+
+                            }
+                        }
+                    });
+
     }
 
     public void startGame() {
@@ -247,13 +276,36 @@ GuiController extends Application {
     }
 
     public void switchScenetoMain() {
-        Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
+
+        mainVew.buttons[2].setFill(mainVew.tranparentColor);
+        mainVew.buttonTitles[2].setFill(Color.WHITE);
                         primaryStage.setScene(mainVew.mainScene);
-                    }
-                }
-        );
+
+
     }
+
+
+
+
+    public void  switchScenetoRanking()
+    {
+
+
+    }
+
+    private void setScaneToRanking()
+    {
+        System.out.printf("CHANGE SCNE TO RANKING");
+        try {
+
+            rankView = new RankView(this);
+            rankView.iniit(this.primaryStage);
+            this.primaryStage.setScene(rankView.mainScene);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
+
+

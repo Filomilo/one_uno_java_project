@@ -275,6 +275,10 @@ public class ServerConnectionManager {
                 this.serverApp.surrender(playerData);
                 break;
 
+            case RANKING:
+                this.serverApp.sendRanking(playerData);
+                break;
+
 
 
 

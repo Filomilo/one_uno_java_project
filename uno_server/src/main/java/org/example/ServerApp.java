@@ -432,4 +432,28 @@ System.out.println("giving cards");
 
 
     }
+
+    public void sendRanking(PlayerData playerData) {
+
+        List<Integer> numbers= this.dataBaseMangaer.getAmtOfWinsRaning();
+        List<String> nicks = this.dataBaseMangaer.getListofNicksRanking();
+
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.RANKING;
+        messageFormat.number = new int[numbers.size()];
+        messageFormat.text = new String[nicks.size()];
+
+        for(int i=0;i<nicks.size();i++)
+        {
+            messageFormat.number[i]= numbers.get(i);
+            messageFormat.text[i]= nicks.get(i);
+        }
+
+        try {
+            this.connectionManger.sendMessage(playerData, messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

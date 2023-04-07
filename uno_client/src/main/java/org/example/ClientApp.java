@@ -1,5 +1,7 @@
 package org.example;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import sun.misc.Lock;
 
 import java.io.IOException;
@@ -17,6 +19,14 @@ public class ClientApp {
     int connectedPlayers;
     boolean isConnected=false;
     boolean isReady;
+
+
+    String rankingNicks[]={};
+
+    int rankingwinsAmt[] ={};
+
+    BooleanProperty isRankingLoaded= new SimpleBooleanProperty(false);
+
 
     List<String>lastReults;
 
@@ -360,6 +370,27 @@ public class ClientApp {
         }
 
         this.guiController.mainVew.setPlayersReady(this.readyPlayers,this.connectedPlayers);
+    }
+
+    public void requestRanking()
+    {
+        try {
+            this.isRankingLoaded.set(false);
+            MessageFormat messageFormat= new MessageFormat();
+            messageFormat.type = MessageFormat.messegeTypes.RANKING;
+            this.clientConnectionManager.sendMessage(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized void handleRankingRecived(String[] text, int[] number) {
+
+
+            this.rankingNicks = text;
+            this.rankingwinsAmt = number;
+            this.isRankingLoaded.set(true);
+        System.out.printf("hadnle RANKING RECIeVd \n");
     }
 }
 

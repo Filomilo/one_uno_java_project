@@ -239,6 +239,9 @@ this.waitTillconfirmed();
             case ENDGAME:
                 this.clientApp.finishGame(messageFormat.text);
                 break;
+            case RANKING:
+                this.clientApp.handleRankingRecived(messageFormat.text,messageFormat.number);
+                break;
             case SURRENDER:
                 this.clientApp.handleSurrender(messageFormat.text[0]);
 

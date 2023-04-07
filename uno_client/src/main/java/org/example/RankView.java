@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.omg.CORBA.INTERNAL;
+import sun.awt.image.GifImageDecoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +67,12 @@ public class RankView extends Application {
     private RadialGradient gradient;
     private Shape mask;
 
+    GuiController guiController;
+
+    public RankView(GuiController guiController) {
+        this.guiController= guiController;
+    }
+
 
     public static void main(String[] args) {
         launch(args);
@@ -75,7 +82,7 @@ public class RankView extends Application {
 
     Group root;
 
-    GuiController guiController;
+
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -413,6 +420,15 @@ public class RankView extends Application {
                 }
         );
 
+        this.buttonText.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onButtonRelease();
+                    }
+                }
+        );
+
 
 
         this.buttonText.setOnMouseEntered(
@@ -612,7 +628,7 @@ public class RankView extends Application {
     void updateBackground()
     {
 
-        this.gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getHeight()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
+        this.gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getWidth()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
 
 
         mainScene.setFill(gradient);
@@ -663,8 +679,9 @@ public class RankView extends Application {
 
     private void onButtonRelease()
     {
-        //System.out.println("realse");
+        System.out.println("realse");
         this.button.setFill(Color.WHITE);
+
         this.guiController.switchScenetoMain();
     }
 
@@ -686,15 +703,13 @@ public class RankView extends Application {
 
     int[] getScoreArray()
     {
-       return new int[]{10,5,8,4,1,2,8,1000,10,5,8,4,1,2,8,1000,10,5,8,4,1,2,8,1000};
-      //  return new int[]{10,5};
+     return this.guiController.clientApp.rankingwinsAmt;
 
     }
 
     String[] getNicksArray()
     {
-       return new String[]{"sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg","sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg","sdfdsfdsf","asdasdwwww","~~~~~~~~~~~~~~~~~~~~~~~~~~~~","4","dfsssss","dfgdfg","fgdfg","ggggg"};
-       // return new String[]{"sdfdsfdsf","asdasdwwww"};
+               return this.guiController.clientApp.rankingNicks;
 
     }
 

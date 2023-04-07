@@ -779,7 +779,7 @@ text.setFill(Color.WHITE);
     void updateBackground()
     {
 
-        RadialGradient gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getHeight()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
+        RadialGradient gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getWidth()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
 
 
         mainScene.setFill(gradient);
@@ -881,9 +881,11 @@ text.setFill(Color.WHITE);
     {
         if(this.activeControles[6]) {
             System.out.println("RANKING");
-           // this.setStatusConnected();
-            //this.setPlayersReady(4, 8);
+
+        this.guiController.clientApp.requestRanking();
+
         }
+
         }
 
     void onButtonExitClick()

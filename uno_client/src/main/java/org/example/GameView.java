@@ -25,11 +25,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -141,7 +144,9 @@ public class GameView extends Application {
         this.setupButtonShape();
         this.setupNicks();
         this.setupHelpButton();
+        this.setupGuides();
         this.setTopGlow(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.BLACK, 1));
+
 
         //this.looadCardsInHand();
         this.updateBackground();
@@ -643,6 +648,7 @@ public class GameView extends Application {
         this.upadateText();
         this.updateColorPanelScale();
         this.updateGlowSize();
+        this.updateGuidesSize();
     }
 
     private void setupButtonShape()
@@ -1542,15 +1548,25 @@ catch (ArrayIndexOutOfBoundsException e)
 
         for(index=0;index<this.nickText.length;index++)
         {
-            if(this.nickText[index].getText().equals(nick))
+            if(this.nickText[index].getText().equals(nick)) {
+                this.setGuideNickText(this.nickText[index].getText());
                 break;
-        }
+            }
+            }
+
         if(index==0)
             this.isYourTurn=true;
         else
             this.isYourTurn=false;
 
         this.setTurnGlow(index);
+
+    }
+
+    void setGuideNickText(String txt)
+    {
+        this.turnText.setText(txt);
+        updateGuidesSize();
     }
 
 
@@ -1658,6 +1674,160 @@ catch (ArrayIndexOutOfBoundsException e)
         this.helpButtonText.setY(this.helpButton.getHeight()/2 +  this.helpButton.getY() + this.helpButtonText.getLayoutBounds().getHeight()/2);
 
     }
+
+
+
+
+
+
+
+//////////////////////////////////////// setup guides
+
+
+    Polygon guideBaseTop;
+
+    Polygon guideColor;
+    Polygon guideArrow;
+
+    Text turnText;
+
+
+
+    private void updateGuidesSize()
+    {
+        try {
+            this.guideBaseTop.getTransforms().clear();
+            this.guideColor.getTransforms().clear();
+            this.guideArrow.getTransforms().clear();
+        }
+        catch (Exception e)
+        {
+
+        }
+        double scale=mainScene.getWidth()/720;
+        double deltaX=( this.mainScene.getWidth()/2- (this.guideWidht/2)  );
+        this.guideBaseTop.setTranslateX(deltaX);
+
+
+        Scale scaling= new Scale();
+        scaling.setPivotX(this.guideWidht/2);
+        scaling.setPivotY(0);
+        scaling.setX(scale);
+        scaling.setY(scale);
+
+        this.guideBaseTop.getTransforms().addAll(scaling);
+
+
+
+
+
+        this.guideColor.setTranslateX(this.guideBaseTop.getTranslateX());
+        this.guideColor.getTransforms().addAll(scaling);
+        // this.guideColor.setScaleY(scale);
+
+        this.guideArrow.setTranslateX(deltaX);
+
+
+        if(!this.isTurnInOrder)
+        {
+            Scale scaleMirror= new Scale();
+            scaleMirror.setPivotX(this.guideWidht/2);
+            scaleMirror.setX(-1);
+            this.guideArrow.getTransforms().add(scaleMirror);
+        }
+
+        this.guideArrow.getTransforms().add(scaling);
+
+
+
+        Font font= new Font("Arial", (this.guideColor.getLayoutBounds().getHeight()*scale)*0.6);
+        this.turnText.setFont(font);
+
+
+        this.turnText.setX( this.mainScene.getWidth()/2-this.turnText.getLayoutBounds().getWidth()/2);
+        this.turnText.setY((guideHeight* scale)  -  this.turnText.getLayoutBounds().getHeight()/2);
+
+
+
+
+    }
+
+    final private double guideWidht=200;
+    final private double guideHeight=10;
+    final private double guideTrapezoidDiff=12.5;
+
+    boolean isTurnInOrder=true;
+
+    void swaTurnGuide()
+    {
+        this.isTurnInOrder=!isTurnInOrder;
+        updateGuidesSize();
+    }
+
+
+    private void setupGuides()
+    {
+
+        Double points[] = new Double[]{
+                0.0,0.0,
+                guideWidht,0.0,
+                guideWidht-guideTrapezoidDiff,guideHeight,
+                0+ guideTrapezoidDiff*2,guideHeight,
+        };
+
+        Double arrowPointsp[]= new Double[]{
+                guideTrapezoidDiff*2,guideTrapezoidDiff/3,
+                guideTrapezoidDiff*2,guideHeight-guideTrapezoidDiff/3,
+                guideTrapezoidDiff*-1,guideHeight-guideTrapezoidDiff/3,
+                guideTrapezoidDiff*-1,guideHeight*0.8,
+                guideTrapezoidDiff*-1.5,guideHeight/2,
+                guideTrapezoidDiff*-1,guideHeight*(1-0.8),
+                guideTrapezoidDiff*-1,guideTrapezoidDiff/3,
+
+                // 0.0,0.0
+
+        };
+
+        guideBaseTop= new Polygon();
+        guideBaseTop.setStroke(Color.WHITE);
+        guideBaseTop.setFill(this.tranparentColor);
+        guideBaseTop.setStrokeWidth(2);
+        guideBaseTop.setStrokeLineCap(StrokeLineCap.ROUND);
+        guideBaseTop.getPoints().addAll(points);
+
+        guideArrow= new Polygon();
+        guideArrow.setStroke(Color.WHITE);
+        guideArrow.setFill(Color.WHITE);
+        guideArrow.setStrokeWidth(2);
+        guideArrow.setStrokeLineCap(StrokeLineCap.ROUND);
+        guideArrow.getPoints().addAll(arrowPointsp);
+
+
+
+        this.turnText = new Text();
+        this.turnText.setText("SAMPEL TEXT");
+        this.turnText.setFill(Color.WHITE);
+        this.turnText.setBoundsType(TextBoundsType.VISUAL);
+
+        guideColor= new Polygon();
+        guideColor.setFill(Color.RED);
+        guideColor.setStrokeLineCap(StrokeLineCap.ROUND);
+        guideColor.getPoints().addAll(points);
+        this.root.getChildren().add(this.guideArrow);
+        this.root.getChildren().add(guideColor);
+        this.root.getChildren().add(guideBaseTop);
+        this.root.getChildren().add(this.turnText);
+
+//
+
+    }
+
+
+
+
+
+
+
 
 }
 

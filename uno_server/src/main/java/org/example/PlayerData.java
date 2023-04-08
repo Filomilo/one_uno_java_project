@@ -7,16 +7,11 @@ import java.net.Socket;
 public class PlayerData implements Comparable<PlayerData> {
     String nick;
     boolean isReady=false;
-
     boolean confirmedMesseage=false;
-
     boolean inGame=true;
-
     Socket socket;
     ObjectOutputStream objectOutputStream;
-
     ObjectInputStream objectInputStream;
-
     ClientHandler clientHandler;
 
 

@@ -273,6 +273,8 @@ GuiController extends Application {
                             throw new RuntimeException(e);
                         }
                         primaryStage.setScene(resultView.mainScene);
+                        gameView=null;
+
                     }
                 }
 

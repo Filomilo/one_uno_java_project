@@ -5,10 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import sun.misc.Lock;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ClientApp {
@@ -323,6 +320,9 @@ public class ClientApp {
         Collections.addAll(lastReults, arrayResult);
         this.setReady(false);
         this.readyPlayers=0;
+        this.cardOntop=null;
+        this.cardsInHand=new ArrayList<UnoCard>();
+
 
         this.guiController.mainVew.isReady=false;
         this.guiController.mainVew.setButtonReady();

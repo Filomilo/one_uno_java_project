@@ -220,6 +220,11 @@ System.out.println("giving cards");
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type=MessageFormat.messegeTypes.START;
 
+        for (PlayerData player: this.nicks
+             ) {
+            player.setInGame(true);
+        }
+
         this.createGame();
         this.sendPlayerOrder();
         connectionManger.sendToAll(messageFormat);
@@ -236,7 +241,7 @@ System.out.println("giving cards");
             throw new RuntimeException(e);
         }
         this.setTopCard();
-
+        turn=1;
         this.setTurn();
 
     }

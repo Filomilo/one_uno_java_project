@@ -264,6 +264,7 @@ System.out.println("giving cards");
 
 
     void setTurn() throws IOException {
+
         System.out.println("TURA: " + this.turn);
         PlayerData player= this.nicks.get(this.turn);
             validateHand(player);
@@ -311,10 +312,16 @@ System.out.println("giving cards");
     }
     void nextTurn()
     {
+
+
         if(this.clockOrder)
             incrTurn();
         else
             this.decrTurn();
+
+        this.connectionManger.checkFinishGame();
+        if(this.nicks.get(this.turn).isInGame()==false)
+            nextTurn();
     }
 
 
@@ -429,6 +436,7 @@ System.out.println("giving cards");
             this.setTurn();
         }
         this.connectionManger.checkFinishGame();
+
 
 
     }

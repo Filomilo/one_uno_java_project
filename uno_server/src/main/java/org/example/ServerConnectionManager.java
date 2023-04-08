@@ -175,6 +175,7 @@ public class ServerConnectionManager {
     }
 
     public void checkFinishGame() {
+        System.out.printf("Check finsh gmeae \n\n");
         if(this.serverApp.dataBaseMangaer.getAmtActivePlayers()==1)
         {
             this.finishGame();
@@ -182,10 +183,14 @@ public class ServerConnectionManager {
     }
 
     public void finishGame() {
+        System.out.printf("FINSHIND GMAE \n\n\n\n");
         for (PlayerData player: this.serverApp.nicks
              ) {
+            System.out.printf("check finish game: " + player.getNick() + "\n\n");
             if(player.isInGame())
             {
+                System.out.printf("set rank: " + player.getNick() + "\n\n" );
+
                 serverApp.dataBaseMangaer.setRank(player.getNick());
             }
         }

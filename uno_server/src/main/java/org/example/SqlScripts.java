@@ -546,71 +546,93 @@ public class SqlScripts {
                         "REORDER_STACK; "+
                         "END; "+
                         "",
-                "CREATE OR REPLACE PROCEDURE SET_RANK(nick_var VARCHAR) " +
-                        "AS " +
-                        "game_id_var NUMBER(6); " +
-                        "amt_of_players NUMBER(6); " +
-                        "iter NUMBER(6); " +
-                        "tmp NUMBER(6); " +
-                        "new_rank NUMBER(6); " +
-                        "BEGIN " +
-                        "game_id_var:=GET_ACTIVE_GAME_ID; " +
-                        "amt_of_players:=GET_PLAYER_COUNT; " +
-                        "FOR iter IN 1..amt_of_players  " +
-                        "LOOP " +
-                        "SELECT COUNT(*) INTO tmp FROM GAMES " +
-                        "WHERE " +
-                        "rank=iter; " +
-                        "IF tmp=0 THEN " +
-                        "new_rank:=iter; " +
-                        "Exit; " +
-                        "END IF; " +
-                        "END LOOP; " +
-                        "UPDATE GAMES  " +
-                        "SET " +
-                        "RANK=new_rank " +
-                        "WHERE " +
-                        "GAMES_ID=game_id_var " +
-                        "AND " +
-                        "NICK=nick_var; " +
+                "CREATE OR REPLACE PROCEDURE SET_RANK(nick_var VARCHAR)\n" +
+                        "AS\n" +
+                        "game_id_var NUMBER(6);\n" +
+                        "amt_of_players NUMBER(6);\n" +
+                        "iter NUMBER(6);\n" +
+                        "tmp NUMBER(6);\n" +
+                        "new_rank NUMBER(6);\n" +
+                        "BEGIN\n" +
+                        "game_id_var:=GET_ACTIVE_GAME_ID;\n" +
+                        "amt_of_players:=GET_PLAYER_COUNT;\n" +
+                        "\n" +
+                        "FOR iter IN 1..amt_of_players \n" +
+                        "LOOP\n" +
+                        "\n" +
+                        "SELECT COUNT(*) INTO tmp FROM GAMES\n" +
+                        "WHERE\n" +
+                        "rank=iter\n" +
+                        "AND GAMES_ID=game_id_var;\n" +
+                        "\n" +
+                        "IF tmp=0 THEN\n" +
+                        "new_rank:=iter;\n" +
+                        "Exit;\n" +
+                        "END IF;\n" +
+                        "\n" +
+                        "\n" +
+                        "END LOOP;\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "UPDATE GAMES \n" +
+                        "SET\n" +
+                        "RANK=new_rank\n" +
+                        "WHERE\n" +
+                        "GAMES_ID=game_id_var\n" +
+                        "AND\n" +
+                        "NICK=nick_var;\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
                         "END;",
-                "CREATE OR REPLACE PROCEDURE SURRENDER(nick_var VARCHAR) "+
-                        "AS "+
-                        "game_id_var NUMBER(6); "+
-                        "amt_of_players NUMBER(6); "+
-                        "iter NUMBER(6); "+
-                        "tmp NUMBER(6); "+
-                        "new_rank NUMBER(6); "+
-                        "BEGIN "+
-                        "game_id_var:=GET_ACTIVE_GAME_ID; "+
-                        "amt_of_players:=GET_PLAYER_COUNT; "+
-                        "FOR iter IN REVERSE 1..amt_of_players  "+
-                        "LOOP "+
-                        "SELECT COUNT(*) INTO tmp FROM GAMES "+
-                        "WHERE "+
-                        "rank=iter; "+
-                        "IF tmp=0 THEN "+
-                        "new_rank:=iter; "+
-                        "EXIT;"+
-                        "END IF; "+
-                        "END LOOP; "+
-                        "UPDATE GAMES  "+
-                        "SET "+
-                        "RANK=new_rank "+
-                        "WHERE "+
-                        "GAMES_ID=game_id_var "+
-                        "AND "+
-                        "NICK=nick_var; "+
-                        "UPDATE ACTIVE_CARD_PLACES "+
-                        "SET "+
-                        "POSITION=POSITION-2000, "+
-                        "PLACE_TYPE='STACK', "+
-                        "nick=NULL "+
-                        "WHERE "+
-                        "nick=nick_var; "+
-                        "REORDER_STACK; "+
-                        "END; "+
-                        "",
+                "CREATE OR REPLACE PROCEDURE SURRENDER(nick_var VARCHAR)\n" +
+                        "AS\n" +
+                        "game_id_var NUMBER(6);\n" +
+                        "amt_of_players NUMBER(6):=0;\n" +
+                        "iter NUMBER(6);\n" +
+                        "tmp NUMBER(6);\n" +
+                        "new_rank NUMBER(6):=-1;\n" +
+                        "BEGIN\n" +
+                        "game_id_var:=GET_ACTIVE_GAME_ID;\n" +
+                        "amt_of_players:=GET_PLAYER_COUNT;\n" +
+                        "FOR iter IN REVERSE 1.. amt_of_players\n" +
+                        "LOOP\n" +
+                        "SELECT COUNT(*) INTO tmp FROM GAMES\n" +
+                        "WHERE\n" +
+                        "rank=iter\n" +
+                        "AND GAMES_ID=game_id_var;\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "IF tmp =0 THEN\n" +
+                        "new_rank:=iter;\n" +
+                        "EXIT;\n" +
+                        "END IF;\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "END LOOP;\n" +
+                        "\n" +
+                        "UPDATE GAMES \n" +
+                        "SET\n" +
+                        "RANK=new_rank\n" +
+                        "WHERE\n" +
+                        "GAMES_ID=game_id_var\n" +
+                        "AND\n" +
+                        "NICK=nick_var;\n" +
+                        "\n" +
+                        "UPDATE ACTIVE_CARD_PLACES\n" +
+                        "SET\n" +
+                        "POSITION=POSITION-2000,\n" +
+                        "PLACE_TYPE='STACK',\n" +
+                        "nick=NULL\n" +
+                        "WHERE\n" +
+                        "nick=nick_var;\n" +
+                        "\n" +
+                        "REORDER_STACK;\n" +
+                        "\n" +
+                        "END;",
                 "CREATE OR REPLACE PROCEDURE CLEAR_GAME "+
                         "AS "+
                         "BEGIN "+

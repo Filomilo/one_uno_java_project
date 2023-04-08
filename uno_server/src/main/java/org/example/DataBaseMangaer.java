@@ -226,7 +226,9 @@ public class DataBaseMangaer {
     int getAmtActivePlayers()
     {
         String[] arr=new String[0];
-        return executeSelectInt(SqlScripts.GetAmtOfActivePlayers, arr);
+        int res= executeSelectInt(SqlScripts.GetAmtOfActivePlayers, arr);
+        System.out.printf("Amount of active players:  " + res + "\n\n");
+        return res;
     }
     List<String> getResults()
     {

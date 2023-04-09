@@ -392,6 +392,10 @@ public class ClientApp {
             this.isRankingLoaded.set(true);
         System.out.printf("hadnle RANKING RECIeVd \n");
     }
+
+    public void handleSwapTurn() {
+        this.guiController.gameView.swapTurn();
+    }
 }
 
 

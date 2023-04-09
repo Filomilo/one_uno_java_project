@@ -126,6 +126,10 @@ public class ServerConnectionManager {
         {
             System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ REVERSE");
             this.serverApp.clockOrder=!this.serverApp.clockOrder;
+            MessageFormat messageFormat =new MessageFormat();
+            messageFormat.type=MessageFormat.messegeTypes.SWAPTURN;
+            this.sendToAll(messageFormat);
+
         }
 
 

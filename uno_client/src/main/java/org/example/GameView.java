@@ -60,7 +60,10 @@ public class GameView extends Application {
     Color tranparentBlack = new Color(0, 0, 0, 0.5);
     Color tranparentColor = new Color(1, 0, 0, 0.0);
     Color greenColor = new Color(0, 0.4, 0.1, 1);
+    Color darkGreenColor = new Color(0, 0.32, 0.01, 1);
     Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
+    Stop[] darkGreenStops = new Stop[]{new Stop(0, darkGreenColor), new Stop(1, Color.BLACK)};
+    Stop[] backGroundStops = darkGreenStops;
     GuiController guiController;
 
     String cardPrefix=  "Cards/unoCards_";
@@ -647,7 +650,6 @@ public class GameView extends Application {
         this.updateHelpButtonSize();
         this.upadateText();
         this.updateColorPanelScale();
-        this.updateGlowSize();
         this.updateGuidesSize();
     }
 
@@ -791,31 +793,33 @@ public class GameView extends Application {
 
     void updateBackground() {
 
-        RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.greenStops);
+        RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.backGroundStops);
         mainScene.setFill(gradient);
     }
 
     void setTopGlow(UnoCard card)
     {
+
         Color color = Color.WHITE;
         switch (card.getColor())
         {
-            case GREEN: color= Color.LIGHTGREEN;
+            case GREEN: color= Color.DARKGREEN;
             break;
-            case RED: color= Color.RED;
+            case RED: color= Color.DARKRED;
                 break;
-            case YELLOW: color= Color.YELLOW;
+            case YELLOW: color= Color.GOLD;
                 break;
-            case BLUE: color= Color.BLUE;
+            case BLUE: color= Color.DARKBLUE;
                 break;
             case BLACK: color= Color.BLACK;
                 break;
         }
-        DropShadow shadow=new DropShadow(10,color);
+        //DropShadow shadow=new DropShadow(10,color);
+        this.setGuideColor(color);
 
-        this.emptyCards[0].setEffect(shadow);
-        this.updateGlowSize();
-        this.updateOnSize();
+       // this.emptyCards[0].setEffect(shadow);
+        //this.updateGlowSize();
+       // this.updateOnSize();
     }
 
     void setTopGlow(UnoCard.UNO_COLOR col)
@@ -837,14 +841,10 @@ public class GameView extends Application {
         DropShadow shadow=new DropShadow(10,color);
 
         this.emptyCards[0].setEffect(shadow);
-        this.updateGlowSize();
+
     }
 
-    private void updateGlowSize() {
-        DropShadow shadow= (DropShadow) this.emptyCards[0].getEffect();
-        shadow.setRadius(this.cardWidth/5);
-        this.emptyCards[0].setEffect(shadow);
-    }
+
 
 
     List<String> getNick()
@@ -1554,11 +1554,16 @@ catch (ArrayIndexOutOfBoundsException e)
             }
             }
 
-        if(index==0)
-            this.isYourTurn=true;
-        else
-            this.isYourTurn=false;
+        if(index==0) {
+            this.isYourTurn = true;
+            this.backGroundStops=greenStops;
 
+        }
+        else {
+            this.isYourTurn = false;
+            this.backGroundStops=darkGreenStops;
+        }
+        this.updateBackground();
         this.setTurnGlow(index);
 
     }
@@ -1758,7 +1763,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     boolean isTurnInOrder=true;
 
-    void swaTurnGuide()
+    void swapTurnGuide()
     {
         this.isTurnInOrder=!isTurnInOrder;
         updateGuidesSize();
@@ -1805,12 +1810,12 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
         this.turnText = new Text();
-        this.turnText.setText("SAMPEL TEXT");
+        this.turnText.setText("-");
         this.turnText.setFill(Color.WHITE);
         this.turnText.setBoundsType(TextBoundsType.VISUAL);
 
         guideColor= new Polygon();
-        guideColor.setFill(Color.RED);
+        guideColor.setFill(Color.WHITE);
         guideColor.setStrokeLineCap(StrokeLineCap.ROUND);
         guideColor.getPoints().addAll(points);
         this.root.getChildren().add(this.guideArrow);
@@ -1823,11 +1828,14 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
+    void setGuideColor(Color col)
+    {
+        this.guideColor.setFill(col);
+    }
 
 
-
-
-
-
+    public void swapTurn() {
+        this.swapTurnGuide();
+    }
 }
 

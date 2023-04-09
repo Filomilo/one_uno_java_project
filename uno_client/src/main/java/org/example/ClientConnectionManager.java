@@ -245,6 +245,9 @@ this.waitTillconfirmed();
             case SURRENDER:
                 this.clientApp.handleSurrender(messageFormat.text[0]);
                 break;
+            case SWAPTURN:
+                this.clientApp.handleSwapTurn();
+                break;
 
 
         }

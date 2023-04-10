@@ -17,6 +17,7 @@ public class ClientApp {
     boolean isConnected=false;
     boolean isReady;
 
+    Stack<ChatMesseage> chatLogs= new Stack<ChatMesseage>();
 
     String rankingNicks[]={};
 
@@ -53,6 +54,7 @@ public class ClientApp {
     }
 
     public void setGameStarted(boolean gameStarted) {
+        this.chatLogs= new Stack<ChatMesseage>();
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
@@ -395,6 +397,28 @@ public class ClientApp {
 
     public void handleSwapTurn() {
         this.guiController.gameView.swapTurn();
+    }
+
+    public void sendChatMesseage(String text) {
+        this.addChatMesseage(new ChatMesseage(this.getNick(),text));
+        try {
+        MessageFormat messageFormat= new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.MESSAGE;
+        messageFormat.text = new String[1];
+        messageFormat.text[0] = text;
+            this.clientConnectionManager.sendMessage(messageFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private void addChatMesseage(ChatMesseage chatMesseage) {
+        this.guiController.gameView.addChatLog(chatMesseage);
+    }
+
+    public void reciveChatMesseage(String nick, String mess) {
+        this.addChatMesseage(new ChatMesseage(nick,mess));
     }
 }
 

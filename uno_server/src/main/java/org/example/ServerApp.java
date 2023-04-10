@@ -469,4 +469,18 @@ System.out.println("giving cards");
         }
 
     }
+
+    public void sendChatMess(PlayerData playerData, String s) {
+        try {
+
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type = MessageFormat.messegeTypes.MESSAGE;
+        messageFormat.text = new String[2];
+        messageFormat.text[0] = playerData.getNick();
+        messageFormat.text[1] = s;
+            this.connectionManger.sendExclusice(messageFormat,playerData);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

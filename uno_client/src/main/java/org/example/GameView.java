@@ -1,25 +1,24 @@
 package org.example;
 
 import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
-import javafx.animation.Animation;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -46,6 +45,7 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 public class GameView extends Application {
@@ -148,6 +148,7 @@ public class GameView extends Application {
         this.setupNicks();
         this.setupHelpButton();
         this.setupGuides();
+        this.setupChat();
         this.setTopGlow(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.BLACK, 1));
 
 
@@ -638,6 +639,21 @@ public class GameView extends Application {
         });
 
 
+        mainScene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode()== KeyCode.BACK_QUOTE)
+                {
+                    onTyldaButton();
+                }
+                if(event.getCode()== KeyCode.ENTER)
+                {
+                    sendMessage();
+                }
+            }
+        });
+
+
     }
 
 
@@ -651,6 +667,7 @@ public class GameView extends Application {
         this.upadateText();
         this.updateColorPanelScale();
         this.updateGuidesSize();
+        this.updateChatSize();
     }
 
     private void setupButtonShape()
@@ -710,7 +727,9 @@ public class GameView extends Application {
         double fontSizeparm=5;
         Font font= new Font("Arial",cardWidth/fontSizeparm);
         this.nickText[0].setFont(font);
+        this.nickText[0].setX(this.mainScene.getWidth()- this.nickText[0].getLayoutBounds().getWidth()*1.5);
         this.nickText[0].setY(this.mainScene.getHeight()- this.nickText[0].getLayoutBounds().getHeight()*0.2);
+        this.textBox[0].setX(this.nickText[0].getLayoutBounds().getMinX());
         this.textBox[0].setY(this.nickText[0].getLayoutBounds().getMinY());
         this.textBox[0].setHeight(this.nickText[0].getLayoutBounds().getHeight());
         this.textBox[0].setWidth(this.nickText[0].getLayoutBounds().getWidth()*1.1);
@@ -719,7 +738,7 @@ public class GameView extends Application {
         {
             try {
                 this.nickText[i].setFont(font);
-                this.nickText[i].setX((this.emptyCards[i + 1].getBoundsInParent().getMinX() + this.emptyCards[i + 1].getBoundsInParent().getMaxX()) / 2 - this.nickText[i].getLayoutBounds().getWidth() / 2);
+                this.nickText[i].setX((this.emptyCards[i + 1].getBoundsInParent().getMinX() + this.emptyCards[i + 1].getBoundsInParent().getMaxX()) / 2 - this.mainScene.getWidth() / 200);
                 this.nickText[i].setY(this.emptyCards[i + 1].getBoundsInParent().getMinY());
 
                 this.textBox[i].setY(this.nickText[i].getLayoutBounds().getMinY());
@@ -1720,14 +1739,14 @@ catch (ArrayIndexOutOfBoundsException e)
         scaling.setX(scale);
         scaling.setY(scale);
 
-        this.guideBaseTop.getTransforms().addAll(scaling);
+        this.guideBaseTop.getTransforms().add(scaling);
 
 
 
 
 
         this.guideColor.setTranslateX(this.guideBaseTop.getTranslateX());
-        this.guideColor.getTransforms().addAll(scaling);
+        this.guideColor.getTransforms().add(scaling);
         // this.guideColor.setScaleY(scale);
 
         this.guideArrow.setTranslateX(deltaX);
@@ -1837,5 +1856,221 @@ catch (ArrayIndexOutOfBoundsException e)
     public void swapTurn() {
         this.swapTurnGuide();
     }
+
+
+
+
+///////////////////////////////////// chat
+
+
+    TextField chatArea;
+    TextArea chatLogs;
+    boolean isWritingInChat=false;
+
+    Stack<Text> popupMess;
+    int popupTime=2;
+    double fadeTime=2;
+    private final int limitChat=40;
+
+
+    void setupChat()
+    {
+        mainScene.getStylesheets().add("Style.css");
+        popupMess = new Stack<Text>();
+        chatArea = new TextField();
+        this.setupChatFormatting();
+        chatLogs = new TextArea();
+        chatLogs.setWrapText(true);
+        chatLogs.setEditable(false);
+
+
+        hideChat();
+        this.root.getChildren().add(chatArea);
+        this.root.getChildren().add(chatLogs);
+
+
+    }
+
+    void onTyldaButton()
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(isWritingInChat)
+                {
+                    hideChat();
+                }
+                else
+                {
+                    showChat();
+                }
+                isWritingInChat=!isWritingInChat;
+            }
+        });
+
+    }
+
+    void showChat()
+    {
+
+        chatArea.setVisible(true);
+        chatLogs.setVisible(true);
+        chatArea.requestFocus();
+
+
+        for (Text popup: this.popupMess
+             ) {
+            popup.setVisible(false);
+        }
+    }
+    void hideChat()
+    {
+        chatArea.setVisible(false);
+        chatLogs.setVisible(false);
+
+
+        for (Text popup: this.popupMess
+        ) {
+            popup.setVisible(true);
+
+        }
+
+    }
+
+    void setupChatFormatting()
+    {
+
+        TextFormatter textFormatter = new TextFormatter<>(change -> {
+
+            String txt=change.getControlNewText();
+
+            if (txt.length() > this.limitChat) {
+                return null;
+
+            }
+
+            if(change.getControlNewText().endsWith("`")||change.getControlNewText().endsWith("\n"))
+            {
+                return null;
+            }
+
+            return change;
+        });
+
+        this.chatArea.setTextFormatter(textFormatter);
+
+
+    }
+    void sendMessage()
+    {
+        if(this.chatArea.getLength()>0) {
+            this.guiController.clientApp.sendChatMesseage(this.chatArea.getText());
+            this.chatArea.setText("");
+
+        }
+    }
+
+    void updateChatSize()
+    {
+        double height= this.mainScene.getHeight()/45;
+
+        Font font = new Font("Arial", height);;
+        this.chatArea.setFont(font);
+        this.chatArea.setPrefSize(this.mainScene.getWidth()/4,height);
+        this.chatArea.setTranslateY(this.mainScene.getHeight()-this.chatArea.getHeight());
+
+        this.chatLogs.setFont(font);
+        this.chatLogs.setPrefSize(this.mainScene.getWidth()/4,height*10);
+        this.chatLogs.setTranslateY(this.mainScene.getHeight()-this.chatArea.getHeight()-this.chatLogs.getHeight());
+        //    chatLogs.setBackground(new Background(new BackgroundFill(Color.BLACK,null,null)));
+
+        int i=popupMess.size();
+
+        for (Text popup: this.popupMess
+        ) {
+            popup.setFont(font);
+            double popX = (this.mainScene.getWidth()/400);
+            double popY = (this.mainScene.getHeight() - height * (i));
+
+            TranslateTransition translateTransition= new TranslateTransition();
+
+            translateTransition.setToY(popY);
+            translateTransition.setToX(popX);
+            translateTransition.setNode(popup);
+            translateTransition.setDuration(Duration.millis(200));
+            translateTransition.play();
+
+
+            i--;
+        }
+
+
+
+    }
+
+
+    public void addChatLog(ChatMesseage chatMesseage) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                chatLogs.appendText(chatMesseage + "\n");
+                addPopupMesseage(chatMesseage);
+            }
+        });
+
+    }
+
+    void addPopupMesseage(ChatMesseage chatMesseage)
+    {
+
+        Text text = new Text(chatMesseage.toString());
+        if(this.isWritingInChat)
+            text.setVisible(false);
+        text.setX(0);
+        text.setY(0);
+        text.setTranslateY(this.mainScene.getHeight());
+
+        text.setFill(Color.WHITE);
+        this.popupMess.push(text);
+        this.root.getChildren().add(text);
+        updateChatSize();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(popupTime), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                removePopup(text);
+            }
+        }));
+        timeline.play();
+
+    }
+
+    void removePopup(Text text)
+    {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(fadeTime));
+        fadeTransition.setNode(text);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.play();
+
+
+        fadeTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+            @Override
+            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                if(newValue== Animation.Status.STOPPED)
+                {
+                    root.getChildren().remove(text);
+                    popupMess.remove(text);
+
+
+
+                }
+            }
+        });
+    }
+
+
+
+
 }
 

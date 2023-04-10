@@ -248,6 +248,9 @@ this.waitTillconfirmed();
             case SWAPTURN:
                 this.clientApp.handleSwapTurn();
                 break;
+            case MESSAGE:
+                this.clientApp.reciveChatMesseage(messageFormat.text[0],messageFormat.text[1]);
+                break;
 
 
         }

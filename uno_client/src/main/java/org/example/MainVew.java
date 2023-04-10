@@ -1,27 +1,30 @@
 package org.example;
 
-import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.When;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
@@ -43,7 +46,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.security.Key;
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 
@@ -781,6 +786,8 @@ public class MainVew extends Application {
         });
 
 
+
+
     }
 
 
@@ -1067,9 +1074,6 @@ void onHelpReelased()
     this.guiController.switchSceneToInstruction();
     onHelpMovedOutside();
 }
-
-
-
 
 
 }

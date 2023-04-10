@@ -287,6 +287,9 @@ public class ServerConnectionManager {
             case RANKING:
                 this.serverApp.sendRanking(playerData);
                 break;
+            case MESSAGE:
+                this.serverApp.sendChatMess(playerData,messageFormat.text[0]);
+                break;
 
 
 

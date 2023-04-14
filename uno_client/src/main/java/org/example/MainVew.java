@@ -112,7 +112,7 @@ public class MainVew extends Application {
     public void start(Stage primaryStage) throws IOException {
         try {
 
-            this.iniit(primaryStage);
+            this.iniit(primaryStage,null);
             primaryStage.setScene(this.mainScene);
             primaryStage.show();
         }
@@ -124,15 +124,15 @@ public class MainVew extends Application {
     }
 
 
-    void iniit(Stage primaryStage) throws IOException, URISyntaxException {
+    void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
 
 
-
+        this.mainScene=mainScene;
 
 
         root = new Group();
 
-        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
+       // mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
         this.setupLock();
         this.updateBackground();
         this.setupImages();
@@ -143,11 +143,6 @@ public class MainVew extends Application {
         this.addListiners(primaryStage);
         this.updateOnSize();
         this.updateLocks();
-
-
-
-
-
     }
 
     private void setupHelpButton() {
@@ -924,10 +919,12 @@ text.setFill(Color.WHITE);
     void updateBackground()
     {
 
-        RadialGradient gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getWidth()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
+        if(this.guiController.activeScenes== GuiController.SCENES.MAIN) {
+            RadialGradient gradient = new RadialGradient(0, 0, this.guiController.mainScene.getWidth() / 2, this.guiController.mainScene.getHeight() / 2, this.guiController.mainScene.getHeight() > this.guiController.mainScene.getWidth() ? this.guiController.mainScene.getHeight() * 4 : this.guiController.mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
 
-        mainScene.setFill(gradient);
+            mainScene.setFill(gradient);
+        }
     }
 
     int getButtonINdex(Rectangle button)
@@ -1073,6 +1070,7 @@ void onHelpReelased()
 {
     this.guiController.switchSceneToInstruction();
     onHelpMovedOutside();
+
 }
 
 

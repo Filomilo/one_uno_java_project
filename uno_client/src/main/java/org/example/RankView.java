@@ -69,8 +69,9 @@ public class RankView extends Application {
 
     GuiController guiController;
 
-    public RankView(GuiController guiController) {
+    public RankView(GuiController guiController, Scene mainScene) {
         this.guiController= guiController;
+        this.mainScene=mainScene;
     }
 
 
@@ -104,7 +105,6 @@ public class RankView extends Application {
     void iniit(Stage primaryStage) throws IOException, URISyntaxException {
         root = new Group();
 
-        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
         this.updateBackground();
 
         this.setupRankView();
@@ -627,11 +627,13 @@ public class RankView extends Application {
 
     void updateBackground()
     {
+        if(this.guiController.activeScenes== GuiController.SCENES.RANK) {
 
-        this.gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getWidth()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
+            this.gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 4 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
 
-        mainScene.setFill(gradient);
+            mainScene.setFill(gradient);
+        }
     }
 
     private void setupButton() {

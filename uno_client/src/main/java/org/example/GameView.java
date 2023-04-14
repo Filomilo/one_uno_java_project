@@ -99,8 +99,9 @@ public class GameView extends Application {
 
     int playersAtStart=0;
 
-    public GameView(GuiController guiController) {
+    public GameView(GuiController guiController,Scene mainScene) {
         this.guiController=guiController;
+        this.mainScene=mainScene;
     }
 
     public GameView()
@@ -138,7 +139,6 @@ public class GameView extends Application {
     void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
-        mainScene = new Scene(root);
         //mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), true, SceneAntialiasing.BALANCED);
         this.loadImages();
 
@@ -811,9 +811,11 @@ public class GameView extends Application {
 
 
     void updateBackground() {
+        if(this.guiController.activeScenes== GuiController.SCENES.GAME) {
 
-        RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.backGroundStops);
-        mainScene.setFill(gradient);
+            RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.backGroundStops);
+            mainScene.setFill(gradient);
+        }
     }
 
     void setTopGlow(UnoCard card)

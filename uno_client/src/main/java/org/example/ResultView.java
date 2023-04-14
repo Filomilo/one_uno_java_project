@@ -78,8 +78,6 @@ public class ResultView extends Application {
 
         root = new Group();
 
-        mainScene = new Scene(root, 1250, 720,true, SceneAntialiasing.BALANCED);
-
         this.setupRanking();
         this.setupButton();
 
@@ -126,8 +124,9 @@ public class ResultView extends Application {
 
 
 
-    public ResultView(GuiController guiController) {
+    public ResultView(GuiController guiController, Scene mainScene) {
         this.guiController=guiController;
+        this.mainScene=mainScene;
     }
 
     void addListiners(Stage primaryStage) {
@@ -307,8 +306,11 @@ public class ResultView extends Application {
 
     void updateBackground()
     {
-        RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.orangeStops);
-        mainScene.setFill(gradient);
+        if(this.guiController.activeScenes== GuiController.SCENES.RESULT) {
+
+            RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.orangeStops);
+            mainScene.setFill(gradient);
+        }
     }
 
 

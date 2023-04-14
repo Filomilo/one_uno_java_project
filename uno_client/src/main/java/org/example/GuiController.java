@@ -8,7 +8,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -16,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
+import sun.java2d.windows.GDIRenderer;
 
 import javax.swing.text.View;
 import java.io.FileNotFoundException;
@@ -30,13 +34,22 @@ GuiController extends Application {
     GameView gameView;
     MainVew mainVew;
     ResultView resultView;
-
     RankView rankView;
-
     InstructionView instructionView;
 
-    Scene mainScene;
+    static enum SCENES{
+        MAIN,
+        INSRTUCTION,
+        GAME,
+        RANK,
+        RESULT
+    };
 
+    GuiController.SCENES activeScenes=SCENES.MAIN;
+    GuiController.SCENES prevScene=SCENES.MAIN;
+
+    Scene mainScene;
+    Group root;
     static String nick="";
     String ip="localhost";
     String port="25565";
@@ -46,6 +59,7 @@ GuiController extends Application {
     BooleanProperty isStarted= new SimpleBooleanProperty(false);
 
     Scene previousScene;
+    private Group prevRoot;
 
 
     public static void main(String[] args) {
@@ -72,21 +86,41 @@ GuiController extends Application {
         try{
 
 
-
-
+            this.root = new Group();
+            mainScene = new Scene(this.root, 1250, 720,true, SceneAntialiasing.BALANCED);
             this.primaryStage=primaryStage;
-            this.addListineres();
-            primaryStage.setOnCloseRequest(
-                    new EventHandler<WindowEvent>() {
-                        @Override
-                        public void handle(WindowEvent event) {
-                            System.exit(1);
-                        }
-                    }
-            );
+            primaryStage.setScene(mainScene);
+            primaryStage.show();
+
+            this.primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("one_icon.png")));
 
             this.mainVew= new MainVew(this);
-            this.primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("one_icon.png")));
+            this.mainVew.iniit(primaryStage,mainScene);
+
+            this.mainVew.updateOnSize();
+            //this.mainScene.seton
+
+            this.instructionView= new InstructionView(this);
+            this.instructionView.iniit(primaryStage,mainScene);
+
+
+
+            this.addListineres();
+
+
+
+            this.mainVew.textFields[0].setText(GuiController.nick);
+            this.mainVew.textFields[1].setText(this.ip);
+            this.mainVew.textFields[2].setText(this.port);
+            this.mainScene.setRoot(this.mainVew.root);
+            //primaryStage.setO
+
+            /*
+            this.primaryStage=primaryStage;
+
+
+            this.mainVew= new MainVew(this);
+
             this.instructionView = new InstructionView(this);
             this.instructionView.iniit(primaryStage);
 
@@ -94,19 +128,21 @@ GuiController extends Application {
             mainVew.iniit(primaryStage);// mainScene = new Scene(mainVew.root, 1250, 720,true, SceneAntialiasing.BALANCED);
 
 
-            this.mainVew.textFields[0].setText(GuiController.nick);
-            this.mainVew.textFields[1].setText(this.ip);
-            this.mainVew.textFields[2].setText(this.port);
-
-
-            primaryStage.setScene(mainVew.mainScene);
-            primaryStage.setWidth(640);
-            primaryStage.setHeight(360);
-            primaryStage.show();
 
 
 
 
+
+
+
+
+            //primaryStage.setWidth(640);
+            //primaryStage.setHeight(360);
+
+            this.mainScene.setRoot(mainVew.root);
+
+
+*/
         }
         catch (Exception e)
         {
@@ -184,10 +220,52 @@ GuiController extends Application {
     }
 
 
+    void updateOnSize()
+    {
+        System.out.printf("update Size: "+ this.activeScenes + "\n");
 
+
+
+        switch (this.activeScenes)
+        {
+
+            case GAME: this.gameView.updateOnSize();
+                break;
+            case MAIN: this.mainVew.updateOnSize();
+                break;
+            case RANK: this.rankView.updateOnSize();
+                break;
+            case RESULT: this.resultView.updateOnSize();
+                break;
+            case INSRTUCTION: this.instructionView.updateOnSize();
+                break;
+        }
+
+
+
+        if(this.activeScenes == SCENES.MAIN)
+        this.mainVew.updateOnSize();
+        if(this.activeScenes == SCENES.RANK)
+            this.rankView.updateOnSize();
+    }
 
     void addListineres()
     {
+
+
+
+        primaryStage.setOnCloseRequest(
+                new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        System.exit(1);
+                    }
+                }
+        );
+
+
+
+
         this.primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             System.out.println("KEY PResed: "+ event.getCode());
             if(KeyCode.F10.equals(event.getCode()))
@@ -197,6 +275,17 @@ GuiController extends Application {
             }
 
         });
+
+        this.mainScene.rootProperty().addListener(
+                new ChangeListener<Parent>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+                        System.out.printf("ROOT CHANED\n");
+                        updateOnSize();
+                    }
+                }
+        );
+
 
         System.out.println("ADDDL ISTINER BOOLEAN");
             this.clientApp.isRankingLoaded.addListener(
@@ -225,7 +314,7 @@ GuiController extends Application {
     }
 
     public void startGame() {
-        this.gameView= new GameView(this);
+        this.gameView= new GameView(this,mainScene);
         try {
 
             this.gameView.iniit(this.primaryStage);
@@ -240,7 +329,8 @@ GuiController extends Application {
                         if(gameView.isAssetLoaded) {
                             gameView.playersAtStart = clientApp.getReadyPlayers();
                             gameView.playersAtStart = clientApp.connectedPlayers;
-                            primaryStage.setScene(gameView.mainScene);
+                            activeScenes=SCENES.GAME;
+                            mainScene.setRoot(gameView.root);
                             gameView.updateOnSize();
                         }
                     }
@@ -266,13 +356,14 @@ GuiController extends Application {
                 new Runnable() {
                     @Override
                     public void run() {
-                        resultView = new ResultView(guiController);
+                        resultView = new ResultView(guiController,mainScene);
                         try {
                             resultView.iniit(primaryStage);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        primaryStage.setScene(resultView.mainScene);
+                        activeScenes= SCENES.RESULT;
+                        mainScene.setRoot(resultView.root);
                         gameView=null;
 
                     }
@@ -287,7 +378,8 @@ GuiController extends Application {
 
         mainVew.buttons[2].setFill(mainVew.tranparentColor);
         mainVew.buttonTitles[2].setFill(Color.WHITE);
-                        primaryStage.setScene(mainVew.mainScene);
+        this.activeScenes=SCENES.MAIN;
+                        this.mainScene.setRoot(mainVew.root);
 
 
     }
@@ -302,9 +394,13 @@ GuiController extends Application {
         System.out.printf("CHANGE SCNE TO RANKING");
         try {
 
-            rankView = new RankView(this);
+
+
+            this.activeScenes=SCENES.RANK;
+            rankView = new RankView(this,mainScene);
             rankView.iniit(this.primaryStage);
-            this.primaryStage.setScene(rankView.mainScene);
+            this.activeScenes=SCENES.RANK;
+            this.mainScene.setRoot(rankView.root);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -313,13 +409,18 @@ GuiController extends Application {
 
     public void ReturnScene()
     {
-        this.primaryStage.setScene(this.previousScene);
+
+        this.activeScenes=this.prevScene;
+        this.mainVew.updateOnSize();
+        this.mainScene.setRoot(this.prevRoot);
     }
 
     public void switchSceneToInstruction() {
-        this.previousScene= this.primaryStage.getScene();
-        this.primaryStage.setScene(this.instructionView.mainScene);
 
+        this.prevScene=this.activeScenes;
+        this.activeScenes=SCENES.INSRTUCTION;
+        this.prevRoot= (Group) this.mainScene.getRoot();
+        this.mainScene.setRoot(this.instructionView.root);
     }
 }
 

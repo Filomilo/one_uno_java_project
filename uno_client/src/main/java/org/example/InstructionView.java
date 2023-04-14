@@ -101,7 +101,7 @@ public class InstructionView extends Application {
     public void start(Stage primaryStage) throws IOException {
         try {
 
-            this.iniit(primaryStage);
+            this.iniit(primaryStage,null);
             primaryStage.setScene(this.mainScene);
             primaryStage.setHeight(startH);
             primaryStage.setWidth(startW);
@@ -115,10 +115,10 @@ public class InstructionView extends Application {
     }
 
 
-    void iniit(Stage primaryStage) throws IOException, URISyntaxException {
+    void iniit(Stage primaryStage, Scene mainScene) throws IOException, URISyntaxException {
         root = new Group();
 
-        mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(),true, SceneAntialiasing.BALANCED);
+        this.mainScene =mainScene;
         this.updateBackground();
 
         this.setupButton();
@@ -390,22 +390,24 @@ public class InstructionView extends Application {
     {
         double scaleGuide= this.mainScene.getWidth()<this.mainScene.getHeight()?this.mainScene.getHeight():this.mainScene.getWidth();
         this.instructionText.setY(this.button.getLayoutBounds().getMaxY()*1.5);
-        Font font = new Font("Arial", scaleGuide/65);
+        Font font = new Font("Lucida Console", scaleGuide/65);
         this.instructionText.setFont(font);
         this.instructionText.setWrappingWidth(this.mainScene.getWidth());
         if(this.instructionText.getLayoutBounds().getHeight()>this.mainScene.getHeight())
         {
-            Font newfont = new Font("Arial", font.getSize()/(this.instructionText.getLayoutBounds().getHeight()/this.mainScene.getHeight()));
+            Font newfont = new Font("Lucida Console", font.getSize()/(this.instructionText.getLayoutBounds().getHeight()/this.mainScene.getHeight()));
             this.instructionText.setFont(newfont);
         }
     }
     void updateBackground()
     {
+        if(this.guiController.activeScenes== GuiController.SCENES.INSRTUCTION) {
 
-        this.gradient = new RadialGradient(0,0,mainScene.getWidth()/2,mainScene.getHeight()/2,mainScene.getHeight()>mainScene.getHeight()?mainScene.getHeight()*4:mainScene.getWidth()*2, false, CycleMethod.NO_CYCLE,this.blueStops);
+            this.gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getHeight() ? mainScene.getHeight() * 4 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
 
-        mainScene.setFill(gradient);
+            mainScene.setFill(gradient);
+        }
     }
 
     private void setupButton() {
@@ -431,7 +433,7 @@ public class InstructionView extends Application {
         this.button.setArcWidth(buttonHeight/2);
 
 
-        Font font=new Font("Arial",buttonHeight/1.5);
+        Font font=new Font("Lucida Console",buttonHeight/1.5);
         this.buttonText.setFont(font);
         this.buttonText.setX(this.button.getX() + this.button.getWidth()/2 - this.buttonText.getLayoutBounds().getWidth()/2 );
         this.buttonText.setY(this.button.getY() + this.button.getHeight()/2 + this.buttonText.getLayoutBounds().getHeight()/2.5 );

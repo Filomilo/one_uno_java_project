@@ -87,7 +87,7 @@ GuiController extends Application {
 
 
             this.root = new Group();
-            mainScene = new Scene(this.root, 1250, 720,true, SceneAntialiasing.BALANCED);
+            mainScene = new Scene(this.root, 360, 360,true, SceneAntialiasing.BALANCED);
             this.primaryStage=primaryStage;
             primaryStage.setScene(mainScene);
             primaryStage.show();

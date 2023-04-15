@@ -95,6 +95,7 @@ public class ServerConnectionManager {
     void sendMessage(PlayerData playerData, MessageFormat messageFormat) throws IOException {
         System.out.println("To: " + playerData.getNick());
     ServerConnectionManager.sendMessage(playerData.getObjectOutputStream(),messageFormat);
+    if(messageFormat.type!= MessageFormat.messegeTypes.TOOMANYPLAYERS && messageFormat.type!= MessageFormat.messegeTypes.GAMESATRTED)
     waitConfirm(playerData);
 
 
@@ -280,6 +281,9 @@ public class ServerConnectionManager {
             case DISCONNECT:
                 return false;
 
+            case TOOMANYPLAYERS:
+                return false;
+
             case SURRENDER:
                 this.serverApp.surrender(playerData);
                 break;
@@ -312,18 +316,37 @@ public class ServerConnectionManager {
         if (messageFormat.type == MessageFormat.messegeTypes.CONNECT) {
             System.out.println(messageFormat.text[0] + "Connected");
             PlayerData pLayerData = new PlayerData(messageFormat.text[0], socket, objectOutStream, objectInStream);
-
+            boolean res=true;
             ClientHandler clientHandler= new ClientHandler(pLayerData,this);
             pLayerData.setClientHandler(clientHandler);
-            clientHandler.start();
 
-            boolean res= serverApp.addPlayer(pLayerData);
+            System.out.printf("this.serverApp.nicks.size(): " + this.serverApp.nicks.size() + "\n");
+            if(this.serverApp.nicks.size() >=8)
+            {
+                MessageFormat messageFormatDenyAmt=new MessageFormat();
+                messageFormatDenyAmt.type= MessageFormat.messegeTypes.TOOMANYPLAYERS;
+                this.sendMessage(pLayerData,messageFormatDenyAmt);
+                return;
+            }
+            if(this.serverApp.gameStarted)
+            {
+                MessageFormat messageFormatDenyAmt=new MessageFormat();
+                messageFormatDenyAmt.type= MessageFormat.messegeTypes.GAMESATRTED;
+                this.sendMessage(pLayerData,messageFormatDenyAmt);
+                return;
+            }
+
+
+            clientHandler.start();
+        if(res)
+            res= serverApp.addPlayer(pLayerData);
 
 
 
             System.out.println(pLayerData);
             MessageFormat confirmationMessege = new MessageFormat();
             confirmationMessege.type = MessageFormat.messegeTypes.CONNECT;
+
             if(res==false)
             {
                 confirmationMessege.number = new int[1];

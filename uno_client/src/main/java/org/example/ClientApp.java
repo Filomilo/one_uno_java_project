@@ -420,6 +420,19 @@ public class ClientApp {
     public void reciveChatMesseage(String nick, String mess) {
         this.addChatMesseage(new ChatMesseage(nick,mess));
     }
+
+    public void handleConncetionError(MessageFormat messageFormat) {
+    }
+
+
+    public void handleTooManyPlayers(MessageFormat messageFormat) {
+        this.guiController.mainVew.communicatText.setText("Sorry play lismit on server reached");
+    }
+
+    public void hadleGameAlradyStared(MessageFormat messageFormat) {
+        this.guiController.mainVew.communicatText.setText("Sorry game on this server alrady started");
+
+    }
 }
 
 

@@ -76,6 +76,7 @@ public class MainVew extends Application {
     TextField[] textFields = new TextField[textFieldsTexts.length];
     Line[] textFieldsLine=new Line[textFieldsTexts.length];
     private Text connectionStatusText;
+     Text communicatText;
     private Text readyStatusText;
 
 
@@ -209,11 +210,13 @@ public class MainVew extends Application {
 
         this.connectionStatusText= new Text();
         this.readyStatusText= new Text();
+        this.communicatText= new Text("");
 
         this.connectionStatusText.setFill(Color.WHITE);
         this.readyStatusText.setFill(Color.WHITE);
+        this.communicatText.setFill(Color.GREENYELLOW);
 
-        this.root.getChildren().addAll(this.connectionStatusText,this.readyStatusText);
+        this.root.getChildren().addAll(this.connectionStatusText,this.readyStatusText,this.communicatText);
 
         this.setPlayersReady(0,0);
         this.setStatusDiscconnted();
@@ -820,6 +823,7 @@ delay.play();
         Font font=new Font("Arial",fontSize );
                 this.connectionStatusText.setFont(font);
         this.readyStatusText.setFont(font);
+        this.communicatText.setFont(font);
 
 
         this.readyStatusText.setY(this.mainScene.getHeight() - this.readyStatusText.getBoundsInParent().getHeight()/2);
@@ -827,6 +831,13 @@ delay.play();
 
         this.connectionStatusText.setX((this.buttons[0].getBoundsInParent().getMinX() +this.buttons[0].getBoundsInParent().getMaxX())/2 - this.connectionStatusText.getBoundsInParent().getWidth()/2  );
         this.connectionStatusText.setY(this.buttons[0].getBoundsInParent().getMaxY()+ this.connectionStatusText.getBoundsInParent().getHeight()*1.3 );
+
+
+        this.communicatText.setX( this.connectionStatusText.getLayoutBounds().getMinX() +this.connectionStatusText.getLayoutBounds().getWidth()/2- this.communicatText.getLayoutBounds().getWidth()/2 );
+        this.communicatText.setY( this.connectionStatusText.getLayoutBounds().getMaxY() + this.connectionStatusText.getLayoutBounds().getHeight());
+
+
+
     }
 
     void updateImagesSize()
@@ -969,14 +980,19 @@ text.setFill(Color.WHITE);
     void onButtonConnectClick()
     {
         if(this.activeControles[3]) {
+            this.communicatText.setText("");
             if (!isConnected) {
                 this.setStatusConnecting();
                 this.updateOnSize();
                 System.out.println("CONNECT");
                 if (this.guiController.connectTosServer())
                     this.setStatusConnected();
-                else
+                else {
                     this.setStatusDiscconnted();
+                    if (this.communicatText.getText().equals("")) {
+                        this.communicatText.setText("Failed to connect");
+                    }
+                }
             } else {
                 this.setStatusDiscconnted();
                 this.guiController.disconnectFromServer();

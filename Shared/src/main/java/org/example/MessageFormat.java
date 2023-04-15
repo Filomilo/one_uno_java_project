@@ -24,7 +24,11 @@ public class MessageFormat implements Serializable {
         SHUFFLE,
         FINAL,
         ENDGAME,
-        SURRENDER, RANKING, SWAPTURN,
+        SURRENDER,
+        RANKING,
+        SWAPTURN,
+        TOOMANYPLAYERS,
+        GAMESATRTED
 
     }
     messegeTypes type;

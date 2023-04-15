@@ -67,7 +67,7 @@ public class ClientConnectionManager {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
        System.out.println("_____________________________________________get Messegae_______________________________");
        System.out.println(messageFormat);
-        if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM && messageFormat.type != MessageFormat.messegeTypes.DISCONNECT)
+        if(messageFormat.type != MessageFormat.messegeTypes.CONFIRM && messageFormat.type != MessageFormat.messegeTypes.DISCONNECT&& messageFormat.type != MessageFormat.messegeTypes.TOOMANYPLAYERS && messageFormat.type != MessageFormat.messegeTypes.GAMESATRTED)
         sendConfirm();
 
         return messageFormat;
@@ -94,8 +94,12 @@ public class ClientConnectionManager {
         reciverHandler.start();
 
         this.waitTillconfirmed();
-
+        System.out.printf("FISNED WIOTNG FOR CONFIRM \n");
             result = this.conectionResult;
+            if(result==false)
+            {
+                reciverHandler.shoudldRun=false;
+            }
             this.setConfirmedMesseage(false);
             return result;
     }
@@ -229,6 +233,20 @@ this.waitTillconfirmed();
                 this.clientApp.setTurn(messageFormat.text[0]);
 
                 break;
+            case TOOMANYPLAYERS:
+
+                this.clientApp.handleTooManyPlayers(messageFormat);
+                this.setConfirmedMesseage(true);
+                this.setConectionResult(false);
+                    break;
+
+            case GAMESATRTED:
+
+                this.clientApp.hadleGameAlradyStared(messageFormat);
+                this.setConfirmedMesseage(true);
+                this.setConectionResult(false);
+                break;
+
 
             case PLAYCARD:
                 clientApp.procesPlaycard(messageFormat.text[0], messageFormat.unoCard);

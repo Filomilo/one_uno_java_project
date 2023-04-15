@@ -186,6 +186,7 @@ System.out.println("giving cards");
             System.out.println(player.getNick());
             List<UnoCard> unoCardList= this.dataBaseMangaer.selectFromHand(player.getNick());
             for(UnoCard card: unoCardList) {
+                System.out.println("deakung cards " + player.getNick() +"\n");
                 TimeUnit.MILLISECONDS.sleep(200);
               this.giveCard(card, player);
             }
@@ -207,9 +208,10 @@ System.out.println("giving cards");
         }
     }
 
+boolean isInStratingProces=false;
 
     void startGame() throws IOException, ClassNotFoundException {
-
+        isInStratingProces=true;
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
@@ -241,9 +243,9 @@ System.out.println("giving cards");
             throw new RuntimeException(e);
         }
         this.setTopCard();
-        turn=1;
+        turn=0;
         this.setTurn();
-
+        isInStratingProces=false;
     }
 
     void setTopCard()
@@ -269,6 +271,8 @@ System.out.println("giving cards");
 
 
     void setTurn() throws IOException {
+
+
 
         System.out.println("TURA: " + this.turn);
         PlayerData player= this.nicks.get(this.turn);
@@ -438,9 +442,12 @@ System.out.println("giving cards");
         if(this.turn==this.nicks.indexOf(playerData))
         {
             this.nextTurn();
-            this.setTurn();
+
         }
         this.connectionManger.checkFinishGame();
+        if(this.gameStarted)
+        this.setTurn();
+
 
 
 
@@ -480,6 +487,22 @@ System.out.println("giving cards");
         messageFormat.text[1] = s;
             this.connectionManger.sendExclusice(messageFormat,playerData);
         } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleWaitForPlayer(String nick) {
+        System.out.printf("WAITNG FOR ");
+    }
+
+    public void shutGame() {
+
+        try {
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type= MessageFormat.messegeTypes.SHUTGAME;
+            this.connectionManger.sendToAll(messageFormat);
+            this.gameStarted=false;
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -269,6 +269,14 @@ this.waitTillconfirmed();
             case MESSAGE:
                 this.clientApp.reciveChatMesseage(messageFormat.text[0],messageFormat.text[1]);
                 break;
+            case WAITSTART:
+                this.clientApp.startWait(messageFormat.text[0]);
+                break;
+            case WAIT:
+                this.clientApp.updateWaiting(messageFormat.text[0], messageFormat.number[0]);
+                break;
+            case SHUTGAME:
+                this.clientApp.handleShutDown();
 
 
         }

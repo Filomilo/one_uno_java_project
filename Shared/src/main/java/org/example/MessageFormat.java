@@ -28,7 +28,10 @@ public class MessageFormat implements Serializable {
         RANKING,
         SWAPTURN,
         TOOMANYPLAYERS,
-        GAMESATRTED
+        WAIT,
+        WAITSTART,
+        GAMESATRTED,
+        SHUTGAME
 
     }
     messegeTypes type;

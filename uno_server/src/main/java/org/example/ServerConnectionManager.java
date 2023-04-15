@@ -5,10 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.exp;
 
 
 public class ServerConnectionManager {
@@ -39,12 +41,20 @@ public class ServerConnectionManager {
 
     //static funciton fo receving object messege form chosen stream
     static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException, SocketException,SocketTimeoutException {
-            MessageFormat messageFormat = new MessageFormat();
+
+        MessageFormat messageFormat = new MessageFormat();
+        try {
             messageFormat = (MessageFormat) objectInputStream.readObject();
-            if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM) {
+            if (messageFormat.type != MessageFormat.messegeTypes.CONFIRM) {
                 System.out.println("get messegae");
                 System.out.println(messageFormat);
-                System.out.println(" ");}
+                System.out.println(" ");
+            }
+        }
+        catch (SocketException e)
+        {
+            e.printStackTrace();
+        }
             return messageFormat;
 
     }
@@ -187,6 +197,8 @@ public class ServerConnectionManager {
         }
     }
 
+
+
     public void finishGame() {
         System.out.printf("FINSHIND GMAE \n\n\n\n");
         for (PlayerData player: this.serverApp.nicks
@@ -328,7 +340,7 @@ public class ServerConnectionManager {
                 this.sendMessage(pLayerData,messageFormatDenyAmt);
                 return;
             }
-            if(this.serverApp.gameStarted)
+            if(this.serverApp.gameStarted && !this.findIfInWaitList(messageFormat.text[0]))
             {
                 MessageFormat messageFormatDenyAmt=new MessageFormat();
                 messageFormatDenyAmt.type= MessageFormat.messegeTypes.GAMESATRTED;
@@ -405,5 +417,87 @@ public class ServerConnectionManager {
             }
         }
         serverSocket.close();
+    }
+
+    private int secWaitLimir=20;
+
+    List<String> waitList= new ArrayList<String>();
+    List<Boolean> waitListCheck= new ArrayList<Boolean>();
+
+
+    int findIndexOfWaitList(String nick)
+    {
+        int i;
+        for(i=0;i<waitList.size();i++)
+        {
+            if(waitList.get(i).equals(nick))
+            {
+                break;
+            }
+        }
+    return i;
+    }
+
+    boolean findIfInWaitList(String nick)
+    {
+        int i;
+        boolean res=false;
+        for(i=0;i<waitList.size();i++)
+        {
+            if(waitList.get(i).equals(nick))
+            {
+                res=true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    public void handleWaitForPlayer(PlayerData playerData) {
+
+        try {
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type= MessageFormat.messegeTypes.WAITSTART;
+            messageFormat.text = new String[1];
+            messageFormat.text[0] = playerData.getNick();
+            this.sendToAll(messageFormat);
+            waitList.add(playerData.nick);
+            waitListCheck.add(false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        int i=0;
+        while(true)
+        {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+
+
+
+                MessageFormat messageFormat = new MessageFormat();
+                messageFormat.type= MessageFormat.messegeTypes.WAIT;
+                messageFormat.text = new String[1];
+                messageFormat.text[0] = playerData.getNick();
+                messageFormat.number = new int[1];
+                messageFormat.number[0]= secWaitLimir-i;
+                this.sendToAll(messageFormat);
+                i++;
+
+                int indx=this.findIndexOfWaitList(playerData.nick);
+                if(waitListCheck.get(indx)==true)
+                    break;
+
+
+            if(i>secWaitLimir) {
+                this.serverApp.surrender(playerData);
+                this.waitListCheck.remove(indx);
+                this.waitList.remove(indx);
+                break;
+            }
+            System.out.printf(i+": Waiting for " + playerData.getNick() + "\n");
+            } catch (InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

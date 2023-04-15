@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import sun.misc.Lock;
@@ -225,7 +226,16 @@ public class ClientApp {
 
     public void setTurn(String turn) {
         this.turn = turn;
-        this.guiController.gameView.setTurn(turn);
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                        guiController.gameView.setTurn(turn);
+                    }
+                }
+        );
+
     }
 
     @Override
@@ -315,20 +325,28 @@ public class ClientApp {
 
     }
 
+    public void resetGame()
+    {
+        this.setReady(false);
+        this.readyPlayers=0;
+        this.cardOntop=null;
+        this.cardsInHand=new ArrayList<UnoCard>();
+        this.playersInORder= new ArrayList<PlayerData>();
+        this.guiController.mainVew.isReady=false;
+        this.guiController.mainVew.setButtonReady();
+        this.guiController.mainVew.updateOnSize();
+
+    }
+
     public void finishGame(String arrayResult[]) {
 
 
         this.lastReults= new ArrayList<String>();
         Collections.addAll(lastReults, arrayResult);
-        this.setReady(false);
-        this.readyPlayers=0;
-        this.cardOntop=null;
-        this.cardsInHand=new ArrayList<UnoCard>();
+
+        this.resetGame();
 
 
-        this.guiController.mainVew.isReady=false;
-        this.guiController.mainVew.setButtonReady();
-        this.guiController.mainVew.updateOnSize();
         this.guiController.switchSceneToResult();
     }
 
@@ -365,8 +383,11 @@ public class ClientApp {
     }
 
     public void handleDisconnect(String disconnectedNikc, int wasReady) {
+
         this.connectedPlayers--;
-        if(wasReady==1)
+        boolean isInGame=true;
+
+        if(wasReady==1 )
         {
             this.readyPlayers--;
         }
@@ -432,6 +453,26 @@ public class ClientApp {
     public void hadleGameAlradyStared(MessageFormat messageFormat) {
         this.guiController.mainVew.communicatText.setText("Sorry game on this server alrady started");
 
+    }
+
+    public void startWait(String s) {
+        this.guiController.gameView.startWaiting(s);
+    }
+
+    public void updateWaiting(String s, int i) {
+        if (i==0)
+            this.guiController.gameView.stopWaiting(s);
+        else
+            this.guiController.gameView.updateWaitText(s,i);
+
+    }
+
+
+    public void handleShutDown() {
+        this.guiController.switchScenetoMain();
+        this.guiController.mainVew.communicatText.setText("Someone discocnect while setting up game");
+        this.resetGame();
+        this.guiController.gameView=null;
     }
 }
 

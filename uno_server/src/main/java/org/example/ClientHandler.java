@@ -76,6 +76,12 @@ boolean connectionActive=true;
             this.playerData.socket.close();
             this.connectionActive=false;
             serverConnectionManager.serverApp.disconnectPlayer(playerData);
+            if(this.serverConnectionManager.serverApp.isInStratingProces)
+            {
+                this.serverConnectionManager.serverApp.shutGame();
+            }
+            if(this.serverConnectionManager.serverApp.gameStarted)
+            this.serverConnectionManager.handleWaitForPlayer(playerData);
         } catch (IOException e) {
          e.printStackTrace();
         }

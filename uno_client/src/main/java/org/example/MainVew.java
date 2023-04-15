@@ -39,6 +39,7 @@ import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import org.omg.CORBA.WStringSeqHelper;
 
 
 import java.io.File;
@@ -47,7 +48,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
@@ -122,6 +125,7 @@ public class MainVew extends Application {
             e.printStackTrace();
         }
         this.updateOnSize();
+
     }
 
 
@@ -1020,6 +1024,7 @@ text.setFill(Color.WHITE);
     void onButtonReadyClick()
     {
         if(this.activeControles[4]) {
+            this.communicatText.setText("");
             // guiController.changeSceneToGame();
             if (isReady) {
                 setButtonReady();

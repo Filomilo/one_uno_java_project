@@ -60,7 +60,7 @@ public class GameView extends Application {
     Color tranparentBlack = new Color(0, 0, 0, 0.5);
     Color tranparentColor = new Color(1, 0, 0, 0.0);
     Color greenColor = new Color(0, 0.4, 0.1, 1);
-    Color darkGreenColor = new Color(0, 0.32, 0.01, 1);
+    Color darkGreenColor = new Color(0.2, 0.28, 0.01, 1);
     Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
     Stop[] darkGreenStops = new Stop[]{new Stop(0, darkGreenColor), new Stop(1, Color.BLACK)};
     Stop[] backGroundStops = darkGreenStops;
@@ -407,18 +407,19 @@ public class GameView extends Application {
     int getAmtOfOpponets()
     {
         int amt=0;
-        try{
-            amt=this.guiController.clientApp.getConnectedPlayers()-1;
-            if(amt==0)
-            {
-                System.out.println("Amount of playeers: " + amt);
+        if(this.emptyCards!=null)
+        amt=this.emptyCards.length-2;
+        if(amt==0) {
+            try {
+                amt = this.guiController.clientApp.getConnectedPlayers() - 1;
+                if (amt == 0) {
+                    System.out.println("Amount of playeers: " + amt);
+                    System.exit(-1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 System.exit(-1);
             }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.exit(-1);
         }
         return amt;
     }
@@ -668,6 +669,7 @@ public class GameView extends Application {
         this.updateColorPanelScale();
         this.updateGuidesSize();
         this.updateChatSize();
+        this.updateWaitSize();
     }
 
     private void setupButtonShape()
@@ -779,7 +781,7 @@ public class GameView extends Application {
             System.out.println("getAmtOfOpponets(): "+ getAmtOfOpponets());
             System.exit(-1);
         }
-         this.emptyCards[0].setFitWidth(cardWidth);
+        this.emptyCards[0].setFitWidth(cardWidth);
         this.emptyCards[0].setX(this.mainScene.getWidth()/2-cardWidth/2);
         this.emptyCards[0].setY(this.mainScene.getHeight()/2- this.emptyCards[0].getLayoutBounds().getHeight()/2);
 
@@ -1037,7 +1039,7 @@ public class GameView extends Application {
     }
 
     private void playCard(ImageView card) {
-        if(!isChoosingColor) {
+        if(!isChoosingColor && !this.isWaitingForPlayer) {
             int index = this.cardsInHand.indexOf(card);
 
             UnoCard unoCard = this.guiController.clientApp.cardsInHand.get(index);
@@ -1161,35 +1163,35 @@ public class GameView extends Application {
     }
 
     private void surrenderButton() {
-        this.guiController.clientApp.surrender();
+        if(!this.isWaitingForPlayer) {
+            this.guiController.clientApp.surrender();
 
-        for (ImageView card: this.cardsInHand
-             ) {
-            TranslateTransition transition = new TranslateTransition();
-            transition.setToY(this.emptyCards[1].getY());
-            transition.setToX(this.emptyCards[1].getX());
-            transition.setNode(card);
-            transition.setDuration(Duration.millis(200));
-            transition.play();
+            for (ImageView card : this.cardsInHand
+            ) {
+                TranslateTransition transition = new TranslateTransition();
+                transition.setToY(this.emptyCards[1].getY());
+                transition.setToX(this.emptyCards[1].getX());
+                transition.setNode(card);
+                transition.setDuration(Duration.millis(200));
+                transition.play();
 
-            transition.statusProperty().addListener(
-                    new ChangeListener<Animation.Status>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                            if(newValue == Animation.Status.STOPPED)
-                            {
-                                root.getChildren().remove(card);
-                                cardsInHand.remove(card);
-                                updateCardsInHandScale();
+                transition.statusProperty().addListener(
+                        new ChangeListener<Animation.Status>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                                if (newValue == Animation.Status.STOPPED) {
+                                    root.getChildren().remove(card);
+                                    cardsInHand.remove(card);
+                                    updateCardsInHandScale();
+                                }
                             }
                         }
-                    }
-            );
+                );
 
+
+            }
 
         }
-
-
     }
 
 
@@ -1315,6 +1317,7 @@ public class GameView extends Application {
                             System.out.println("amtOfOpponetsCards.: " + amtOfOpponetsCards.length);
                             System.out.println("emptyCards: " + emptyCards.length);
                             System.out.println("getAmtOfOpponets: " + getAmtOfOpponets());
+                            System.out.println("Players in order: " +   guiController.clientApp.playersInORder);
                             System.exit(-1);
 
                         }
@@ -1345,66 +1348,66 @@ public class GameView extends Application {
     int clikcedPanel=0;
     int showChoiceColor(ImageView card)
     {
+if(!this.isWaitingForPlayer) {
+    this.isChoosingColor = true;
+    ImageView blue = new ImageView(this.colorChoicePanel[0]);
+    ImageView green = new ImageView(this.colorChoicePanel[1]);
+    ImageView red = new ImageView(this.colorChoicePanel[2]);
+    ImageView yellow = new ImageView(this.colorChoicePanel[3]);
 
-        this.isChoosingColor=true;
-        ImageView blue = new ImageView(this.colorChoicePanel[0]);
-        ImageView green = new ImageView(this.colorChoicePanel[1]);
-        ImageView red = new ImageView(this.colorChoicePanel[2]);
-        ImageView yellow = new ImageView(this.colorChoicePanel[3]);
 
+    blue.setPreserveRatio(true);
+    green.setPreserveRatio(true);
+    red.setPreserveRatio(true);
+    yellow.setPreserveRatio(true);
 
-        blue.setPreserveRatio(true);
-        green.setPreserveRatio(true);
-        red.setPreserveRatio(true);
-        yellow.setPreserveRatio(true);
+    this.colorPanel.add(blue);
+    this.colorPanel.add(green);
+    this.colorPanel.add(red);
+    this.colorPanel.add(yellow);
 
-        this.colorPanel.add(blue);
-        this.colorPanel.add(green);
-        this.colorPanel.add(red);
-        this.colorPanel.add(yellow);
+    this.updateColorPanelScale();
 
-        this.updateColorPanelScale();
-
-        int i=0;
-        for (ImageView panel: this.colorPanel
-             ) {
-            panel.setOnMouseEntered(
-                    new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            onPanelEntterd(panel);
-                        }
+    int i = 0;
+    for (ImageView panel : this.colorPanel
+    ) {
+        panel.setOnMouseEntered(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onPanelEntterd(panel);
                     }
+                }
 
-            );
-            panel.setOnMouseExited(
-                    new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            onPanelExited(panel);
-                        }
+        );
+        panel.setOnMouseExited(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onPanelExited(panel);
                     }
+                }
 
-            );
+        );
 
-            panel.setOnMouseClicked(
-                    new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            onPanelClicked(panel, card);
-                        }
+        panel.setOnMouseClicked(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        onPanelClicked(panel, card);
                     }
+                }
 
-            );
-
-
-        }
+        );
 
 
+    }
 
-        this.root.getChildren().addAll(blue,green,red,yellow);
+
+    this.root.getChildren().addAll(blue, green, red, yellow);
 
 
+}
 
 
         return 0;
@@ -2070,6 +2073,99 @@ catch (ArrayIndexOutOfBoundsException e)
             }
         });
     }
+
+//////////////////////////////////////////////// waitig processing
+
+
+    boolean isWaitingForPlayer=false;
+
+    List<Rectangle> waitBackGrounds = new ArrayList<Rectangle>();
+    List<Text> waitTexts = new ArrayList<Text>();
+    List<String> nicksWaiting = new ArrayList<String>();
+
+
+
+
+    void startWaiting(String nick)
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                isWaitingForPlayer=true;
+                nicksWaiting.add(nick);
+                Text text = new Text();
+                text.setFill(Color.WHITE);
+                waitTexts.add(text);
+
+                Rectangle rectangle = new Rectangle();
+                rectangle.setFill(new Color(0,0,0,0.7));
+                waitBackGrounds.add(rectangle);
+                root.getChildren().addAll(rectangle,text);
+                System.out.printf("Started Waitng for " + nick + "\n");
+                updateWaitSize();
+            }
+        });
+
+    }
+
+
+    void updateWaitSize()
+    {
+        int amtOfwaits=waitBackGrounds.size();
+        double rowHeight=this.mainScene.getHeight()/(8*2);
+        double finalHeight=rowHeight*amtOfwaits+((rowHeight/2)*(amtOfwaits-1));
+        Font font = new Font("Arial", rowHeight/2);
+        for(int i=0;i<amtOfwaits;i++)
+        {
+            this.waitBackGrounds.get(i).setWidth(this.mainScene.getWidth());
+            this.waitBackGrounds.get(i).setHeight(rowHeight);
+            this.waitBackGrounds.get(i).setY(this.mainScene.getHeight()/2-(finalHeight/2) + i *(rowHeight*1.5));
+
+            this.waitTexts.get(i).setFont(font);
+            this.waitTexts.get(i).setY( this.waitBackGrounds.get(i).getY()+this.waitBackGrounds.get(i).getHeight()/2 + this.waitTexts.get(i).getLayoutBounds().getHeight()/2);
+            this.waitTexts.get(i).setX( this.waitBackGrounds.get(i).getX()+this.waitBackGrounds.get(i).getWidth()/2 - this.waitTexts.get(i).getLayoutBounds().getWidth()/2);
+
+        }
+    }
+
+    int findIndexOfWait(String nick)
+    {
+        int indx=0;
+        for(indx=0;indx<this.nicksWaiting.size();indx++)
+        {
+            if(this.nicksWaiting.get(indx).equals(nick))
+                break;
+        }
+        return indx;
+    }
+
+    void updateWaitText(String nick,int sec)
+    {
+        int indx=this.findIndexOfWait(nick);
+        this.waitTexts.get(indx).setText("Watiing for player "+ nick + ": " + sec + "s");
+        updateWaitSize();
+    }
+
+    void stopWaiting(String nick) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                int indx = findIndexOfWait(nick);
+                root.getChildren().remove(waitBackGrounds.get(indx));
+                root.getChildren().remove(waitTexts.get(indx));
+
+                waitBackGrounds.remove(indx);
+                waitTexts.remove(indx);
+                nicksWaiting.remove(indx);
+
+                if (nicksWaiting.size() == 0) {
+                    isWaitingForPlayer = false;
+                }
+            }
+
+        });
+    }
+
 
 
 

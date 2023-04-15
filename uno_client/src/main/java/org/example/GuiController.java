@@ -60,6 +60,7 @@ GuiController extends Application {
 
     Scene previousScene;
     private Group prevRoot;
+    Boolean isGameLoaded=false;
 
 
     public static void main(String[] args) {
@@ -318,6 +319,7 @@ GuiController extends Application {
         try {
 
             this.gameView.iniit(this.primaryStage);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -338,6 +340,7 @@ GuiController extends Application {
 
         );
     this.gameView.updateOnSize();
+    this.isGameLoaded=true;
     }
 
     public void getCard(UnoCard unoCard) {
@@ -365,7 +368,7 @@ GuiController extends Application {
                         activeScenes= SCENES.RESULT;
                         mainScene.setRoot(resultView.root);
                         gameView=null;
-
+                        isGameLoaded=false;
                     }
                 }
 

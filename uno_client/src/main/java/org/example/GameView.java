@@ -2157,8 +2157,9 @@ catch (ArrayIndexOutOfBoundsException e)
                 waitBackGrounds.remove(indx);
                 waitTexts.remove(indx);
                 nicksWaiting.remove(indx);
-
+                System.out.println("check Waiting\n");
                 if (nicksWaiting.size() == 0) {
+                    System.out.println("Stop Waiting\n");
                     isWaitingForPlayer = false;
                 }
             }

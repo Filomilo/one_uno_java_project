@@ -379,6 +379,10 @@ public class ServerConnectionManager {
 
             }
             sendMessage(pLayerData, confirmationMessege);
+            if(this.serverApp.gameStarted)
+            {
+                this.serverApp.catchUp(pLayerData);
+            }
         }
 
     }
@@ -484,20 +488,30 @@ public class ServerConnectionManager {
                 i++;
 
                 int indx=this.findIndexOfWaitList(playerData.nick);
-                if(waitListCheck.get(indx)==true)
+                if(waitListCheck.get(indx))
                     break;
 
 
             if(i>secWaitLimir) {
                 this.serverApp.surrender(playerData);
-                this.waitListCheck.remove(indx);
-                this.waitList.remove(indx);
                 break;
             }
             System.out.printf(i+": Waiting for " + playerData.getNick() + "\n");
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+        int indx=this.findIndexOfWaitList(playerData.nick);
+        waitList.remove(indx);
+        waitListCheck.remove(indx);
+        MessageFormat messageFormat = new MessageFormat();
+        messageFormat.type= MessageFormat.messegeTypes.STOPWAIT;
+        messageFormat.text = new String[1];
+        messageFormat.text[0]= playerData.getNick();
+        try {
+            this.sendExclusice(messageFormat,playerData);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -48,6 +48,8 @@ public class ServerApp {
 
     boolean addPlayer(PlayerData pLayerData)
     {
+
+        System.out.println("add player PLAYERS: "+ this.nicks + "\n");
         this.nicks.add(pLayerData);
         Collections.sort(this.nicks);
         boolean res= this.dataBaseMangaer.addPlayer(pLayerData.nick);
@@ -505,5 +507,44 @@ boolean isInStratingProces=false;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void catchUp(PlayerData pLayerData) {
+
+        try {
+            int indx=this.connectionManger.findIndexOfWaitList(pLayerData.nick);
+            this.connectionManger.waitListCheck.set(indx,true);
+            System.out.printf("CATCHUP: \n");
+            System.out.println(this.nicks);;
+            MessageFormat messageFormat= new MessageFormat();
+            this.sendPlayerOrder();
+            messageFormat.type= MessageFormat.messegeTypes.CATCHUP;
+            this.connectionManger.sendMessage(pLayerData,messageFormat);
+            this.sendCardsInHand(pLayerData);
+            this.setTopCard();
+            this.setTurn();
+            this.nicks.add(pLayerData);
+            pLayerData.setInGame(true);
+
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sendCardsInHand(PlayerData pLayerData) {
+        List<UnoCard> cards= this.dataBaseMangaer.selectFromHand(pLayerData.nick);
+        for (UnoCard card: cards
+             ) {
+
+            try {
+                MessageFormat messageFormat = new MessageFormat();
+                messageFormat.type= MessageFormat.messegeTypes.RECIVECARDS;
+                messageFormat.unoCard=card;
+                this.connectionManger.sendMessage(pLayerData,messageFormat);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 }

@@ -198,10 +198,12 @@ this.waitTillconfirmed();
 
                     break;
             case RECIVECARDS:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.reciveCard(messageFormat.unoCard);
 
                 break;
             case RECIVEVARDCOMMUNICAT:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.giveCardToOpponent(messageFormat.text[0]);
 
                 break;
@@ -222,6 +224,7 @@ this.waitTillconfirmed();
                 this.clientApp.handleDisconnect(messageFormat.text[0],messageFormat.number[0]);
                 break;
             case TOPCARD:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.setCardOntop(messageFormat.unoCard);
 
                 break;
@@ -229,7 +232,7 @@ this.waitTillconfirmed();
                 this.clientApp.setGameStarted(true);
         break;
             case TURN:
-
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.setTurn(messageFormat.text[0]);
 
                 break;
@@ -249,34 +252,48 @@ this.waitTillconfirmed();
 
 
             case PLAYCARD:
+                if(this.clientApp.isGameLoaded())
                 clientApp.procesPlaycard(messageFormat.text[0], messageFormat.unoCard);
                 break;
-                case FINAL:
+            case FINAL:
+                    if(this.clientApp.isGameLoaded())
                     clientApp.managePlayerFinale(messageFormat.text[0]);
                     break;
             case ENDGAME:
                 this.clientApp.finishGame(messageFormat.text);
                 break;
             case RANKING:
+
                 this.clientApp.handleRankingRecived(messageFormat.text,messageFormat.number);
                 break;
             case SURRENDER:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.handleSurrender(messageFormat.text[0]);
                 break;
             case SWAPTURN:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.handleSwapTurn();
                 break;
             case MESSAGE:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.reciveChatMesseage(messageFormat.text[0],messageFormat.text[1]);
                 break;
             case WAITSTART:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.startWait(messageFormat.text[0]);
                 break;
             case WAIT:
+                if(this.clientApp.isGameLoaded() && this.clientApp.isWaiting())
                 this.clientApp.updateWaiting(messageFormat.text[0], messageFormat.number[0]);
                 break;
             case SHUTGAME:
                 this.clientApp.handleShutDown();
+            case CATCHUP:
+                this.clientApp.catchup();
+                break;
+            case STOPWAIT:
+                this.clientApp.stopWait(messageFormat.text[0]);
+                break;
 
 
         }

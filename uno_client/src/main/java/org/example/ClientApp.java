@@ -473,6 +473,23 @@ public class ClientApp {
         this.guiController.mainVew.communicatText.setText("Someone discocnect while setting up game");
         this.resetGame();
         this.guiController.gameView=null;
+        this.guiController.isGameLoaded=false;
+    }
+
+    public boolean isGameLoaded() {
+        return guiController.isGameLoaded;
+    }
+
+    public void catchup() {
+        this.setGameStarted(true);
+    }
+
+    public void stopWait(String nick) {
+        this.guiController.gameView.stopWaiting(nick);
+    }
+
+    public boolean isWaiting() {
+        return this.guiController.gameView.isWaitingForPlayer;
     }
 }
 

@@ -4,6 +4,8 @@ import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.When;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -98,7 +100,6 @@ public class MainVew extends Application {
     Rectangle buttons[] = new Rectangle[buttonsTexts.length];
     final float buttonSizeRatio=9;
     final float buttonHeightToScreenRatio=12;
-
 
 
 
@@ -956,8 +957,11 @@ text.setFill(Color.WHITE);
     void onButtonMoved(Rectangle button)
     {
 
+
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
+            if(button.getFill()!=Color.WHITE)
+            this.guiController.isOnButton.set(true);
             button.setFill(Color.WHITE);
             this.buttonTitles[index].setFill(Color.BLACK);
         }
@@ -965,6 +969,8 @@ text.setFill(Color.WHITE);
 
     void onButtonMovedOutside(Rectangle button)
     {
+        this.guiController.isOnButton.set(false);
+
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
             button.setFill(this.tranparentColor);
@@ -976,6 +982,8 @@ text.setFill(Color.WHITE);
     {
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
+            this.guiController.soundPlayer.playOnButtonClick();
+
             button.setFill(Color.LIGHTGRAY);
         }
 
@@ -989,9 +997,12 @@ text.setFill(Color.WHITE);
                 this.setStatusConnecting();
                 this.updateOnSize();
                 System.out.println("CONNECT");
-                if (this.guiController.connectTosServer())
+                if (this.guiController.connectTosServer()) {
+                    this.guiController.soundPlayer.playSucces();
                     this.setStatusConnected();
+                }
                 else {
+                    this.guiController.soundPlayer.playFailed();
                     this.setStatusDiscconnted();
                     if (this.communicatText.getText().equals("")) {
                         this.communicatText.setText("Failed to connect");
@@ -1024,6 +1035,7 @@ text.setFill(Color.WHITE);
     void onButtonReadyClick()
     {
         if(this.activeControles[4]) {
+
             this.communicatText.setText("");
             // guiController.changeSceneToGame();
             if (isReady) {
@@ -1081,11 +1093,15 @@ text.setFill(Color.WHITE);
     void onHelpBasicClick()
     {
 
-
+            this.guiController.soundPlayer.playOnButtonClick();
             helpButton.setFill(Color.LIGHTGRAY);
 
 
     }
+
+
+
+
 
 void onHelpReelased()
 {

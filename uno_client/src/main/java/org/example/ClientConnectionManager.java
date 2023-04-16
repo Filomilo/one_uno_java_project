@@ -292,6 +292,7 @@ this.waitTillconfirmed();
                 this.clientApp.catchup();
                 break;
             case STOPWAIT:
+                if(this.clientApp.isGameLoaded())
                 this.clientApp.stopWait(messageFormat.text[0]);
                 break;
 

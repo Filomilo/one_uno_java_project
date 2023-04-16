@@ -523,7 +523,7 @@ boolean isInStratingProces=false;
             this.sendCardsInHand(pLayerData);
             this.setTopCard();
             this.setTurn();
-            this.nicks.add(pLayerData);
+           // this.nicks.add(pLayerData);
             pLayerData.setInGame(true);
 
         } catch (IOException | ClassNotFoundException e) {

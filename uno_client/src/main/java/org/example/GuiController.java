@@ -37,6 +37,8 @@ GuiController extends Application {
     RankView rankView;
     InstructionView instructionView;
 
+    SoundPlayer soundPlayer;
+
     static enum SCENES{
         MAIN,
         INSRTUCTION,
@@ -47,6 +49,7 @@ GuiController extends Application {
 
     GuiController.SCENES activeScenes=SCENES.MAIN;
     GuiController.SCENES prevScene=SCENES.MAIN;
+    BooleanProperty isOnButton= new SimpleBooleanProperty(false);
 
     Scene mainScene;
     Group root;
@@ -66,7 +69,7 @@ GuiController extends Application {
     public static void main(String[] args) {
 
 
-
+        System.out.println("STARTING \n");
         if(args.length>0)
         GuiController.nick=args[0];
         else
@@ -144,6 +147,7 @@ GuiController extends Application {
 
 
 */
+            soundPlayer = new SoundPlayer();
         }
         catch (Exception e)
         {
@@ -254,7 +258,6 @@ GuiController extends Application {
     {
 
 
-
         primaryStage.setOnCloseRequest(
                 new EventHandler<WindowEvent>() {
                     @Override
@@ -359,6 +362,7 @@ GuiController extends Application {
                 new Runnable() {
                     @Override
                     public void run() {
+                        soundPlayer.playfinish();
                         resultView = new ResultView(guiController,mainScene);
                         try {
                             resultView.iniit(primaryStage);

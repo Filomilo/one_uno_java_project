@@ -913,6 +913,7 @@ public class GameView extends Application {
 
     void addCard(UnoCard card)
     {
+        this.guiController.soundPlayer.playDrawCard();
         ImageView cardView = new ImageView(cardImages[getIndexOfmage(card)]);
         Platform.runLater(
                 new Runnable() {
@@ -1039,6 +1040,7 @@ public class GameView extends Application {
     }
 
     private void playCard(ImageView card) {
+
         if(!isChoosingColor && !this.isWaitingForPlayer) {
             int index = this.cardsInHand.indexOf(card);
 
@@ -1050,7 +1052,7 @@ public class GameView extends Application {
                 this.waitForColorChoice();
 
                 */
-
+                this.guiController.soundPlayer.playDrawCard();
                 this.guiController.clientApp.playCard(index + 1, unoCard);
                 double duration = 250;
                 ImageView tmpCard = new ImageView(card.getImage());
@@ -2150,6 +2152,9 @@ catch (ArrayIndexOutOfBoundsException e)
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                try {
+
+
                 int indx = findIndexOfWait(nick);
                 root.getChildren().remove(waitBackGrounds.get(indx));
                 root.getChildren().remove(waitTexts.get(indx));
@@ -2162,6 +2167,12 @@ catch (ArrayIndexOutOfBoundsException e)
                     System.out.println("Stop Waiting\n");
                     isWaitingForPlayer = false;
                 }
+                }
+                catch (IndexOutOfBoundsException e)
+                {
+
+                }
+
             }
 
         });

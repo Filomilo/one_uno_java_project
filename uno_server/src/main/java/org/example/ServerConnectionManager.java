@@ -217,6 +217,13 @@ public class ServerConnectionManager {
         MessageFormat messageFormat= new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.ENDGAME;
         messageFormat.text = new String[results.size()];
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         int i=0;
         for (String nick: results
              ) {

@@ -210,6 +210,15 @@ System.out.println("giving cards");
         }
     }
 
+    void setEveryoneNotReady()
+    {
+        this.playersReady = 0;
+        for (PlayerData player: nicks
+             ) {
+            player.setReady(false);
+        }
+    }
+
 boolean isInStratingProces=false;
 
     void startGame() throws IOException, ClassNotFoundException {

@@ -74,7 +74,7 @@ public class SoundPlayer {
                         String file=getClass().getClassLoader().getResource(soundPrefix+fileName).toString();
                         Media failedSfx = new Media(file);
                         MediaPlayer mediaPlayer = new MediaPlayer(failedSfx);
-                        mediaPlayer.play();
+                        //mediaPlayer.play();
                     }
                 }
         );

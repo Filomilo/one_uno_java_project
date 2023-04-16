@@ -327,27 +327,49 @@ public class ClientApp {
 
     public void resetGame()
     {
-        this.setReady(false);
+        System.out.println("REST GAME TEST: 1\n");
+        //this.setReady(false);
+        System.out.println("REST GAME TEST: 2\n");
         this.readyPlayers=0;
+        System.out.println("REST GAME TEST: 3\n");
         this.cardOntop=null;
+        System.out.println("REST GAME TEST: 4\n");
         this.cardsInHand=new ArrayList<UnoCard>();
+        System.out.println("REST GAME TEST: 5\n");
         this.playersInORder= new ArrayList<PlayerData>();
+        System.out.println("REST GAME TEST: 6\n");
         this.guiController.mainVew.isReady=false;
+        System.out.println("REST GAME TEST: 7\n");
         this.guiController.mainVew.setButtonReady();
+        System.out.println("REST GAME TEST: 8\n");
         this.guiController.mainVew.updateOnSize();
+        System.out.println("REST GAME TEST: 9\n");
 
     }
 
     public void finishGame(String arrayResult[]) {
-
-
+        this.stopAllWait();
+        System.out.println("Test 1 \n");
         this.lastReults= new ArrayList<String>();
+        System.out.println("Test 2 \n");
         Collections.addAll(lastReults, arrayResult);
-
+        System.out.println("Test 3 \n");
         this.resetGame();
-
+        System.out.println("Test 4 \n");
 
         this.guiController.switchSceneToResult();
+        System.out.println("Test 5 \n");
+        this.setReady(false);
+        this.setReadyPlayers(0);
+
+    }
+
+    private void stopAllWait() {
+        for (String nick: this.guiController.gameView.nicksWaiting
+             ) {
+            stopWait(nick);
+        }
+
     }
 
     public List<String> getResults() {

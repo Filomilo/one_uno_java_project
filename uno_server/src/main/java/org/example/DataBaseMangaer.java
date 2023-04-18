@@ -141,9 +141,9 @@ public class DataBaseMangaer {
         executeArrayStatements(SqlScripts.CreateProceduresScripts);
     }
 
-    boolean addPlayer(String nick)
+    boolean addPlayer(String nick, String pass)
     {
-        String[] arr={nick};
+        String[] arr={nick,pass};
         boolean res= executeProcedure(SqlScripts.AddPlayerScript,arr);
         return res;
     }
@@ -283,6 +283,23 @@ public class DataBaseMangaer {
                 e.printStackTrace();
             }
         }
+    }
+
+    boolean validateNick(String nick)
+    {
+        String array[] = new String[1];
+        array[0]=nick;
+        int amt = executeSelectInt(SqlScripts.validateNick, array);
+        return amt==0;
+    }
+
+    boolean validatePass(String nick, String pass)
+    {
+        String array[] = new String[2];
+        array[0]=nick;
+        array[1]=pass;
+        int amt = executeSelectInt(SqlScripts.validatePass, array);
+        return amt==1;
     }
 
     private boolean executeProcedure(String sqlCode, String[] vars)

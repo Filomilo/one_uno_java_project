@@ -10,12 +10,20 @@ public class SqlScripts {
     static String MainStackViewScript=
             "SELECT * FROM stack_view";
 
+    static String validateNick=
+            "SELECT count(*) FROM PLAYERS\n" +
+                    "WHERE NICK=?";
+
+    static String validatePass=
+            "SELECT count(*) FROM PLAYERS\n" +
+                    "WHERE NICK= ? \n" +
+                    "AND PASS = ?";
     static String getResult=
             "SELECT * FROM RESULTS";
 
 
     static String AddPlayerScript =
-            "{call ADD_PLAYER(?)}";
+            "{call ADD_PLAYER(?,?)}";
 
     static String FillBaseCardsScripts=
             "{call FILL_BASE_CARDS}";
@@ -119,10 +127,10 @@ public class SqlScripts {
                     ")ORDER BY TURN ";
 
     static String[] CreateTablecSripts={
-            "CREATE TABLE PLAYERS( "+
-                    "NICK VARCHAR(30) PRIMARY KEY "+
-                    ") "+
-                    "",
+            "CREATE TABLE PLAYERS(\n" +
+                    "NICK VARCHAR(30) PRIMARY KEY,\n" +
+                    "PASS VARCHAR(100)        \n" +
+                    ")",
             "CREATE TABLE GAMES( "+
                     "NICK VARCHAR(30) CONSTRAINT games_nick_fk REFERENCES PLAYERS(NICK), "+
                     "GAMES_ID NUMBER(6) , "+
@@ -390,13 +398,12 @@ public class SqlScripts {
                         "END LOOP; "+
                         "END; "+
                         "",
-                "CREATE OR REPLACE PROCEDURE ADD_PLAYER(NICK_VAR VARCHAR) "+
-                        "AS "+
-                        "BEGIN "+
-                        "INSERT INTO PLAYERS (NICK) "+
-                        "VALUES(NICK_VAR); "+
-                        "END; "+
-                        "",
+                "CREATE OR REPLACE PROCEDURE ADD_PLAYER(NICK_VAR VARCHAR,PASS_VAR VARCHAR)\n" +
+                        "AS\n" +
+                        "BEGIN\n" +
+                        "INSERT INTO PLAYERS (NICK, PASS)\n" +
+                        "VALUES(NICK_VAR,PASS_VAR);\n" +
+                        "END;",
                 "CREATE OR REPlACE PROCEDURE CREATE_NEW_GAME (NICK_VAR VARCHAR) "+
                         "AS "+
                         "BEGIN "+

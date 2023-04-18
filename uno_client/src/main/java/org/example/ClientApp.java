@@ -6,6 +6,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import sun.misc.Lock;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -34,9 +36,11 @@ public class ClientApp {
 
     String turn = new String();
 
+
     String ip;
     int port;
 
+    String pass;
     final Lock confirmLock= new Lock();
 
     GuiController guiController;
@@ -125,7 +129,7 @@ public class ClientApp {
     }
 
     public void setReady(boolean ready) {
-
+        System.out.println("^^^^^^^^^^^^^^^^^ SET READ\n");
         isReady = ready;
 
 
@@ -140,16 +144,19 @@ public class ClientApp {
             this.clientConnectionManager.sendReady(false);
         }
 
+
     }
 
-    boolean connectWithServer()
+    boolean connectWithServer(int choice)
     {
         boolean res=false;
         try {
-           res= this.clientConnectionManager.connectToServer(this.getIp(), this.getPort(), this.nick);
+           res= this.clientConnectionManager.connectToServer(this.getIp(), this.getPort(),this.nick,this.encrypt(pass),choice);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return  false;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
         return res;
 
@@ -512,6 +519,65 @@ public class ClientApp {
 
     public boolean isWaiting() {
         return this.guiController.gameView.isWaitingForPlayer;
+    }
+
+    public void register(String nick, String pass) {
+        try {
+            String encryped = this.encrypt(pass);
+            System.out.println("REGeISTERING : " + nick + "::::" + encryped + "\n");
+
+            MessageFormat messageFormat = new MessageFormat();
+            messageFormat.type = MessageFormat.messegeTypes.CONNECT;
+            messageFormat.text = new String[2];
+            messageFormat.text[0] = nick;
+            messageFormat.text[1] = encryped;
+            messageFormat.number = new int[1];
+            messageFormat.number[0] = 0;
+            this.clientConnectionManager.sendMessage(messageFormat);
+
+        } catch (IOException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+        private void succesfulRegistration() {
+        System.out.println("SUCCESFULY REGISTE \n");
+    }
+
+    private void failedRegistration() {
+        System.out.println("FAIELD REGISTRATION \n");
+        this.guiController.loginView.setRegisterCommunicat("Nick alrady taken");
+    }
+
+    private String encrypt(String pass) throws NoSuchAlgorithmException {
+        MessageDigest m=  MessageDigest.getInstance("MD5");
+        m.update(pass.getBytes());
+        byte[] bytes=m.digest();
+        StringBuilder encrypted= new StringBuilder();
+        for (byte byt: bytes
+             ) {
+            encrypted.append(String.format("%02x",byt));
+        }
+        return encrypted.toString();
+
+    }
+
+    public void handleRegistration(MessageFormat messageFormat) {
+        System.out.println("REGISTRATION\n");
+            if(messageFormat.number[0]==1)
+            {
+                this.succesfulRegistration();
+            }
+            else
+            {
+                failedRegistration();
+            }
+
+
+    }
+
+    public void setPass(String text) {
+        this.pass=text;
     }
 }
 

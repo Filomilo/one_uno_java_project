@@ -73,7 +73,7 @@ public class ClientConnectionManager {
         return messageFormat;
     }
 
-    boolean connectToServer(String ip, int port, String nick) throws IOException, ClassNotFoundException {
+    boolean connectToServer(String ip, int port, String nick, String pass, int choice) throws IOException, ClassNotFoundException {
         boolean result = false;
         this.socket = new Socket(ip, port);
         socket.setSoTimeout(100);
@@ -86,9 +86,13 @@ public class ClientConnectionManager {
 
         MessageFormat message = new MessageFormat();
         message.type = MessageFormat.messegeTypes.CONNECT;
-        message.text = new String[1];
+        message.text = new String[2];
         message.text[0] = this.nick;
+        message.text[1]= pass;
+        message.number = new int[1];
+        message.number[0]=choice;
         this.sendMessage(message);
+
 
         reciverHandler = new ReciverHandler(this);
         reciverHandler.start();
@@ -103,6 +107,15 @@ public class ClientConnectionManager {
             this.setConfirmedMesseage(false);
             return result;
     }
+
+    private void handleLoginProces() {
+        System.out.println("HADNLE LOGIN \n");
+                this.clientApp.guiController.switchScenetoLogin();
+
+
+    }
+
+
 
     void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
         MessageFormat message=new MessageFormat();
@@ -176,6 +189,14 @@ this.waitTillconfirmed();
                 this.setConfirmedMesseage(true);
 
                 break;
+            case NICKTAKEN:
+                this.setConfirmedMesseage(true);
+                this.clientApp.guiController.loginView.setRegisterCommunicat("NICK TAKEn");
+                break;
+            case WRONGDATA:
+                this.setConfirmedMesseage(true);
+                this.clientApp.guiController.loginView.setLoginCommuncat("wrong nick or password");
+                break;
             case CONNECT:
                 this.setConectionResult(messageFormat.number[0] == 1);
                 if (this.isConectionResult()) {
@@ -183,6 +204,7 @@ this.waitTillconfirmed();
                     clientApp.setConnectedPlayers(messageFormat.number[2]);
                 }
                 this.setConfirmedMesseage(true);
+                this.clientApp.guiController.succesfulLogin();
                 break;
             case NEWPLAYER:
                 if (messageFormat.number[0]==1)
@@ -294,6 +316,9 @@ this.waitTillconfirmed();
             case STOPWAIT:
                 if(this.clientApp.isGameLoaded())
                 this.clientApp.stopWait(messageFormat.text[0]);
+                break;
+            case REGISTER:
+                this.clientApp.handleRegistration(messageFormat);
                 break;
 
 

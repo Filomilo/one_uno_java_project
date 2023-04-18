@@ -935,7 +935,7 @@ text.setFill(Color.WHITE);
     void updateBackground()
     {
 
-        if(this.guiController.activeScenes== GuiController.SCENES.MAIN) {
+        if(this.guiController.activeScenes== GuiController.SCENES.MAIN || this.guiController.activeScenes== GuiController.SCENES.LOGIN) {
             RadialGradient gradient = new RadialGradient(0, 0, this.guiController.mainScene.getWidth() / 2, this.guiController.mainScene.getHeight() / 2, this.guiController.mainScene.getHeight() > this.guiController.mainScene.getWidth() ? this.guiController.mainScene.getHeight() * 4 : this.guiController.mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
 
@@ -994,6 +994,8 @@ text.setFill(Color.WHITE);
         if(this.activeControles[3]) {
             this.communicatText.setText("");
             if (!isConnected) {
+                this.guiController.switchScenetoLogin();
+                /*
                 this.setStatusConnecting();
                 this.updateOnSize();
                 System.out.println("CONNECT");
@@ -1008,6 +1010,7 @@ text.setFill(Color.WHITE);
                         this.communicatText.setText("Failed to connect");
                     }
                 }
+                */
             } else {
                 this.setStatusDiscconnted();
                 this.guiController.disconnectFromServer();

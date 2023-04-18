@@ -28,7 +28,7 @@ public class ServerConnectionManager {
 
     //static function for sending object of messeafe to chosen stream
     static void sendMessage(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
-        synchronized (ServerConnectionManager.messeageLocker) {
+        //synchronized (ServerConnectionManager.messeageLocker) {
             objectOutputStream.writeObject(messageFormat);
             objectOutputStream.flush();
             objectOutputStream.reset();
@@ -36,7 +36,19 @@ public class ServerConnectionManager {
             System.out.println("send message: ");
             System.out.println(messageFormat);
             System.out.println(" ");}
-        }
+        //}
+    }
+
+    static void sendMessageWithoutLock(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
+
+            objectOutputStream.writeObject(messageFormat);
+            objectOutputStream.flush();
+            objectOutputStream.reset();
+            if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM){
+                System.out.println("send message: ");
+                System.out.println(messageFormat);
+                System.out.println(" ");}
+
     }
 
     //static funciton fo receving object messege form chosen stream
@@ -61,16 +73,22 @@ public class ServerConnectionManager {
 
 
 //method to get meege form specif player, after getting messege auntamtl send confimation messee to seder
+
+
      MessageFormat getMesseage(PlayerData playerData) throws IOException, ClassNotFoundException, SocketException {
-        System.out.println("from: " + playerData.getNick());
-         ;
-        MessageFormat messageFormat = ServerConnectionManager.getMesseage(playerData.getObjectInputStream());
-         System.out.println(messageFormat);
-        if(messageFormat.type!= org.example.MessageFormat.messegeTypes.CONFIRM)
-        {
-            sendConfirm(playerData);
-        }
-         return messageFormat;
+         //synchronized (ServerConnectionManager.messeageLocker) {
+             System.out.println("from: " + playerData.getNick());
+             ;
+             MessageFormat messageFormat = ServerConnectionManager.getMesseage(playerData.getObjectInputStream());
+
+             System.out.println(messageFormat);
+             System.out.println("$$$$$$$$$$$$$$$$$$ sedning CONFIRm\n");
+             if (messageFormat.type != org.example.MessageFormat.messegeTypes.CONFIRM) {
+                 System.out.println("$$$$$$$$$$$$$$$$$$ sedning CONFIRm\n");
+                 sendConfirm(playerData);
+             }
+             return messageFormat;
+      //  }
      }
 
 
@@ -79,7 +97,7 @@ public class ServerConnectionManager {
     void sendConfirm(PlayerData playerData) throws IOException {
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
-        this.sendMessage(playerData, messageFormat);
+        this.sendMessageWithoutLock(playerData.getObjectOutputStream(), messageFormat);
     }
 
     //method to wait for cofnirmation from specifc player
@@ -103,8 +121,9 @@ public class ServerConnectionManager {
     // funciton to send messege to specifcly connected player
     // this method should be used instead of the static to automaticly wait for confirmation method
     void sendMessage(PlayerData playerData, MessageFormat messageFormat) throws IOException {
-        System.out.println("To: " + playerData.getNick());
+        System.out.println("Sending To: " + playerData.getNick() + ": " + messageFormat);
     ServerConnectionManager.sendMessage(playerData.getObjectOutputStream(),messageFormat);
+        System.out.println("Messege succefuly sent\n");
     if(messageFormat.type!= MessageFormat.messegeTypes.TOOMANYPLAYERS && messageFormat.type!= MessageFormat.messegeTypes.GAMESATRTED)
     waitConfirm(playerData);
 
@@ -238,6 +257,7 @@ public class ServerConnectionManager {
             throw new RuntimeException(e);
         }
         this.serverApp.gameStarted=false;
+        this.serverApp.setEveryoneNotReady();
 
     }
 
@@ -277,7 +297,6 @@ public class ServerConnectionManager {
                 break;
 
             case READY:
-
                 if(messageFormat.number[0]==1) {
                     serverApp.setPlayersReady(serverApp.getPlayersReady() + 1);
                     playerData.setReady(true);
@@ -333,68 +352,87 @@ public class ServerConnectionManager {
 
         MessageFormat messageFormat = getMesseage(objectInStream);
         if (messageFormat.type == MessageFormat.messegeTypes.CONNECT) {
-            System.out.println(messageFormat.text[0] + "Connected");
-            PlayerData pLayerData = new PlayerData(messageFormat.text[0], socket, objectOutStream, objectInStream);
-            boolean res=true;
-            ClientHandler clientHandler= new ClientHandler(pLayerData,this);
-            pLayerData.setClientHandler(clientHandler);
-
-            System.out.printf("this.serverApp.nicks.size(): " + this.serverApp.nicks.size() + "\n");
-            if(this.serverApp.nicks.size() >=8)
-            {
-                MessageFormat messageFormatDenyAmt=new MessageFormat();
-                messageFormatDenyAmt.type= MessageFormat.messegeTypes.TOOMANYPLAYERS;
-                this.sendMessage(pLayerData,messageFormatDenyAmt);
-                return;
-            }
-            if(this.serverApp.gameStarted && !this.findIfInWaitList(messageFormat.text[0]))
-            {
-                MessageFormat messageFormatDenyAmt=new MessageFormat();
-                messageFormatDenyAmt.type= MessageFormat.messegeTypes.GAMESATRTED;
-                this.sendMessage(pLayerData,messageFormatDenyAmt);
-                return;
+           System.out.println(messageFormat.text[0] + "Connected");
+            Boolean validationResult = false;
+            if (messageFormat.number[0] == 0) {
+                validationResult = this.serverApp.validateRegistration(messageFormat.text[0], messageFormat.text[1]);
+                if (!validationResult) {
+                    MessageFormat loginValidation = new MessageFormat();
+                    loginValidation.type = MessageFormat.messegeTypes.NICKTAKEN;
+                    sendMessage(objectOutStream, loginValidation);
+                }
+            } else {
+                validationResult = this.serverApp.validateLogin(messageFormat.text[0], messageFormat.text[1]);
+                if (!validationResult) {
+                    MessageFormat loginValidation = new MessageFormat();
+                    loginValidation.type = MessageFormat.messegeTypes.WRONGDATA;
+                    sendMessage(objectOutStream, loginValidation);
+                }
             }
 
+            if (validationResult) {
 
-            clientHandler.start();
-        if(res)
-            res= serverApp.addPlayer(pLayerData);
+                System.out.println("SUCCESFULY VALIDATED PLAYER\n");
+                PlayerData pLayerData = new PlayerData("", socket, objectOutStream, objectInStream);
+                boolean res = true;
+                ClientHandler clientHandler = new ClientHandler(pLayerData, this);
+                pLayerData.setClientHandler(clientHandler);
+                pLayerData.setNick(messageFormat.text[0]);
+                if (this.serverApp.nicks.size() >= 8) {
+                    MessageFormat messageFormatDenyAmt = new MessageFormat();
+                    messageFormatDenyAmt.type = MessageFormat.messegeTypes.TOOMANYPLAYERS;
+                    this.sendMessage(pLayerData, messageFormatDenyAmt);
+                    return;
+                }
+                if (this.serverApp.gameStarted && !this.findIfInWaitList(messageFormat.text[0])) {
+                    MessageFormat messageFormatDenyAmt = new MessageFormat();
+                    messageFormatDenyAmt.type = MessageFormat.messegeTypes.GAMESATRTED;
+                    this.sendMessage(pLayerData, messageFormatDenyAmt);
+                    return;
+                }
 
 
 
-            System.out.println(pLayerData);
-            MessageFormat confirmationMessege = new MessageFormat();
-            confirmationMessege.type = MessageFormat.messegeTypes.CONNECT;
 
-            if(res==false)
-            {
-                confirmationMessege.number = new int[1];
-                confirmationMessege.number[0]=0;
-            }
-            else {
-                confirmationMessege.number = new int[3];
-                confirmationMessege.number[0] = 1;
-                confirmationMessege.number[1] = serverApp.playersReady;
-                confirmationMessege.number[2] = serverApp.playersConnected;
+                if (res)
+                    res= serverApp.addPlayer(pLayerData);
 
-                MessageFormat newPlayerCommunicat = new MessageFormat();
-                newPlayerCommunicat.type= MessageFormat.messegeTypes.NEWPLAYER;
-                newPlayerCommunicat.number= new int[1];
-                newPlayerCommunicat.number[0]=1;
 
-                this.sendExclusice(newPlayerCommunicat,pLayerData);
+                System.out.println("Player connected: " + pLayerData + " \n");
+                MessageFormat confirmationMessege = new MessageFormat();
+                confirmationMessege.type = MessageFormat.messegeTypes.CONNECT;
 
-            }
-            sendMessage(pLayerData, confirmationMessege);
-            if(this.serverApp.gameStarted)
-            {
-                this.serverApp.catchUp(pLayerData);
+                if (res == false) {
+                    confirmationMessege.number = new int[1];
+                    confirmationMessege.number[0] = 0;
+                } else {
+
+                    confirmationMessege.number = new int[3];
+                    confirmationMessege.number[0] = 1;
+                    confirmationMessege.number[1] = serverApp.playersReady;
+                    confirmationMessege.number[2] = serverApp.playersConnected;
+
+                    MessageFormat newPlayerCommunicat = new MessageFormat();
+                    newPlayerCommunicat.type = MessageFormat.messegeTypes.NEWPLAYER;
+                    newPlayerCommunicat.number = new int[1];
+                    newPlayerCommunicat.number[0] = 1;
+
+                    System.out.println("sending neplay communicat " + newPlayerCommunicat + "((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((\n");
+                    this.sendExclusice(newPlayerCommunicat, pLayerData);
+
+                }
+                System.out.println("sending confimatopn messwegae " + confirmationMessege + "********************************************\n\n");
+                sendMessageWithoutLock(pLayerData.getObjectOutputStream(), confirmationMessege);
+                clientHandler.start();
+                if (this.serverApp.gameStarted) {
+                    this.serverApp.catchUp(pLayerData);
+                }
             }
         }
-
     }
 
-// mrthod that send the same messege to all connected players
+
+    // mrthod that send the same messege to all connected players
     void sendToAll(MessageFormat messageFormat) throws IOException {
         for (PlayerData player:
                 this.serverApp.nicks) {
@@ -430,7 +468,7 @@ public class ServerConnectionManager {
         serverSocket.close();
     }
 
-    private int secWaitLimir=20;
+    private int secWaitLimir=7;
 
     List<String> waitList= new ArrayList<String>();
     List<Boolean> waitListCheck= new ArrayList<Boolean>();
@@ -478,6 +516,7 @@ public class ServerConnectionManager {
             throw new RuntimeException(e);
         }
         int i=0;
+        boolean res=true;
         while(true)
         {
             try {
@@ -495,12 +534,14 @@ public class ServerConnectionManager {
                 i++;
 
                 int indx=this.findIndexOfWaitList(playerData.nick);
-                if(waitListCheck.get(indx))
+                if(waitListCheck.get(indx)) {
+
                     break;
+                }
 
 
             if(i>secWaitLimir) {
-                this.serverApp.surrender(playerData);
+                res = false;
                 break;
             }
             System.out.printf(i+": Waiting for " + playerData.getNick() + "\n");
@@ -511,6 +552,18 @@ public class ServerConnectionManager {
         int indx=this.findIndexOfWaitList(playerData.nick);
         waitList.remove(indx);
         waitListCheck.remove(indx);
+        stopWaitMesseage(playerData);
+        if(!res) {
+            try {
+                this.serverApp.surrender(playerData);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    void stopWaitMesseage( PlayerData playerData)
+    {
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.STOPWAIT;
         messageFormat.text = new String[1];
@@ -521,4 +574,5 @@ public class ServerConnectionManager {
             throw new RuntimeException(e);
         }
     }
+
 }

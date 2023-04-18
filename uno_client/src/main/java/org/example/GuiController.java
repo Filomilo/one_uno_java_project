@@ -38,13 +38,25 @@ GuiController extends Application {
     InstructionView instructionView;
 
     SoundPlayer soundPlayer;
+    LoginVew loginView;
+
+    public void succesfulLogin() {
+        this.switchScenetoMain();
+        this.mainVew.setStatusConnecting();
+        System.out.println("CONNECT");
+              this.soundPlayer.playSucces();
+            this.mainVew.setStatusConnected();
+        }
+
+
+
 
     static enum SCENES{
         MAIN,
         INSRTUCTION,
         GAME,
         RANK,
-        RESULT
+        LOGIN, RESULT
     };
 
     GuiController.SCENES activeScenes=SCENES.MAIN;
@@ -106,8 +118,8 @@ GuiController extends Application {
 
             this.instructionView= new InstructionView(this);
             this.instructionView.iniit(primaryStage,mainScene);
-
-
+            this.loginView= new LoginVew(this);
+            this.loginView.iniit(this.primaryStage,mainScene);
 
             this.addListineres();
 
@@ -148,6 +160,7 @@ GuiController extends Application {
 
 */
             soundPlayer = new SoundPlayer();
+           // this.switchScenetoLogin();
         }
         catch (Exception e)
         {
@@ -175,12 +188,13 @@ GuiController extends Application {
             String ip = this.mainVew.textFields[1].getText();
             String port = this.mainVew.textFields[2].getText();
 
-            this.clientApp.setNick(nick);
+            //this.clientApp.setNick(nick);
             this.clientApp.setPort(Integer.parseInt(port));
             this.clientApp.setIp(ip);
 
+
             System.out.println(nick + " " + ip + " " + " " + port);
-            Boolean res=this.clientApp.connectWithServer();
+            Boolean res=this.clientApp.connectWithServer(1);
             if(res)
                     this.updatePlayerAmt();
             return res ;
@@ -243,6 +257,8 @@ GuiController extends Application {
             case RESULT: this.resultView.updateOnSize();
                 break;
             case INSRTUCTION: this.instructionView.updateOnSize();
+                break;
+            case LOGIN: this.loginView.updateOnSize();
                 break;
         }
 
@@ -390,7 +406,20 @@ GuiController extends Application {
 
 
     }
+    public void switchScenetoLogin() {
 
+        mainVew.buttons[2].setFill(mainVew.tranparentColor);
+        mainVew.buttonTitles[2].setFill(Color.WHITE);
+
+
+            this.activeScenes=SCENES.LOGIN;
+            this.mainScene.setRoot( this.loginView.root);
+
+            this.updateOnSize();
+
+
+
+    }
 
 
 

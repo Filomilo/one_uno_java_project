@@ -2,6 +2,7 @@ package org.example;
 
 import com.sun.xml.internal.ws.api.model.MEP;
 
+import javax.swing.text.StyledEditorKit;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLOutput;
@@ -46,16 +47,17 @@ public class ServerApp {
         }
     }
 
-    boolean addPlayer(PlayerData pLayerData)
-    {
+        boolean addPlayer(PlayerData pLayerData)
+        {
 
-        System.out.println("add player PLAYERS: "+ this.nicks + "\n");
-        this.nicks.add(pLayerData);
-        Collections.sort(this.nicks);
-        boolean res= this.dataBaseMangaer.addPlayer(pLayerData.nick);
-        this.playersConnected++;
-        return  true;
-    }
+            System.out.println("add player PLAYERS: "+ this.nicks + "\n");
+            this.nicks.add(pLayerData);
+            Collections.sort(this.nicks);
+            this.playersConnected++;
+            return  true;
+
+
+        }
 
     public void setPort(int port) {
         this.port = port;
@@ -299,6 +301,7 @@ boolean isInStratingProces=false;
     }
 
     void sendPlayerOrder() throws IOException, ClassNotFoundException {
+        System.out.println("NICKS: " + this.nicks + "\n");
         for (PlayerData player : this.nicks) {
             List<String> nicks = this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + nicks);
@@ -555,5 +558,20 @@ boolean isInStratingProces=false;
             }
         }
 
+    }
+
+    public Boolean validateRegistration(String nick, String pass) {
+        Boolean isNotTaken=this.dataBaseMangaer.validateNick(nick);
+        if(!isNotTaken)
+            return false;
+
+        this.dataBaseMangaer.addPlayer(nick,pass);
+
+
+        return true;
+    }
+
+    public Boolean validateLogin(String nick, String pass) {
+        return this.dataBaseMangaer.validatePass(nick,pass);
     }
 }

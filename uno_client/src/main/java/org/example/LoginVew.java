@@ -137,9 +137,6 @@ public class LoginVew extends Application {
         this.addListiners(primaryStage);
         this.updateOnSize();
 
-        this.setLoginCommuncat("asdsdasdasdasdas");
-        this.setRegisterCommunicat("tyutyutyutyutu");
-        this.setServerAdressCommunicat("!23456789");
 
 
         this.serverAdressFields[0].setText("localhost");
@@ -847,11 +844,12 @@ public class LoginVew extends Application {
 
     void updateBackground()
     {
+        if(this.guiController.activeScenes== GuiController.SCENES.LOGIN) {
 
-        RadialGradient gradient = new RadialGradient(0, 0, this.mainScene.getWidth() / 2, this.mainScene.getHeight() / 2, this.mainScene.getHeight() > this.mainScene.getWidth() ? this.mainScene.getHeight() * 4 : this.mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
+            RadialGradient gradient = new RadialGradient(0, 0, this.mainScene.getWidth() / 2, this.mainScene.getHeight() / 2, this.mainScene.getHeight() > this.mainScene.getWidth() ? this.mainScene.getHeight() * 4 : this.mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
             mainScene.setFill(gradient);
-
+        }
     }
 
 
@@ -1024,12 +1022,20 @@ public class LoginVew extends Application {
 
     void setRegisterCommunicat(String s)
     {
-        registerCommunicat.setText(s);
-        this.updateOnSize();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                registerCommunicat.setText(s);
+                updateOnSize();
+            }
+        });
+
     }
 
     void setServerAdressCommunicat(String s)
     {
+        if(!s.equals(""))
+        this.guiController.soundPlayer.playFailed();
         this.serverAdressCommunicat.setText(s);
         this.updateOnSize();
     }

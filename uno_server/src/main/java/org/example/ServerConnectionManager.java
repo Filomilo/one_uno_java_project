@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.swing.text.StyledEditorKit;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,7 +16,7 @@ import static java.lang.Math.exp;
 
 public class ServerConnectionManager {
 
-   static final Object messeageLocker= new Object();
+   final Object messeageLocker= new Object();
     ServerApp serverApp;
     ServerSocket serverSocket;
     //variable that change should close thrad and server
@@ -26,9 +27,10 @@ public class ServerConnectionManager {
     }
 
 
+    static final Object sendMessegeLocker= new Object();
     //static function for sending object of messeafe to chosen stream
     static void sendMessage(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
-        //synchronized (ServerConnectionManager.messeageLocker) {
+        synchronized (sendMessegeLocker) {
             objectOutputStream.writeObject(messageFormat);
             objectOutputStream.flush();
             objectOutputStream.reset();
@@ -36,18 +38,20 @@ public class ServerConnectionManager {
             System.out.println("send message: ");
             System.out.println(messageFormat);
             System.out.println(" ");}
-        //}
+        }
     }
 
-    static void sendMessageWithoutLock(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
-
+    void sendMessageWithoutLock(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
+        synchronized (sendMessegeLocker) {
             objectOutputStream.writeObject(messageFormat);
             objectOutputStream.flush();
             objectOutputStream.reset();
-            if(messageFormat.type!= MessageFormat.messegeTypes.CONFIRM){
+            if (messageFormat.type != MessageFormat.messegeTypes.CONFIRM) {
                 System.out.println("send message: ");
                 System.out.println(messageFormat);
-                System.out.println(" ");}
+                System.out.println(" ");
+            }
+        }
 
     }
 
@@ -121,11 +125,13 @@ public class ServerConnectionManager {
     // funciton to send messege to specifcly connected player
     // this method should be used instead of the static to automaticly wait for confirmation method
     void sendMessage(PlayerData playerData, MessageFormat messageFormat) throws IOException {
-        System.out.println("Sending To: " + playerData.getNick() + ": " + messageFormat);
-    ServerConnectionManager.sendMessage(playerData.getObjectOutputStream(),messageFormat);
-        System.out.println("Messege succefuly sent\n");
-    if(messageFormat.type!= MessageFormat.messegeTypes.TOOMANYPLAYERS && messageFormat.type!= MessageFormat.messegeTypes.GAMESATRTED)
-    waitConfirm(playerData);
+        synchronized (sendMessegeLocker) {
+            System.out.println("Sending To: " + playerData.getNick() + ": " + messageFormat);
+            ServerConnectionManager.sendMessage(playerData.getObjectOutputStream(), messageFormat);
+            System.out.println("Messege succefuly sent\n");
+            if (messageFormat.type != MessageFormat.messegeTypes.TOOMANYPLAYERS && messageFormat.type != MessageFormat.messegeTypes.GAMESATRTED)
+                waitConfirm(playerData);
+        }
 
 
     }
@@ -257,7 +263,7 @@ public class ServerConnectionManager {
             throw new RuntimeException(e);
         }
         this.serverApp.gameStarted=false;
-        this.serverApp.setEveryoneNotReady();
+        //this.serverApp.setEveryoneNotReady();
 
     }
 
@@ -364,11 +370,28 @@ public class ServerConnectionManager {
             } else {
                 validationResult = this.serverApp.validateLogin(messageFormat.text[0], messageFormat.text[1]);
                 if (!validationResult) {
+
                     MessageFormat loginValidation = new MessageFormat();
                     loginValidation.type = MessageFormat.messegeTypes.WRONGDATA;
                     sendMessage(objectOutStream, loginValidation);
+
+
+
+
                 }
             }
+            if(validationResult)
+            {
+                Boolean playerConnectedValidation=this.serverApp.checkIfAlradyLogged(messageFormat.text[0]);
+                if(playerConnectedValidation)
+                {
+                    MessageFormat loginValidation = new MessageFormat();
+                    loginValidation.type = MessageFormat.messegeTypes.ALRADYLOGGED;
+                    sendMessage(objectOutStream, loginValidation);
+                }
+                validationResult=!playerConnectedValidation;
+            }
+
 
             if (validationResult) {
 
@@ -509,6 +532,8 @@ public class ServerConnectionManager {
             messageFormat.type= MessageFormat.messegeTypes.WAITSTART;
             messageFormat.text = new String[1];
             messageFormat.text[0] = playerData.getNick();
+            messageFormat.number = new int[1];
+            messageFormat.number[0]= this.secWaitLimir;
             this.sendToAll(messageFormat);
             waitList.add(playerData.nick);
             waitListCheck.add(false);
@@ -520,8 +545,6 @@ public class ServerConnectionManager {
         while(true)
         {
             try {
-                TimeUnit.SECONDS.sleep(1);
-
 
 
                 MessageFormat messageFormat = new MessageFormat();
@@ -531,6 +554,13 @@ public class ServerConnectionManager {
                 messageFormat.number = new int[1];
                 messageFormat.number[0]= secWaitLimir-i;
                 this.sendToAll(messageFormat);
+
+
+                TimeUnit.SECONDS.sleep(1);
+
+
+
+
                 i++;
 
                 int indx=this.findIndexOfWaitList(playerData.nick);

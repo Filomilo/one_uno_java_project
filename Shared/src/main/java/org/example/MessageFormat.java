@@ -31,7 +31,7 @@ public class MessageFormat implements Serializable {
         WAIT,
         WAITSTART,
         GAMESATRTED,
-        CATCHUP, STOPWAIT, SHUTGAME
+        CATCHUP, STOPWAIT, REGISTER, LOGIN, NICKTAKEN, WRONGDATA, ALRADYLOGGED, SHUTGAME
 
     }
     messegeTypes type;

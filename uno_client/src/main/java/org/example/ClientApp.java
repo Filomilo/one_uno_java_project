@@ -367,7 +367,7 @@ public class ClientApp {
         this.guiController.switchSceneToResult();
         System.out.println("Test 5 \n");
         this.setReady(false);
-        this.setReadyPlayers(0);
+        //this.setReadyPlayers(0);
 
     }
 
@@ -484,7 +484,7 @@ public class ClientApp {
 
     }
 
-    public void startWait(String s) {
+    public void startWait(String s, int i) {
         this.guiController.gameView.startWaiting(s);
     }
 

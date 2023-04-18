@@ -193,6 +193,10 @@ this.waitTillconfirmed();
                 this.setConfirmedMesseage(true);
                 this.clientApp.guiController.loginView.setRegisterCommunicat("NICK TAKEn");
                 break;
+            case ALRADYLOGGED:
+                this.setConfirmedMesseage(true);
+                this.clientApp.guiController.loginView.setRegisterCommunicat("Player alrady logged");
+                break;
             case WRONGDATA:
                 this.setConfirmedMesseage(true);
                 this.clientApp.guiController.loginView.setLoginCommuncat("wrong nick or password");
@@ -302,7 +306,7 @@ this.waitTillconfirmed();
                 break;
             case WAITSTART:
                 if(this.clientApp.isGameLoaded())
-                this.clientApp.startWait(messageFormat.text[0]);
+                this.clientApp.startWait(messageFormat.text[0],messageFormat.number[0]);
                 break;
             case WAIT:
                 if(this.clientApp.isGameLoaded() && this.clientApp.isWaiting())

@@ -574,4 +574,28 @@ boolean isInStratingProces=false;
     public Boolean validateLogin(String nick, String pass) {
         return this.dataBaseMangaer.validatePass(nick,pass);
     }
+
+    public boolean checkIfAlradyLogged(String nick)
+    {
+        Boolean res=false;
+        for (PlayerData player: this.nicks
+             ) {
+            if(player.getNick().equals(nick))
+            {
+                res=true;
+                for(String nickWaitList: this.connectionManger.waitList)
+                {
+                    if(nickWaitList.equals(player.getNick()))
+                    {
+                        res=false;
+                        break;
+                    }
+                }
+
+
+                break;
+            }
+        }
+        return res;
+    }
 }

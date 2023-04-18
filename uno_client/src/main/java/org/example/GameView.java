@@ -1,17 +1,14 @@
 package org.example;
 
-import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -19,7 +16,6 @@ import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
@@ -35,15 +31,10 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.sound.midi.Soundbank;
-import javax.swing.text.StyledEditorKit;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
@@ -1857,6 +1848,10 @@ catch (ArrayIndexOutOfBoundsException e)
     void setGuideColor(Color col)
     {
         this.guideColor.setFill(col);
+        if(col==Color.GOLD)
+            this.turnText.setFill(Color.BLACK);
+        else
+            this.turnText.setFill(Color.WHITE);
     }
 
 
@@ -2093,6 +2088,7 @@ catch (ArrayIndexOutOfBoundsException e)
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+
                 isWaitingForPlayer=true;
                 nicksWaiting.add(nick);
                 Text text = new Text();
@@ -2105,6 +2101,8 @@ catch (ArrayIndexOutOfBoundsException e)
                 root.getChildren().addAll(rectangle,text);
                 System.out.printf("Started Waitng for " + nick + "\n");
                 updateWaitSize();
+
+
             }
         });
 

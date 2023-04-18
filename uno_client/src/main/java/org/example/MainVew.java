@@ -76,10 +76,7 @@ public class MainVew extends Application {
 
 
 
-    String[] textFieldsTexts={"Nick","Ip","Port"};
-    Text textFieldsTitles[]= new Text[textFieldsTexts.length];
-    TextField[] textFields = new TextField[textFieldsTexts.length];
-    Line[] textFieldsLine=new Line[textFieldsTexts.length];
+
     private Text connectionStatusText;
      Text communicatText;
     private Text readyStatusText;
@@ -144,7 +141,6 @@ public class MainVew extends Application {
         this.setupImages();
         this.setupButtons();
         this.setupHelpButton();
-        this.setupTextFields();
         this.setupStatusText();
         this.addListiners(primaryStage);
         this.updateOnSize();
@@ -190,12 +186,9 @@ public class MainVew extends Application {
        // this.updateLocks();
     }
 
-    private void updateLocks() {
-        for(int i=0;i<3;i++)
-        {
-            this.textFields[i].setEditable(this.activeControles[i]);
-        }
+    public void updateLocks() {
 
+        System.out.println("LOCK UPDATE: " + Arrays.toString(this.activeControles) + "\n");
         for(int i = 0;i<4;i++) {
 
             if (!activeControles[i + 3]) {
@@ -274,25 +267,6 @@ public class MainVew extends Application {
 
 
 
-    private void setupTextFields() {
-    for(int i=0;i<this.textFieldsTexts.length;i++)
-    {
-        this.textFieldsTitles[i] = new Text(this.textFieldsTexts[i]);
-        this.textFields[i] = new TextField();
-        setupTextField(this.textFields[i]);
-
-        this.textFieldsLine[i] = new Line();
-        setupLine(this.textFieldsLine[i]);
-
-        this.textFieldsTitles[i] = new Text(this.textFieldsTexts[i]);
-        setupTextFiledTitle(this.textFieldsTitles[i]);
-
-     this.root.getChildren().add( this.textFieldsTitles[i])  ;
-        this.root.getChildren().add(this.textFields[i]);
-        this.root.getChildren().add(this.textFieldsLine[i]);
-    }
-    this.updateTextFieldsSize();
-    }
 
     void setupTextFiledTitle(Text text)
     {
@@ -300,86 +274,7 @@ public class MainVew extends Application {
     }
 
     
-    void updateTextFieldsSize()
-    {
-        double width=this.buttons[0].getWidth()/1.8;
-        double height=this.buttons[0].getHeight();
-        double offesetGap=20;
 
-        this.textFields[0].setLayoutX(this.buttonTitles[0].getX() + this.buttonTitles[0].getLayoutBounds().getWidth()/2 - width/2);
-        this.textFields[0].setLayoutY(this.buttonTitles[0].getY() - this.buttonTitles[0].getLayoutBounds().getHeight() * 3*2.5);
-
-        //this.textFields[1].setLayoutX(this.buttonTitles[0].getX() + this.buttonTitles[0].getLayoutBounds().getWidth()/2 - width/2);
-        this.textFields[1].setLayoutX(this.textFields[0].getLayoutX() - width/2 -  offesetGap );
-        this.textFields[1].setLayoutY(this.textFields[0].getLayoutY()+height*2.5);
-
-        this.textFields[2].setLayoutX(this.textFields[0].getLayoutX() + width/2 + offesetGap);
-        this.textFields[2].setLayoutY(this.textFields[0].getLayoutY()+height*2.5);
-
-        double fontSize= this.textFields[0].getFont().getSize()/2;
-
-        Font font=new Font("Arial",fontSize);
-
-
-        Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        for(int i=0;i<textFields.length;i++)
-                        {
-
-                            textFields[i].setPrefSize(width,height);
-                            textFields[i].setFont(buttonTitles[0].getFont());
-
-
-
-                            textFieldsLine[i].setStartX(textFields[i].getLayoutBounds().getMinX()+textFields[i].getLayoutX());
-                            textFieldsLine[i].setStartY(textFields[i].getLayoutBounds().getMaxY()+textFields[i].getLayoutY());
-                            textFieldsLine[i].setEndX(textFields[i].getLayoutBounds().getMaxX()+textFields[i].getLayoutX());
-                            textFieldsLine[i].setEndY(textFields[i].getLayoutBounds().getMaxY()+textFields[i].getLayoutY());
-
-
-                            textFieldsTitles[i].setFont(font);
-                            textFieldsTitles[i].setX(textFieldsLine[i].getStartX());
-                            textFieldsTitles[i].setY(textFieldsLine[i].getEndY()+ textFieldsTitles[i].getLayoutBounds().getHeight()/1);
-
-
-
-
-
-                        }
-                    }
-                }
-
-        );
-
-/*
-        for(int i=0;i<this.textFields.length;i++)
-        {
-
-            this.textFields[i].setPrefSize(width,height);
-            this.textFields[i].setFont(this.buttonTitles[0].getFont());
-
-
-
-            this.textFieldsLine[i].setStartX(this.textFields[i].getLayoutBounds().getMinX()+this.textFields[i].getLayoutX());
-            this.textFieldsLine[i].setStartY(this.textFields[i].getLayoutBounds().getMaxY()+this.textFields[i].getLayoutY());
-            this.textFieldsLine[i].setEndX(this.textFields[i].getLayoutBounds().getMaxX()+this.textFields[i].getLayoutX());
-            this.textFieldsLine[i].setEndY(this.textFields[i].getLayoutBounds().getMaxY()+this.textFields[i].getLayoutY());
-
-
-            this.textFieldsTitles[i].setFont(font);
-            this.textFieldsTitles[i].setX(this.textFieldsLine[i].getStartX());
-            this.textFieldsTitles[i].setY(this.textFieldsLine[i].getEndY()+ this.textFieldsTitles[i].getLayoutBounds().getHeight()/1);
-
-
-
-
-
-        }
-*/
-
-    }
 
     void setPlayersReady(int ready, int connected)
     {
@@ -806,7 +701,6 @@ public class MainVew extends Application {
                                 updateBackground();
                                 updateButtonsSize();
                                 updateStatusText();
-                                updateTextFieldsSize();
                                 updateHelpButtonSize();
 
 
@@ -867,7 +761,7 @@ delay.play();
         double offset=10;
 
         double initalX=this.mainScene.getWidth()-buttonWIdth-buttonWIdth/5;
-        double initalY=this.mainScene.getHeight()/1.65- ((offset+buttonHeight)*buttons.length)/2;
+        double initalY=this.mainScene.getHeight()/1.65- ((offset+buttonHeight)*buttons.length)/1.5;
 
         int iterator=0;
         for (Rectangle button:this.buttons) {
@@ -974,6 +868,7 @@ text.setFill(Color.WHITE);
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
             button.setFill(this.tranparentColor);
+            System.out.println(index+" Set WHite\n");
             this.buttonTitles[index].setFill(Color.WHITE);
         }
     }
@@ -1057,9 +952,8 @@ text.setFill(Color.WHITE);
 
     void onButtonRankingClick()
     {
-        if(this.activeControles[6]) {
+        if(this.activeControles[5]) {
             System.out.println("RANKING");
-
         this.guiController.clientApp.requestRanking();
 
         }

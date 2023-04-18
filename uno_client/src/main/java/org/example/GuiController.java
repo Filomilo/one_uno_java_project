@@ -123,11 +123,6 @@ GuiController extends Application {
 
             this.addListineres();
 
-
-
-            this.mainVew.textFields[0].setText(GuiController.nick);
-            this.mainVew.textFields[1].setText(this.ip);
-            this.mainVew.textFields[2].setText(this.port);
             this.mainScene.setRoot(this.mainVew.root);
             //primaryStage.setO
 
@@ -181,30 +176,6 @@ GuiController extends Application {
         this.gameView.updateOnSize();
     }
 
-    boolean connectTosServer()
-    {
-        try {
-            String nick = this.mainVew.textFields[0].getText();
-            String ip = this.mainVew.textFields[1].getText();
-            String port = this.mainVew.textFields[2].getText();
-
-            //this.clientApp.setNick(nick);
-            this.clientApp.setPort(Integer.parseInt(port));
-            this.clientApp.setIp(ip);
-
-
-            System.out.println(nick + " " + ip + " " + " " + port);
-            Boolean res=this.clientApp.connectWithServer(1);
-            if(res)
-                    this.updatePlayerAmt();
-            return res ;
-        }
-        catch (Exception e)
-        {
-            //e.printStackTrace();
-            return false;
-        }
-    }
 
     void disconnectFromServer()
     {
@@ -400,7 +371,7 @@ GuiController extends Application {
     public void switchScenetoMain() {
 
         mainVew.buttons[2].setFill(mainVew.tranparentColor);
-        mainVew.buttonTitles[2].setFill(Color.WHITE);
+        mainVew.updateLocks();
         this.activeScenes=SCENES.MAIN;
                         this.mainScene.setRoot(mainVew.root);
 

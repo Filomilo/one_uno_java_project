@@ -538,6 +538,7 @@ public class GameView extends Application {
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
+                        guiController.soundPlayer.playOnButtonClick();
                         onButtonPresed();
                     }
                 }
@@ -602,6 +603,7 @@ public class GameView extends Application {
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
+                        guiController.soundPlayer.playOnButtonClick();
                         onHelpBasicClick();
                     }
                 }
@@ -1120,7 +1122,8 @@ public class GameView extends Application {
     }
 
     void onMouseOnButton()
-{
+    {
+
     this.button.setFill(Color.WHITE);
     this.buttonText.setFill(Color.BLACK);
   //  System.out.println("On btton");
@@ -1138,6 +1141,7 @@ public class GameView extends Application {
 
     void onButtonPresed()
     {
+        this.guiController.soundPlayer.playOnButtonClick();
         this.button.setFill(Color.LIGHTGRAY);
 
     }
@@ -2141,6 +2145,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     void updateWaitText(String nick,int sec)
     {
+        this.guiController.soundPlayer.playClock();
         int indx=this.findIndexOfWait(nick);
         this.waitTexts.get(indx).setText("Watiing for player "+ nick + ": " + sec + "s");
         updateWaitSize();

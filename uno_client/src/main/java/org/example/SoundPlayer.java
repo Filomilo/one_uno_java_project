@@ -16,7 +16,7 @@ public class SoundPlayer {
 
     private final String drawCardSoundLocationb= "drawCardSound.wav" ;
     private final String finishSoundLocationi= "finishSound.mp3" ;
-
+    private final String clockTickSoundLocationi= "clockTickSound.wav" ;
 
 
     SoundPlayer()
@@ -64,6 +64,11 @@ public class SoundPlayer {
     public void playfinish()
     {
         this.playSound(this.finishSoundLocationi);
+    }
+
+    public void playClock()
+    {
+        this.playSound(this.clockTickSoundLocationi);
     }
     private void playSound(String fileName)
     {

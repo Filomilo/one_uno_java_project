@@ -338,6 +338,7 @@ public class ResultView extends Application {
 
     private void onButtonPush()
     {
+        this.guiController.soundPlayer.playOnButtonClick();
         this.button.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }

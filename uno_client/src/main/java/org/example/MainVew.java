@@ -868,7 +868,6 @@ text.setFill(Color.WHITE);
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
             button.setFill(this.tranparentColor);
-            System.out.println(index+" Set WHite\n");
             this.buttonTitles[index].setFill(Color.WHITE);
         }
     }

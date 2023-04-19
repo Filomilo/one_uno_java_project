@@ -895,6 +895,7 @@ public class LoginVew extends Application {
 
     private void onButtonReturnPush()
     {
+        this.guiController.soundPlayer.playOnButtonClick();
         this.returnButton.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }
@@ -926,6 +927,7 @@ public class LoginVew extends Application {
 
     private void onButtonLoginPush()
     {
+        this.guiController.soundPlayer.playOnButtonClick();
         this.loginButton.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }
@@ -974,6 +976,7 @@ public class LoginVew extends Application {
 
     private void onButtonRegisterPush()
     {
+        this.guiController.soundPlayer.playOnButtonClick();
         this.registerButton.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }

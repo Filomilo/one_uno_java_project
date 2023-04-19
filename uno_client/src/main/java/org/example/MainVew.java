@@ -59,26 +59,26 @@ import java.util.concurrent.TimeUnit;
 
 public class MainVew extends Application {
 
-    Scene mainScene;
+    private Scene mainScene;
 
-    boolean isConnected=false;
-    Boolean isReady=false;
-    final int startH=720;
-    final int startW=1280;
-    static final String resDir = "uno_client\\src\\main\\resources\\";
+    private boolean isConnected=false;
+    public  Boolean isReady=false;
+    private  final int startH=720;
+    private  final int startW=1280;
+    private static final String resDir = "uno_client\\src\\main\\resources\\";
 
-    Color tranparentColor = new Color(1,0,0,0.0);
-    Color blueColor = new Color(0,0.1,0.6,1);
-    Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    public  Color tranparentColor = new Color(1,0,0,0.0);
+    private  Color blueColor = new Color(0,0.1,0.6,1);
+    private  Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
 
-    boolean activeControles [];
+    private boolean[] activeControles;
 
 
 
 
     private Text connectionStatusText;
-     Text communicatText;
+    public  Text communicatText;
     private Text readyStatusText;
 
 
@@ -86,30 +86,28 @@ public class MainVew extends Application {
         launch(args);
     }
 
-    Image unoLogo;
-    ImageView unoLogoView;
+    private  Image unoLogo;
+    private ImageView unoLogoView;
 
 
-  ;
-
-    String buttonsTexts[]={"Connect","Ready","Ranking","Exit"};
-    Text buttonTitles[]= new Text[buttonsTexts.length];
-    Rectangle buttons[] = new Rectangle[buttonsTexts.length];
-    final float buttonSizeRatio=9;
-    final float buttonHeightToScreenRatio=12;
+    public  String[] buttonsTexts ={"Connect","Ready","Ranking","Exit"};
+    public Text[] buttonTitles = new Text[buttonsTexts.length];
+    public  Rectangle[] buttons = new Rectangle[buttonsTexts.length];
+    private  final float buttonSizeRatio=9;
+    private final float buttonHeightToScreenRatio=12;
 
 
 
-    Rectangle helpButton;
-    Text helpButtonText;
+    private  Rectangle helpButton;
+    private Text helpButtonText;
 
 
 
 
 
-    Group root;
+    public Group root;
 
-    GuiController guiController;
+    private GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -127,7 +125,7 @@ public class MainVew extends Application {
     }
 
 
-    void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
+    public void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
 
 
         this.mainScene=mainScene;
@@ -223,7 +221,7 @@ public class MainVew extends Application {
     }
 
 
-    void setStatusConnected()
+    public  void setStatusConnected()
     {
         this.isConnected=true;
         this.activeControles[0]=false;
@@ -242,13 +240,13 @@ public class MainVew extends Application {
 
     }
 
-    void setStatusConnecting()
+    public  void setStatusConnecting()
     {
         this.connectionStatusText.setText("Trying to connect");
         this.connectionStatusText.setFill(Color.YELLOW);
     }
 
-    void setStatusDiscconnted()
+    private void setStatusDiscconnted()
     {
         this.isConnected=false;
         this.activeControles[0]=true;
@@ -268,28 +266,28 @@ public class MainVew extends Application {
 
 
 
-    void setupTextFiledTitle(Text text)
+    private  void setupTextFiledTitle(Text text)
     {
     text.setFill(Color.WHITE);
     }
 
-    
 
 
-    void setPlayersReady(int ready, int connected)
+
+    public void setPlayersReady(int ready, int connected)
     {
         System.out.println("SET PLAYER \n\n\n" + ready + "\n\n\n\n");
         this.readyStatusText.setText("Players ready " + ready + "/" + connected);
     }
 
-    void setupTextField(TextField textField)
+    private void setupTextField(TextField textField)
     {
         textField.setStyle("-fx-text-fill: white;");
        textField.setBackground(Background.EMPTY);
         textField.setAlignment(Pos.CENTER);
     }
 
-    void setupLine(Line line)
+    private void setupLine(Line line)
     {
         line.setStroke(Color.WHITE);
         line.setStrokeWidth(2);
@@ -318,7 +316,7 @@ public class MainVew extends Application {
         this.guiController=guiController;
     }
 
-    void addListiners(Stage primaryStage) {
+    private  void addListiners(Stage primaryStage) {
 
        this.mainScene.widthProperty().addListener(
                new ChangeListener<Number>() {
@@ -689,7 +687,7 @@ public class MainVew extends Application {
     }
 
 
-    void updateOnSize()
+    public  void updateOnSize()
     {
         int miliSec=10;
         PauseTransition delay= new PauseTransition(Duration.millis(miliSec));
@@ -739,14 +737,14 @@ delay.play();
 
     }
 
-    void updateImagesSize()
+    private  void updateImagesSize()
     {
        this.unoLogoView.setFitHeight(mainScene.getHeight()<mainScene.getWidth()?mainScene.getHeight()/2:mainScene.getWidth()/5.0);
        this.unoLogoView.setY(mainScene.getHeight()/2-unoLogoView.getFitHeight()/2);
        this.unoLogoView.setX(mainScene.getWidth()/50.0);
     }
 
-    void updateButtonsSize()
+    private  void updateButtonsSize()
     {
         double buttonHeight=0;
 
@@ -800,7 +798,7 @@ delay.play();
     }
 
 
-    void setupButtons()
+    private  void setupButtons()
     {
         for(int i=0;i<buttons.length;i++){
             buttons[i]=new Rectangle();
@@ -815,18 +813,18 @@ delay.play();
 
     }
 
-    void setupTextParams(Text text)
+    private  void setupTextParams(Text text)
     {
 text.setFill(Color.WHITE);
     }
-    void setupButtonshape(Rectangle rectangle)
+    private  void setupButtonshape(Rectangle rectangle)
     {
         rectangle.setStrokeWidth(1.5);
         rectangle.setStroke(Color.WHITE);
         rectangle.setFill(tranparentColor);
     }
 
-    void updateBackground()
+    private  void updateBackground()
     {
 
         if(this.guiController.activeScenes== GuiController.SCENES.MAIN || this.guiController.activeScenes== GuiController.SCENES.LOGIN) {
@@ -837,7 +835,7 @@ text.setFill(Color.WHITE);
         }
     }
 
-    int getButtonINdex(Rectangle button)
+    private int getButtonINdex(Rectangle button)
     {
         int index=0;
         for(index=0;index<this.buttons.length;index++)
@@ -848,7 +846,7 @@ text.setFill(Color.WHITE);
         }
         return index;
     }
-    void onButtonMoved(Rectangle button)
+    private  void onButtonMoved(Rectangle button)
     {
 
 
@@ -861,7 +859,7 @@ text.setFill(Color.WHITE);
         }
     }
 
-    void onButtonMovedOutside(Rectangle button)
+    private void onButtonMovedOutside(Rectangle button)
     {
         this.guiController.isOnButton.set(false);
 
@@ -872,7 +870,7 @@ text.setFill(Color.WHITE);
         }
     }
 
-    void onButtonBasicClick(Rectangle button)
+    private void onButtonBasicClick(Rectangle button)
     {
         int index=getButtonINdex(button);
         if(this.activeControles[index+3]) {
@@ -883,7 +881,7 @@ text.setFill(Color.WHITE);
 
     }
 
-    void onButtonConnectClick()
+    private void onButtonConnectClick()
     {
         if(this.activeControles[3]) {
             this.communicatText.setText("");
@@ -916,20 +914,20 @@ text.setFill(Color.WHITE);
     }
 
 
-    void setButtonReady()
+    public void setButtonReady()
     {
         this.buttonTitles[1].setText("Ready");
         this.updateButtonsSize();
     }
 
-    void setButtonNotReady()
+    private void setButtonNotReady()
     {
         this.buttonTitles[1].setText("Not Ready");
         this.updateButtonsSize();
     }
 
 
-    void onButtonReadyClick()
+    private void onButtonReadyClick()
     {
         if(this.activeControles[4]) {
 
@@ -949,7 +947,7 @@ text.setFill(Color.WHITE);
         }
     }
 
-    void onButtonRankingClick()
+    private void onButtonRankingClick()
     {
         if(this.activeControles[5]) {
             System.out.println("RANKING");
@@ -959,7 +957,7 @@ text.setFill(Color.WHITE);
 
         }
 
-    void onButtonExitClick()
+    private  void onButtonExitClick()
     {
         if(this.activeControles[6]) {
             //System.out.println("EXIT");
@@ -970,14 +968,14 @@ text.setFill(Color.WHITE);
 
 
 
-    void onHelpMoved()
+    private  void onHelpMoved()
     {
             helpButton.setFill(Color.WHITE);
             helpButtonText.setFill(Color.BLACK);
 
     }
 
-    void onHelpMovedOutside()
+    private  void onHelpMovedOutside()
     {
 
 
@@ -986,7 +984,7 @@ text.setFill(Color.WHITE);
 
     }
 
-    void onHelpBasicClick()
+    private  void onHelpBasicClick()
     {
 
             this.guiController.soundPlayer.playOnButtonClick();
@@ -999,7 +997,7 @@ text.setFill(Color.WHITE);
 
 
 
-void onHelpReelased()
+    private void onHelpReelased()
 {
     this.guiController.switchSceneToInstruction();
     onHelpMovedOutside();

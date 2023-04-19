@@ -15,20 +15,20 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientConnectionManager {
 
-    String nick;
-    Socket socket;
-    OutputStream outStream;
-    ObjectOutputStream objectOutStream;
-    InputStream inStream;
-    ObjectInputStream objectInStream;
+    private  String nick;
+    private  Socket socket;
+    private  OutputStream outStream;
+    private  ObjectOutputStream objectOutStream;
+    private   InputStream inStream;
+    private   ObjectInputStream objectInStream;
 
-    ReciverHandler reciverHandler;
+    private  ReciverHandler reciverHandler;
 
-    boolean confirmedMesseage=false;
+    private  boolean confirmedMesseage=false;
 
-    ClientApp clientApp;
+    public  ClientApp clientApp;
 
-    boolean conectionResult;
+    private  boolean conectionResult;
 
 
     public ClientConnectionManager(ClientApp clientApp) {
@@ -54,7 +54,7 @@ public class ClientConnectionManager {
         }
     }
 
-    void sendMessage(MessageFormat messageFormat) throws IOException {
+    public   void sendMessage(MessageFormat messageFormat) throws IOException {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
         this.objectOutStream.reset();
@@ -63,7 +63,7 @@ public class ClientConnectionManager {
 
     }
 
-    MessageFormat getMesseage() throws SocketTimeoutException, IOException, ClassNotFoundException {
+    public MessageFormat getMesseage() throws IOException, ClassNotFoundException {
         MessageFormat messageFormat= (MessageFormat)this.objectInStream.readObject();
        System.out.println("_____________________________________________get Messegae_______________________________");
        System.out.println(messageFormat);
@@ -73,7 +73,7 @@ public class ClientConnectionManager {
         return messageFormat;
     }
 
-    boolean connectToServer(String ip, int port, String nick, String pass, int choice) throws IOException, ClassNotFoundException {
+    public boolean connectToServer(String ip, int port, String nick, String pass, int choice) throws IOException, ClassNotFoundException {
         boolean result = false;
         this.socket = new Socket(ip, port);
         socket.setSoTimeout(100);
@@ -98,9 +98,9 @@ public class ClientConnectionManager {
         reciverHandler.start();
 
         this.waitTillconfirmed();
-        System.out.printf("FISNED WIOTNG FOR CONFIRM \n");
+        System.out.print("FISNED WIOTNG FOR CONFIRM \n");
             result = this.conectionResult;
-            if(result==false)
+            if(!result)
             {
                 reciverHandler.shoudldRun=false;
             }
@@ -108,16 +108,8 @@ public class ClientConnectionManager {
             return result;
     }
 
-    private void handleLoginProces() {
-        System.out.println("HADNLE LOGIN \n");
-                this.clientApp.guiController.switchScenetoLogin();
 
-
-    }
-
-
-
-    void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
+    public void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
         MessageFormat message=new MessageFormat();
         message.type=MessageFormat.messegeTypes.DISCONNECT;
         this.sendMessage(message);
@@ -131,19 +123,7 @@ public class ClientConnectionManager {
         socket.close();
     }
 
-
-    void sendConfirmation()
-    {
-        MessageFormat messageFormat = new MessageFormat();
-        messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
-        try {
-            this.sendMessage(messageFormat);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    void waitTillconfirmed()
+    private void waitTillconfirmed()
     {
         while(!isConfirmedMesseage())
         {
@@ -155,7 +135,7 @@ public class ClientConnectionManager {
         }
     }
 
-    boolean sendReady(boolean type)
+    public boolean sendReady(boolean type)
     {
 
         boolean result=false;
@@ -173,9 +153,9 @@ this.waitTillconfirmed();
         return  result;
     }
 
-    void sendConfirm()  {
+    private void sendConfirm()  {
         MessageFormat messageFormat = new MessageFormat();
-        ;messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
+        messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
         try {
             this.sendMessage(messageFormat);
         } catch (IOException e) {

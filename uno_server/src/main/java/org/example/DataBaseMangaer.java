@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ *
+ */
 public class DataBaseMangaer {
+
 
     private Connection connection;
     private String dataBasePort;
@@ -33,7 +37,7 @@ public class DataBaseMangaer {
         this.dataBaseAdres = dataBaseAdres;
     }
 
-    final Object semaphore=new Object();
+    private final Object semaphore=new Object();
 
     DataBaseMangaer()
     {
@@ -52,7 +56,7 @@ public class DataBaseMangaer {
         this.dataBasePass = dataBasePass;
     }
 
-    boolean connectWithDataBase()
+    public boolean connectWithDataBase()
     {
         try {
             this.connection= DriverManager.getConnection("jdbc:oracle:thin:@"+this.dataBaseAdres + ":"+ this.dataBasePort +"/"+this.dataBaseName , this.dataBaseUserName, this.dataBasePass);
@@ -65,7 +69,10 @@ public class DataBaseMangaer {
         return true;
     }
 
-    void resetDataBase()
+    /**
+     * Function removes all tables procedures etc. And then creates all from the start to make sure all things in data base are prepared for game
+     */
+    public void resetDataBase()
     {
 
       this.dropSeq();
@@ -81,14 +88,9 @@ public class DataBaseMangaer {
         System.out.println("fisned creat" );
     }
 
-    void prepDataBase()
-    {
-        this.createFunctions();
-        this.createProcedures();
-        this.createViews();
-    }
 
-    boolean checkTable() throws SQLException {
+
+    public boolean checkTable() throws SQLException {
         DatabaseMetaData metadata= this.connection.getMetaData();
         String[] types={"TABLE"};
         String[] searchedTablesArray={"PLAYERS","GAMES","CARDS","ACTIVE_CARD_PLACES"};
@@ -102,171 +104,156 @@ public class DataBaseMangaer {
         }
 
 
-    void createTables()
+    private void createTables()
     {
         executeArrayStatements(SqlScripts.CreateTablecSripts);
     }
 
-    void dropTables()
+    private void dropTables()
     {
         executeArrayStatements(SqlScripts.DropTablecSripts);
     }
 
-    void deleteAll()
+    private void deleteAll()
     {
         executeArrayStatements(SqlScripts.DeleteAllScripts);
     }
 
-    void createViews()
+    private void createViews()
     {
         executeArrayStatements(SqlScripts.CreateViewsScripts);
     }
 
-    void createSeq()
+    private void createSeq()
     {
         executeArrayStatements(SqlScripts.CreateSequencesScripts);
     }
-    void dropSeq()
+    private void dropSeq()
     {
         executeArrayStatements(SqlScripts.DropSequencesScripts);
     }
 
-    void createFunctions()
+    private void createFunctions()
     {
         executeArrayStatements(SqlScripts.CreateFunctions);
     }
 
-    void createProcedures()
+    private void createProcedures()
     {
         executeArrayStatements(SqlScripts.CreateProceduresScripts);
     }
 
-    boolean addPlayer(String nick, String pass)
+    public boolean addPlayer(String nick, String pass)
     {
         String[] arr={nick,pass};
         boolean res= executeProcedure(SqlScripts.AddPlayerScript,arr);
         return res;
     }
 
-    void createBaseCards()
+    private void createBaseCards()
     {
         executeProcedure(SqlScripts.FillBaseCardsScripts);
     }
 
-    void createNewGame(String nick)
+    public void createNewGame(String nick)
     {
         String[] arr={nick};
         executeProcedure(SqlScripts.CreateNewGameScripts,arr);
     }
 
-    void addPlayerToGame(String nick)
+    public void addPlayerToGame(String nick)
     {
         String[] arr={nick};
         executeProcedure(SqlScripts.AddPlayerToGameScript,arr);
     }
 
-    void drawCard(String nick)
+    public void drawCard(String nick)
     {
         String[] arr={nick};
         executeProcedure(SqlScripts.DrawCardScript,arr);
     }
 
-    void preapreDeck()
+    public void preapreDeck()
     {
         executeProcedure(SqlScripts.PreapareDeckScript);
     }
 
-    void dealCards()
+    public void dealCards()
     {
         executeProcedure(SqlScripts.DealCardScript);
     }
 
-    void playCard(String nick, int pos)
+    public void playCard(String nick, int pos)
     {
         executeProcedure(SqlScripts.PlayCardScript,nick,pos);
     }
 
-    void reshuffleDeck()
+    public void reshuffleDeck()
     {
         executeProcedure(SqlScripts.ReshuffleDeck);
     }
 
-    void surrender(String nick)
+    public    void surrender(String nick)
     {
         String[] arr={nick};
         executeProcedure(SqlScripts.SurrenderScript,arr);
     }
-    void setRank(String nick)
+    public    void setRank(String nick)
     {
         String[] arr={nick};
         executeProcedure(SqlScripts.SetRankScript,arr);
     }
 
-    void clearGame()
-    {
-        executeProcedure(SqlScripts.ClearGameSrript);
-    }
 
-    int getPlayerCount()
-    {
-        return executeFunciton(SqlScripts.GetPlayerCountScript);
-    }
-
-    int getNmOnStack()
+    public  int getNmOnStack()
     {
         return executeFunciton(SqlScripts.GetCardAmtOnStack);
     }
 
-    int getAmtInHand(String nick)
+    public  int getAmtInHand(String nick)
     {
         String[] arr={nick};
         return executeSelectInt(SqlScripts.GetAMtOfCardInHands,arr );
     }
 
-    int getAmtActivePlayers()
+    public    int getAmtActivePlayers()
     {
         String[] arr=new String[0];
         int res= executeSelectInt(SqlScripts.GetAmtOfActivePlayers, arr);
         System.out.printf("Amount of active players:  " + res + "\n\n");
         return res;
     }
-    List<String> getResults()
+    public List<String> getResults()
     {
         String[] arr= new String[0];
         return executeSelectPlayers(SqlScripts.getResult, arr);
     }
 
-    int getNumbOntheTable()
-    {
-        return executeFunciton(SqlScripts.GetNumberOnTableScript);
-    }
 
-    int getPlayerAmtOfCards(String nick)
+
+    public    int getPlayerAmtOfCards(String nick)
     {
         return executeFunciton(SqlScripts.GetAmtOfCardsScript, nick);
     }
 
-    int validateHand(String nick)
-    {
-        return executeFunciton(SqlScripts.ValidateHand, nick);
-    }
 
-    List<UnoCard> selectTableStack()
+
+    public   List<UnoCard> selectTableStack()
     {
        return executeSelectCards(SqlScripts.TableStackViewScript);
     }
 
-    List<UnoCard> selectMainStack()
+    public    List<UnoCard> selectMainStack()
     {
         return executeSelectCards(SqlScripts.MainStackViewScript);
     }
 
-    List<UnoCard> selectFromHand(String nick)
+    public   List<UnoCard> selectFromHand(String nick)
     {
         return executeSelectCards(SqlScripts.SelectCardsFromHandScript, nick);
     }
 
-    List<String> selectOrderFromPlayer(String nick)
+    public     List<String> selectOrderFromPlayer(String nick)
     {
         String[] arr={nick,nick,nick};
         return executeSelectPlayers(SqlScripts.SelectOrderForPlayer, arr);
@@ -285,24 +272,24 @@ public class DataBaseMangaer {
         }
     }
 
-    boolean validateNick(String nick)
+    public   boolean validateNick(String nick)
     {
-        String array[] = new String[1];
+        String[] array = new String[1];
         array[0]=nick;
         int amt = executeSelectInt(SqlScripts.validateNick, array);
         return amt==0;
     }
 
-    boolean validatePass(String nick, String pass)
+    public  boolean validatePass(String nick, String pass)
     {
-        String array[] = new String[2];
+        String[] array = new String[2];
         array[0]=nick;
         array[1]=pass;
         int amt = executeSelectInt(SqlScripts.validatePass, array);
         return amt==1;
     }
 
-    private boolean executeProcedure(String sqlCode, String[] vars)
+      private boolean executeProcedure(String sqlCode, String[] vars)
     {
         synchronized (this.semaphore) {
             try {
@@ -321,7 +308,7 @@ public class DataBaseMangaer {
             return true;
         }
     }
-    private void executeProcedure(String sqlCode, String var, int numb )
+     private void executeProcedure(String sqlCode, String var, int numb )
     {
         synchronized (this.semaphore) {
             try {
@@ -345,7 +332,7 @@ public class DataBaseMangaer {
                 CallableStatement statement = connection.prepareCall(sqlCode);
                 statement.registerOutParameter(1, Types.INTEGER);
                 ResultSet resultSet = statement.executeQuery();
-                result = (int) statement.getInt(1);
+                result = statement.getInt(1);
             } catch (SQLException e) {
                 System.out.println(sqlCode + "--------------didint execute porpely---------------");
                 e.printStackTrace();
@@ -363,7 +350,7 @@ public class DataBaseMangaer {
                 statement.registerOutParameter(1, Types.INTEGER);
                 statement.setString(2, var);
                 ResultSet resultSet = statement.executeQuery();
-                result = (int) statement.getInt(1);
+                result = statement.getInt(1);
             } catch (SQLException e) {
                 System.out.println(sqlCode + "--------------didint execute porpely---------------");
                 e.printStackTrace();
@@ -466,20 +453,20 @@ public class DataBaseMangaer {
     }
 
 
-    List<String> getListofNicksRanking()
+    public  List<String> getListofNicksRanking()
     {
-        String var[] = {};
+        String[] var = {};
         List<String> nicks= executeSelectPlayers(SqlScripts.SelectNicksRankingInOrder, var);
         return nicks;
     }
 
-    List<Integer> getAmtOfWinsRaning()
+    public  List<Integer> getAmtOfWinsRaning()
     {
         List<Integer> wins= executeSelectNumbers(SqlScripts.SelectWinsRankingInOrder);
         return wins;
     }
 
-    private List<String> executeSelectPlayers(String sqlCode, String[] var)
+     private List<String> executeSelectPlayers(String sqlCode, String[] var)
     {
         synchronized (this.semaphore) {
             List<String> players = new ArrayList<String>();

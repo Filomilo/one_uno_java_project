@@ -7,16 +7,16 @@ import java.util.Scanner;
 
 public class UiInterface {
 
-    ServerApp serverApp = new ServerApp();
-    Scanner scanner= new Scanner(System.in);
-    ServerRunThread serverRunThread;
-    void clearTerminal()
+    private final ServerApp serverApp = new ServerApp();
+    private final Scanner scanner= new Scanner(System.in);
+    private ServerRunThread serverRunThread;
+    private  void clearTerminal()
     {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    boolean getYesNo()
+    private  boolean getYesNo()
     {
         while(true) {
             System.out.println("y/n");
@@ -33,7 +33,7 @@ public class UiInterface {
 
     }
 
-    void createDataBaseConectionUi()
+    private void createDataBaseConectionUi()
     {
 
         String input;
@@ -67,11 +67,11 @@ public class UiInterface {
             boolean res= this.serverApp.dataBaseMangaer.connectWithDataBase();
             this.clearTerminal();
 
-            if(res==false)
+            if(!res)
             {
                 System.out.println("Conenction with dataBase could not be established would you like to try again");
                 res=getYesNo();
-                if(res==false)
+                if(!res)
                 {
                     System.exit(1);
                 }
@@ -85,7 +85,7 @@ public class UiInterface {
         }
     }
 
-    boolean resetDataBase()
+    private  boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
         boolean res=false;//this.getYesNo();
@@ -98,13 +98,13 @@ public class UiInterface {
         return false;
     }
 
-    void checkDataBae() throws SQLException {
+    private void checkDataBae() throws SQLException {
         boolean dataBaseVaidity=this.serverApp.dataBaseMangaer.checkTable();
-        if(dataBaseVaidity==false)
+        if(!dataBaseVaidity)
         {
             System.out.println("It seems your dataBase does not have correct tables");
             boolean res= this.resetDataBase();
-            if(res==false)
+            if(!res)
                 System.exit(1);
         }
         else
@@ -114,7 +114,7 @@ public class UiInterface {
         }
     }
 
-void strartInterface()
+public void strartInterface()
 {
     int input;
     while (true) {
@@ -145,7 +145,7 @@ void strartInterface()
 }
 
     //method run on Server run thread to get messege to STOP server
-    void waitForExit() throws InterruptedException {
+    private void waitForExit() throws InterruptedException {
         while(true) {
             String input = scanner.next();
             if (input.equals("STOP"))

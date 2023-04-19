@@ -9,12 +9,15 @@ import java.io.*;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * test
+ */
 public class ClientHandler extends  Thread{
 
-    PlayerData playerData;
-    ServerConnectionManager serverConnectionManager;
-boolean connectionActive=true;
-Boolean isLogged=false;
+    private PlayerData playerData;
+    private ServerConnectionManager serverConnectionManager;
+    private boolean connectionActive=true;
+    private Boolean isLogged=false;
 
 
 
@@ -69,10 +72,15 @@ Boolean isLogged=false;
                     }
                 }
             }
+            catch (SocketException e)
+            {
+        break;
+            }
             catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
                break;
             }
+
 
         }
         try {

@@ -26,28 +26,28 @@ import java.util.List;
 
 public class ResultView extends Application {
 
-    Scene mainScene;
+    private final Scene mainScene;
 
-    Color tranparentColor = new Color(1,0,0,0.0);
-    Color orangeColor = new Color(0.8,0.55,0,1);
-    Stop[] orangeStops = new Stop [] {new Stop(0, this.orangeColor), new Stop(1, Color.BLACK)} ;
+    private final Color tranparentColor = new Color(1,0,0,0.0);
+    private final Color orangeColor = new Color(0.8,0.55,0,1);
+    private final Stop[] orangeStops = new Stop [] {new Stop(0, this.orangeColor), new Stop(1, Color.BLACK)} ;
 
-    Rectangle button;
+    private Rectangle button;
 
-    Text buttonText;
+    private Text buttonText;
 
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    Text rankingText[];
-    final float buttonSizeRatio=9;
-    final float winTextHeightToScreenRatio=12;
+    private Text[] rankingText;
+    private final float buttonSizeRatio=9;
+    private final float winTextHeightToScreenRatio=12;
 
-    Group root;
+    public Group root;
 
-    GuiController guiController;
+    private final GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -129,7 +129,7 @@ public class ResultView extends Application {
         this.mainScene=mainScene;
     }
 
-    void addListiners(Stage primaryStage) {
+    private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
                 new ChangeListener<Number>() {
@@ -261,7 +261,7 @@ public class ResultView extends Application {
     }
 
 
-    void updateOnSize()
+    public void updateOnSize()
     {
         this.updateTextSize();
         this.updateButtonSize();
@@ -304,7 +304,7 @@ public class ResultView extends Application {
     }
 
 
-    void updateBackground()
+    private void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.RESULT) {
 
@@ -314,7 +314,7 @@ public class ResultView extends Application {
     }
 
 
-    List<String> getResults()
+    private List<String> getResults()
     {
         List<String> results= this.guiController.clientApp.getResults();
 

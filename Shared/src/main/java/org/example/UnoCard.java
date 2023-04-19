@@ -6,21 +6,22 @@ import java.sql.SQLException;
 import java.util.PrimitiveIterator;
 
 public class UnoCard  implements Serializable  {
-    static enum UNO_COLOR{
+    enum UNO_COLOR{
         GREEN,
         RED,
         YELLOW,
         BLUE,
         BLACK
-    };
-    static enum UNO_TYPE{
+    }
+
+    enum UNO_TYPE{
       REGULAR,
       PLUS2,
         PLUS4,
         COLOR,
         REVERSE,
         BLOCK,
-    };
+    }
 
 
     public UnoCard(UNO_TYPE type, UNO_COLOR color, int numb) {

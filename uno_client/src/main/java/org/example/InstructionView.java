@@ -37,26 +37,23 @@ import static java.lang.Math.abs;
 
 
 public class InstructionView extends Application {
-    Scene mainScene;
+    private Scene mainScene;
 
 
-    final int startH=720;
-    final int startW=1280;
-    static final String resDir = "uno_client\\src\\main\\resources\\";
+    private  static final String resDir = "uno_client\\src\\main\\resources\\";
 
-    Color tranparentColor = new Color(1,0,0,0.0);
-    Color blueColor = new Color(0,0.1,0.6,1);
-    Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
-    Rectangle button;
-    Text buttonText;
-    Rectangle rankViewBase;
-    double scrollAmount=0;
-    private RadialGradient gradient;
+    private final Color tranparentColor = new Color(1,0,0,0.0);
+    private final Color blueColor = new Color(0,0.1,0.6,1);
+    private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    private  Rectangle button;
+    private  Text buttonText;
+    private  Rectangle rankViewBase;
+    private final double scrollAmount=0;
     private Shape mask;
 
 
 
-    String instructions= "In order to play this game, you have to be connected with at least 1 other person. The maximum number of players during the game is 8. Status and amount of players connected to the same server as you can be seen in the bottom right corner of the main menu. The game will begin automatically once everyone connected is ready.\n" +
+    final private  String instructions= "In order to play this game, you have to be connected with at least 1 other person. The maximum number of players during the game is 8. Status and amount of players connected to the same server as you can be seen in the bottom right corner of the main menu. The game will begin automatically once everyone connected is ready.\n" +
             "\n" +
             "The order of players is determined alphabetically, and you begin the game in clockwise order.\n" +
             "\n" +
@@ -82,7 +79,7 @@ public class InstructionView extends Application {
             "During the game, you have the ability to surrender.\n" +
             "The Game will finish once there will be only one active player. After game finish, you can see ranking of players with winners of this game\n" +
             "\t\n";
-    Text instructionText;
+    private  Text instructionText;
 
     public InstructionView(GuiController guiController) {
         this.guiController = guiController;
@@ -94,16 +91,18 @@ public class InstructionView extends Application {
 
 
 
-    Group root;
+    public Group root;
 
-    GuiController guiController;
+    private GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
 
             this.iniit(primaryStage,null);
             primaryStage.setScene(this.mainScene);
+            int startH = 720;
             primaryStage.setHeight(startH);
+            int startW = 1280;
             primaryStage.setWidth(startW);
             primaryStage.show();
         }
@@ -115,7 +114,7 @@ public class InstructionView extends Application {
     }
 
 
-    void iniit(Stage primaryStage, Scene mainScene) throws IOException, URISyntaxException {
+    public  void iniit(Stage primaryStage, Scene mainScene) throws IOException, URISyntaxException {
         root = new Group();
 
         this.mainScene =mainScene;
@@ -142,7 +141,7 @@ public class InstructionView extends Application {
 
 
 
-    void addListiners(Stage primaryStage) {
+    private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
                 new ChangeListener<Number>() {
@@ -360,7 +359,7 @@ public class InstructionView extends Application {
     }
 
 
-    void updateOnSize()
+    public void updateOnSize()
     {
         int miliSec=10;
         PauseTransition delay= new PauseTransition(Duration.millis(miliSec));
@@ -399,11 +398,11 @@ public class InstructionView extends Application {
             this.instructionText.setFont(newfont);
         }
     }
-    void updateBackground()
+    private void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.INSRTUCTION) {
 
-            this.gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getHeight() ? mainScene.getHeight() * 4 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
+            RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getHeight() ? mainScene.getHeight() * 4 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.blueStops);
 
 
             mainScene.setFill(gradient);

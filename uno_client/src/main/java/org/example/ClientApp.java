@@ -13,37 +13,37 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientApp {
 
-    String nick;
-    List<PlayerData> playersInORder= new ArrayList<PlayerData>();
-    int readyPlayers;
-    int connectedPlayers;
-    boolean isConnected=false;
-    boolean isReady;
+    private   String nick;
+    public  List<PlayerData> playersInORder= new ArrayList<PlayerData>();
+    private   int readyPlayers;
+    public   int connectedPlayers;
+    public   boolean isConnected=false;
+    public  boolean isReady;
 
-    Stack<ChatMesseage> chatLogs= new Stack<ChatMesseage>();
+    public  Stack<ChatMesseage> chatLogs= new Stack<ChatMesseage>();
 
-    String rankingNicks[]={};
+    public  String[] rankingNicks ={};
 
-    int rankingwinsAmt[] ={};
+    public  int[] rankingwinsAmt ={};
 
-    BooleanProperty isRankingLoaded= new SimpleBooleanProperty(false);
-
-
-    List<String>lastReults;
-
-    boolean isGameStarted= false;
-    ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
-
-    String turn = new String();
+    public  BooleanProperty isRankingLoaded= new SimpleBooleanProperty(false);
 
 
-    String ip;
-    int port;
+    private  List<String>lastReults;
 
-    String pass;
-    final Lock confirmLock= new Lock();
+    public   boolean isGameStarted= false;
+    private final ClientConnectionManager clientConnectionManager = new ClientConnectionManager(this);
 
-    GuiController guiController;
+    private  String turn = "";
+
+
+    private  String ip;
+    private  int port;
+
+    private  String pass;
+    public  final Lock confirmLock= new Lock();
+
+    public GuiController guiController;
 
     public ClientApp(GuiController guiController) {
         this.guiController=guiController;
@@ -124,9 +124,6 @@ public class ClientApp {
         this.cardOntop = cardOntop;
     }
 
-    public boolean isReady() {
-        return isReady;
-    }
 
     public void setReady(boolean ready) {
         System.out.println("^^^^^^^^^^^^^^^^^ SET READ\n");
@@ -147,7 +144,7 @@ public class ClientApp {
 
     }
 
-    boolean connectWithServer(int choice)
+    public  boolean connectWithServer(int choice)
     {
         boolean res=false;
         try {
@@ -162,7 +159,7 @@ public class ClientApp {
 
     }
 
-    boolean vaidateCard(UnoCard unoCard)
+    public boolean vaidateCard(UnoCard unoCard)
     {
         if(unoCard.getType()== UnoCard.UNO_TYPE.COLOR || unoCard.getType()== UnoCard.UNO_TYPE.PLUS4)
             return true;
@@ -184,15 +181,10 @@ public class ClientApp {
             return true;
         else
         {
-            if(unoCard.getColor()==this.cardOntop.getColor())
-            {
-                return true;
-            }
+            return unoCard.getColor() == this.cardOntop.getColor();
         }
-
-        return false;
     }
-    void playCard(int numbCard, UnoCard card )
+    public  void playCard(int numbCard, UnoCard card )
     {
         if(!vaidateCard(this.cardsInHand.get(numbCard-1)) )
         {
@@ -220,9 +212,7 @@ public class ClientApp {
     }
 
     public boolean getIsGameReady() {
-        boolean result=false;
-        if(this.readyPlayers==this.connectedPlayers && this.connectedPlayers>1)
-            result=true;
+        boolean result= this.readyPlayers == this.connectedPlayers && this.connectedPlayers > 1;
         return result;
     }
 
@@ -267,13 +257,13 @@ public class ClientApp {
 
 //////////////////////////////////////////////////////// GAME
 
-    List<PlayerData> playerData= new ArrayList<PlayerData>();
-    List<UnoCard> cardsInHand= new ArrayList<UnoCard>();
+    private List<PlayerData> playerData= new ArrayList<PlayerData>();
+    public List<UnoCard> cardsInHand= new ArrayList<UnoCard>();
 
-    UnoCard cardOntop=null;
+    private UnoCard cardOntop=null;
 
 
-    void procesPlaycard(String nick, UnoCard card)
+    public void procesPlaycard(String nick, UnoCard card)
     {
         this.setCardOntop(card);
         int index=0;
@@ -354,7 +344,7 @@ public class ClientApp {
 
     }
 
-    public void finishGame(String arrayResult[]) {
+    public void finishGame(String[] arrayResult) {
         this.stopAllWait();
         System.out.println("Test 1 \n");
         this.lastReults= new ArrayList<String>();
@@ -442,7 +432,7 @@ public class ClientApp {
             this.rankingNicks = text;
             this.rankingwinsAmt = number;
             this.isRankingLoaded.set(true);
-        System.out.printf("hadnle RANKING RECIeVd \n");
+        System.out.print("hadnle RANKING RECIeVd \n");
     }
 
     public void handleSwapTurn() {
@@ -471,16 +461,13 @@ public class ClientApp {
         this.addChatMesseage(new ChatMesseage(nick,mess));
     }
 
-    public void handleConncetionError(MessageFormat messageFormat) {
-    }
-
 
     public void handleTooManyPlayers(MessageFormat messageFormat) {
-        this.guiController.mainVew.communicatText.setText("Sorry play lismit on server reached");
+        this.guiController.loginView.setLoginCommuncat("Sorry play lismit on server reached");
     }
 
     public void hadleGameAlradyStared(MessageFormat messageFormat) {
-        this.guiController.mainVew.communicatText.setText("Sorry game on this server alrady started");
+        this.guiController.loginView.setLoginCommuncat("Sorry game on this server alrady started");
 
     }
 

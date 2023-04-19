@@ -5,14 +5,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class PlayerData implements Comparable<PlayerData> {
-    String nick;
-    boolean isReady=false;
-    boolean confirmedMesseage=false;
-    boolean inGame=true;
-    Socket socket;
-    ObjectOutputStream objectOutputStream;
-    ObjectInputStream objectInputStream;
-    ClientHandler clientHandler;
+    public String nick;
+    private  boolean isReady=false;
+    private boolean confirmedMesseage=false;
+    private  boolean inGame=true;
+    public Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
+    public ClientHandler clientHandler;
 
 
     public PlayerData(String nick, Socket socket, ObjectOutputStream objectOutputStream, ObjectInputStream objectInputStream) {

@@ -18,6 +18,8 @@ public class SoundPlayer {
     private final String finishSoundLocationi= "finishSound.mp3" ;
     private final String clockTickSoundLocationi= "clockTickSound.wav" ;
 
+    private final String messagePopSoundLocation= "messagePopSound.wav" ;
+
 
     SoundPlayer()
     {
@@ -69,6 +71,10 @@ public class SoundPlayer {
     public void playClock()
     {
         this.playSound(this.clockTickSoundLocationi);
+    }
+    public void playmesseagePop()
+    {
+        this.playSound(this.messagePopSoundLocation);
     }
     private void playSound(String fileName)
     {

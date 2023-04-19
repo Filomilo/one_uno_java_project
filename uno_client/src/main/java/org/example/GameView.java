@@ -40,55 +40,52 @@ import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 public class GameView extends Application {
-    Scene mainScene;
+    public Scene mainScene;
 
-    Boolean isAssetLoaded=false;
+    public  Boolean isAssetLoaded=false;
 
-    boolean isYourTurn=false;
+    private   boolean isYourTurn=false;
 
-    final int startH = 720;
-    final int startW = 1280;
-    Color tranparentBlack = new Color(0, 0, 0, 0.5);
-    Color tranparentColor = new Color(1, 0, 0, 0.0);
-    Color greenColor = new Color(0, 0.4, 0.1, 1);
-    Color darkGreenColor = new Color(0.2, 0.28, 0.01, 1);
-    Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
-    Stop[] darkGreenStops = new Stop[]{new Stop(0, darkGreenColor), new Stop(1, Color.BLACK)};
-    Stop[] backGroundStops = darkGreenStops;
-    GuiController guiController;
+    private   final int startH = 720;
+    private   final int startW = 1280;
+    private final Color tranparentBlack = new Color(0, 0, 0, 0.5);
+    private final Color tranparentColor = new Color(1, 0, 0, 0.0);
+    private final Color greenColor = new Color(0, 0.4, 0.1, 1);
+    private final Color darkGreenColor = new Color(0.2, 0.28, 0.01, 1);
+    private final Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
+    private final Stop[] darkGreenStops = new Stop[]{new Stop(0, darkGreenColor), new Stop(1, Color.BLACK)};
+    private   Stop[] backGroundStops = darkGreenStops;
+    private  GuiController guiController;
 
-    String cardPrefix=  "Cards/unoCards_";
-    String colorPrefix="ColorChoicePanel/Circle_";
-
-    Image cardImages[]= new Image[56];
+    private final Image[] cardImages = new Image[56];
 
 
-    final Object colorChoiceBlock=new Object();
+    private   final Object colorChoiceBlock=new Object();
 
 
-    Rectangle helpButton;
-    Text helpButtonText;
+    private   Rectangle helpButton;
+    private    Text helpButtonText;
 
 
-    ImageView[] emptyCards ;
+    private  ImageView[] emptyCards ;
 
-    Text nickText[];
-    Rectangle textBox[];
-    Integer amtOfOpponetsCards[];
+    private   Text[] nickText;
+    private  Rectangle[] textBox;
+    private  Integer[] amtOfOpponetsCards;
 
-    Text amtOfCardsText[];
+    private   Text[] amtOfCardsText;
 
-    double cardWidth=100;
-    double cardHandPosY=0;
+    private   double cardWidth=100;
+    private  double cardHandPosY=0;
 
-    List<ImageView> cardsInHand = new ArrayList<ImageView>();
+    private   List<ImageView> cardsInHand = new ArrayList<ImageView>();
 
-    Rectangle button = new Rectangle();
-    Text buttonText= new Text("Surrender");
+    private  Rectangle button = new Rectangle();
+    private  Text buttonText= new Text("Surrender");
 
-    Boolean isChoosingColor=false;
+    private   Boolean isChoosingColor=false;
 
-    int playersAtStart=0;
+    public  int playersAtStart=0;
 
     public GameView(GuiController guiController,Scene mainScene) {
         this.guiController=guiController;
@@ -107,10 +104,10 @@ public class GameView extends Application {
 
 
 
-    Group root;
+    public  Group root;
 
 
-    void setupEmptyCardsPostion()
+    private  void setupEmptyCardsPostion()
     {
        for(int i=0;i<this.emptyCards.length;i++){
            try {
@@ -127,7 +124,7 @@ public class GameView extends Application {
     }
 
 
-    void iniit(Stage primaryStage) throws FileNotFoundException {
+    public  void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
         //mainScene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight(), true, SceneAntialiasing.BALANCED);
@@ -171,19 +168,19 @@ public class GameView extends Application {
         }
     }
 
-    void setEmpty(ImageView imageView)
+    private  void setEmpty(ImageView imageView)
     {
         imageView.setImage(this.cardImages[this.cardImages.length-1]);
     }
 
-    void setNotEmpty(ImageView imageView)
+    private   void setNotEmpty(ImageView imageView)
     {
         imageView.setImage(this.cardImages[this.cardImages.length-2]);
     }
 
-    void updateAmtOfCards()
+    private   void updateAmtOfCards()
     {
-        Integer amtOfCards[]= this.getAmtOfCards();
+        Integer[] amtOfCards = this.getAmtOfCards();
         for (int i = 0; i < this.amtOfCardsText.length; i++) {
             String txt = "x";
             txt += amtOfCards[i];
@@ -287,7 +284,8 @@ public class GameView extends Application {
     private void loadImages() throws FileNotFoundException {
         int iterator=0;
 
-        for(int i=0;i<4;i++)
+        String cardPrefix = "Cards/unoCards_";
+        for(int i = 0; i<4; i++)
         {
             String color="";
             switch (i) {
@@ -321,7 +319,7 @@ public class GameView extends Application {
                         type = "swap";
                         break;
                 }
-                String url=this.cardPrefix + color + "_" + type + ".png";
+                String url= cardPrefix + color + "_" + type + ".png";
                 loadCard(url,iterator);
 
                 iterator++;
@@ -331,24 +329,25 @@ public class GameView extends Application {
 
 
         }
-        loadCard(this.cardPrefix+"Black_choice.png", iterator++);
-        loadCard(this.cardPrefix+"Black_plus4.png", iterator++);
-        loadCard(this.cardPrefix+"CardBack.png", iterator++);
-        loadCard(this.cardPrefix+"Empty.png", iterator++);
+        loadCard(cardPrefix +"Black_choice.png", iterator++);
+        loadCard(cardPrefix +"Black_plus4.png", iterator++);
+        loadCard(cardPrefix +"CardBack.png", iterator++);
+        loadCard(cardPrefix +"Empty.png", iterator++);
       //  System.out.println("Size: " + iterator);
 
-        String url=colorPrefix + "Blue.png";
+        String colorPrefix = "ColorChoicePanel/Circle_";
+        String url= colorPrefix + "Blue.png";
         try {
             InputStream inputStream=getClass().getClassLoader().getResourceAsStream(url);
             this.colorChoicePanel = new Image[4];
             this.colorChoicePanel[0] = new Image(inputStream);
-            url=colorPrefix + "Green.png";
+            url= colorPrefix + "Green.png";
             inputStream=getClass().getClassLoader().getResourceAsStream(url);
             this.colorChoicePanel[1] = new Image(inputStream);
-            url=colorPrefix + "Red.png";
+            url= colorPrefix + "Red.png";
             inputStream=getClass().getClassLoader().getResourceAsStream(url);
             this.colorChoicePanel[2] = new Image(inputStream);
-            url=colorPrefix + "Yellow.png";
+            url= colorPrefix + "Yellow.png";
             inputStream=getClass().getClassLoader().getResourceAsStream(url);
             this.colorChoicePanel[3] = new Image(inputStream);
         }
@@ -363,7 +362,7 @@ public class GameView extends Application {
 
     }
 
-    void loadCard(String url, int positonInTable)
+    private   void loadCard(String url, int positonInTable)
     {
         try{
             InputStream inputStream=getClass().getClassLoader().getResourceAsStream(url);
@@ -382,7 +381,7 @@ public class GameView extends Application {
 
     }
 
-    void updateCardScale()
+    private   void updateCardScale()
 {
     double scaleFactor=7;
     this.cardWidth=this.mainScene.getHeight()*1.5>this.mainScene.getWidth()?this.mainScene.getWidth()/scaleFactor/2:this.mainScene.getHeight()/scaleFactor;
@@ -395,7 +394,7 @@ public class GameView extends Application {
 
 
 
-    int getAmtOfOpponets()
+    private  int getAmtOfOpponets()
     {
         int amt=0;
         if(this.emptyCards!=null)
@@ -651,7 +650,7 @@ public class GameView extends Application {
     }
 
 
-    void updateOnSize() {
+    public  void updateOnSize() {
         this.updateBackground();
         this.updateCardScale();
         this.updateEmptyCard();
@@ -805,7 +804,7 @@ public class GameView extends Application {
     }
 
 
-    void updateBackground() {
+    private  void updateBackground() {
         if(this.guiController.activeScenes== GuiController.SCENES.GAME) {
 
             RadialGradient gradient = new RadialGradient(0, 0, mainScene.getWidth() / 2, mainScene.getHeight() / 2, mainScene.getHeight() > mainScene.getWidth() ? mainScene.getHeight() * 2 : mainScene.getWidth() * 2, false, CycleMethod.NO_CYCLE, this.backGroundStops);
@@ -813,7 +812,7 @@ public class GameView extends Application {
         }
     }
 
-    void setTopGlow(UnoCard card)
+    private  void setTopGlow(UnoCard card)
     {
 
         Color color = Color.WHITE;
@@ -838,7 +837,7 @@ public class GameView extends Application {
        // this.updateOnSize();
     }
 
-    void setTopGlow(UnoCard.UNO_COLOR col)
+    private  void setTopGlow(UnoCard.UNO_COLOR col)
     {
         Color color = Color.WHITE;
         switch (col)
@@ -863,7 +862,7 @@ public class GameView extends Application {
 
 
 
-    List<String> getNick()
+    private  List<String> getNick()
     {
         List<String> nicks= new ArrayList<String>();
         for (PlayerData player: this.guiController.clientApp.playersInORder
@@ -874,18 +873,18 @@ public class GameView extends Application {
         return nicks;
     }
 
-    String getPlayerNick()
+    private  String getPlayerNick()
     {
         return this.guiController.clientApp.getNick();
     }
 
-    Integer[] getAmtOfCards()
+    private  Integer[] getAmtOfCards()
     {
         return this.amtOfOpponetsCards;
     }
 
 
-    void looadCardsInHand()
+    private  void looadCardsInHand()
     {
         List<UnoCard> cards;
         cards = new ArrayList<UnoCard>();
@@ -904,7 +903,7 @@ public class GameView extends Application {
 
     }
 
-    void addCard(UnoCard card)
+    public  void addCard(UnoCard card)
     {
         this.guiController.soundPlayer.playDrawCard();
         ImageView cardView = new ImageView(cardImages[getIndexOfmage(card)]);
@@ -961,11 +960,11 @@ public class GameView extends Application {
 
     }
 
-    int getIndexOfmage(UnoCard card)
+    private int getIndexOfmage(UnoCard card)
     {
         switch (card.getType())
         {
-            case COLOR: return 13*4+0;
+            case COLOR: return 13 * 4;
             case PLUS4: return 13*4+1;
         }
         int col=0;
@@ -986,7 +985,7 @@ public class GameView extends Application {
 
     }
 
-    void onMouseOnCard(ImageView card)
+    private void onMouseOnCard(ImageView card)
     {
         TranslateTransition translateTransition= new TranslateTransition();
         translateTransition.setNode(card);
@@ -995,7 +994,7 @@ public class GameView extends Application {
        translateTransition.play();
       //  System.out.println("OnCard");
     }
-    void onMouseOutsideCard(ImageView card)
+    private  void onMouseOutsideCard(ImageView card)
     {
         TranslateTransition translateTransition= new TranslateTransition();
         translateTransition.setNode(card);
@@ -1005,7 +1004,7 @@ public class GameView extends Application {
         //System.out.println("OutisideCard");
     }
 
-    void onCardClick(ImageView card)
+    private  void onCardClick(ImageView card)
     {
         Image playedImage=card.getImage();
         int index=0;
@@ -1116,12 +1115,10 @@ public class GameView extends Application {
     }
 
     private boolean CanBePlayed(UnoCard card) {
-       if(this.guiController.clientApp.vaidateCard(card))
-           return true;
-           return false;
+        return this.guiController.clientApp.vaidateCard(card);
     }
 
-    void onMouseOnButton()
+    private  void onMouseOnButton()
     {
 
     this.button.setFill(Color.WHITE);
@@ -1131,7 +1128,7 @@ public class GameView extends Application {
 }
 
 
-    void onMouseOutsideButton()
+    private  void onMouseOutsideButton()
     {
         this.button.setFill(this.tranparentColor);
         this.buttonText.setFill(Color.WHITE);
@@ -1139,14 +1136,14 @@ public class GameView extends Application {
 
     }
 
-    void onButtonPresed()
+    private  void onButtonPresed()
     {
         this.guiController.soundPlayer.playOnButtonClick();
         this.button.setFill(Color.LIGHTGRAY);
 
     }
 
-    void onButtonRealsed()
+    private  void onButtonRealsed()
     {
         onMouseOnButton();
        // this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
@@ -1223,7 +1220,7 @@ public class GameView extends Application {
 
      */
 
-    void setStackStable(boolean isFilled)
+    private  void setStackStable(boolean isFilled)
     {
         if(isFilled)
         {
@@ -1235,7 +1232,7 @@ public class GameView extends Application {
         }
     }
 
-    void setStackPile(boolean isFilled)
+    private  void setStackPile(boolean isFilled)
     {
         try {
             if (isFilled) {
@@ -1249,7 +1246,7 @@ public class GameView extends Application {
         }
     }
 
-    void setOpponentsHand(int nbOfOppoenent, boolean isFilled)
+    private void setOpponentsHand(int nbOfOppoenent, boolean isFilled)
     {
         if(isFilled)
         {
@@ -1261,7 +1258,7 @@ public class GameView extends Application {
         }
     }
 
-    void setCardOnTable(UnoCard card)
+    public void setCardOnTable(UnoCard card)
     {
         this.emptyCards[0].setImage(this.cardImages[this.getIndexOfmage(card)]);
         this.setTopGlow(card);
@@ -1269,7 +1266,7 @@ public class GameView extends Application {
 
 
 
-    void giveCardToOpponent(int nbOfOpponent)
+    public void giveCardToOpponent(int nbOfOpponent)
     {
         double duration=250;
 
@@ -1340,10 +1337,10 @@ public class GameView extends Application {
 
     // Color Choice panel
 
-    Image colorChoicePanel[];
-    List<ImageView> colorPanel= new ArrayList<ImageView>();
-    int clikcedPanel=0;
-    int showChoiceColor(ImageView card)
+    private  Image[] colorChoicePanel;
+    private  List<ImageView> colorPanel= new ArrayList<ImageView>();
+    private  int clikcedPanel=0;
+    private  int showChoiceColor(ImageView card)
     {
 if(!this.isWaitingForPlayer) {
     this.isChoosingColor = true;
@@ -1442,17 +1439,17 @@ if(!this.isWaitingForPlayer) {
 
 
 
-    void onPanelEntterd(ImageView panel)
+    private   void onPanelEntterd(ImageView panel)
     {
        panel.setEffect(new Bloom());
     }
 
-    void onPanelExited(ImageView panel)
+    private  void onPanelExited(ImageView panel)
     {
         panel.setEffect(null);
     }
 
-    void onPanelClicked(ImageView panel, ImageView card)
+    private  void onPanelClicked(ImageView panel, ImageView card)
     {
         this.clikcedPanel=this.colorPanel.indexOf(panel);
 
@@ -1483,7 +1480,7 @@ if(!this.isWaitingForPlayer) {
 
     }
 
-    void playCardFromOppoent(int nbOfOppoonent, UnoCard card)
+    public  void playCardFromOppoent(int nbOfOppoonent, UnoCard card)
     {
         try {
             double duration = 200;
@@ -1550,7 +1547,7 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-    void setTurnGlow(int index)
+    private  void setTurnGlow(int index)
     {
         int i;
         for(i=0;i<this.textBox.length;i++)
@@ -1563,7 +1560,7 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-    void setTurn(String nick)
+    public  void setTurn(String nick)
     {
         int index=0;
 
@@ -1589,7 +1586,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void setGuideNickText(String txt)
+    private  void setGuideNickText(String txt)
     {
         this.turnText.setText(txt);
         updateGuidesSize();
@@ -1633,14 +1630,14 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
 
-    void onHelpMoved()
+    private  void onHelpMoved()
     {
         helpButton.setFill(Color.WHITE);
         helpButtonText.setFill(Color.BLACK);
 
     }
 
-    void onHelpMovedOutside()
+    private  void onHelpMovedOutside()
     {
 
 
@@ -1649,7 +1646,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void onHelpBasicClick()
+    private  void onHelpBasicClick()
     {
 
 
@@ -1658,7 +1655,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void onHelpReelased()
+    private   void onHelpReelased()
     {
         this.guiController.switchSceneToInstruction();
         onHelpMovedOutside();
@@ -1710,12 +1707,12 @@ catch (ArrayIndexOutOfBoundsException e)
 //////////////////////////////////////// setup guides
 
 
-    Polygon guideBaseTop;
+    private  Polygon guideBaseTop;
 
-    Polygon guideColor;
-    Polygon guideArrow;
+    private  Polygon guideColor;
+    private Polygon guideArrow;
 
-    Text turnText;
+    private Text turnText;
 
 
 
@@ -1782,9 +1779,9 @@ catch (ArrayIndexOutOfBoundsException e)
     final private double guideHeight=10;
     final private double guideTrapezoidDiff=12.5;
 
-    boolean isTurnInOrder=true;
+    private  boolean isTurnInOrder=true;
 
-    void swapTurnGuide()
+    private void swapTurnGuide()
     {
         this.isTurnInOrder=!isTurnInOrder;
         updateGuidesSize();
@@ -1794,14 +1791,14 @@ catch (ArrayIndexOutOfBoundsException e)
     private void setupGuides()
     {
 
-        Double points[] = new Double[]{
+        Double[] points = new Double[]{
                 0.0,0.0,
                 guideWidht,0.0,
                 guideWidht-guideTrapezoidDiff,guideHeight,
                 0+ guideTrapezoidDiff*2,guideHeight,
         };
 
-        Double arrowPointsp[]= new Double[]{
+        Double[] arrowPointsp = new Double[]{
                 guideTrapezoidDiff*2,guideTrapezoidDiff/3,
                 guideTrapezoidDiff*2,guideHeight-guideTrapezoidDiff/3,
                 guideTrapezoidDiff*-1,guideHeight-guideTrapezoidDiff/3,
@@ -1849,7 +1846,7 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-    void setGuideColor(Color col)
+    private  void setGuideColor(Color col)
     {
         this.guideColor.setFill(col);
         if(col==Color.GOLD)
@@ -1869,17 +1866,17 @@ catch (ArrayIndexOutOfBoundsException e)
 ///////////////////////////////////// chat
 
 
-    TextField chatArea;
-    TextArea chatLogs;
-    boolean isWritingInChat=false;
+    private  TextField chatArea;
+    private  TextArea chatLogs;
+    private boolean isWritingInChat=false;
 
-    Stack<Text> popupMess;
-    int popupTime=2;
-    double fadeTime=2;
+    private  Stack<Text> popupMess;
+    private  int popupTime=2;
+    private   double fadeTime=2;
     private final int limitChat=40;
 
 
-    void setupChat()
+    private  void setupChat()
     {
         mainScene.getStylesheets().add("Style.css");
         popupMess = new Stack<Text>();
@@ -1897,7 +1894,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void onTyldaButton()
+    private   void onTyldaButton()
     {
         Platform.runLater(new Runnable() {
             @Override
@@ -1916,7 +1913,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void showChat()
+    private void showChat()
     {
 
         chatArea.setVisible(true);
@@ -1929,7 +1926,7 @@ catch (ArrayIndexOutOfBoundsException e)
             popup.setVisible(false);
         }
     }
-    void hideChat()
+    private void hideChat()
     {
         chatArea.setVisible(false);
         chatLogs.setVisible(false);
@@ -1943,7 +1940,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void setupChatFormatting()
+    private  void setupChatFormatting()
     {
 
         TextFormatter textFormatter = new TextFormatter<>(change -> {
@@ -1967,7 +1964,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
     }
-    void sendMessage()
+    private  void sendMessage()
     {
         if(this.chatArea.getLength()>0) {
             this.guiController.clientApp.sendChatMesseage(this.chatArea.getText());
@@ -1976,11 +1973,11 @@ catch (ArrayIndexOutOfBoundsException e)
         }
     }
 
-    void updateChatSize()
+    private  void updateChatSize()
     {
         double height= this.mainScene.getHeight()/45;
 
-        Font font = new Font("Arial", height);;
+        Font font = new Font("Arial", height);
         this.chatArea.setFont(font);
         this.chatArea.setPrefSize(this.mainScene.getWidth()/4,height);
         this.chatArea.setTranslateY(this.mainScene.getHeight()-this.chatArea.getHeight());
@@ -2015,10 +2012,11 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-    public void addChatLog(ChatMesseage chatMesseage) {
+      public void addChatLog(ChatMesseage chatMesseage) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                guiController.soundPlayer.playmesseagePop();
                 chatLogs.appendText(chatMesseage + "\n");
                 addPopupMesseage(chatMesseage);
             }
@@ -2026,7 +2024,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void addPopupMesseage(ChatMesseage chatMesseage)
+    private   void addPopupMesseage(ChatMesseage chatMesseage)
     {
 
         Text text = new Text(chatMesseage.toString());
@@ -2051,7 +2049,7 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-    void removePopup(Text text)
+    private void removePopup(Text text)
     {
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(fadeTime));
         fadeTransition.setNode(text);
@@ -2078,16 +2076,16 @@ catch (ArrayIndexOutOfBoundsException e)
 //////////////////////////////////////////////// waitig processing
 
 
-    boolean isWaitingForPlayer=false;
+    public   boolean isWaitingForPlayer=false;
 
-    List<Rectangle> waitBackGrounds = new ArrayList<Rectangle>();
-    List<Text> waitTexts = new ArrayList<Text>();
-    List<String> nicksWaiting = new ArrayList<String>();
-
-
+    private List<Rectangle> waitBackGrounds = new ArrayList<Rectangle>();
+    private   List<Text> waitTexts = new ArrayList<Text>();
+    public  List<String> nicksWaiting = new ArrayList<String>();
 
 
-    void startWaiting(String nick)
+
+
+    public  void startWaiting(String nick)
     {
         Platform.runLater(new Runnable() {
             @Override
@@ -2113,7 +2111,7 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-    void updateWaitSize()
+    private  void updateWaitSize()
     {
         int amtOfwaits=waitBackGrounds.size();
         double rowHeight=this.mainScene.getHeight()/(8*2);
@@ -2132,7 +2130,7 @@ catch (ArrayIndexOutOfBoundsException e)
         }
     }
 
-    int findIndexOfWait(String nick)
+    private  int findIndexOfWait(String nick)
     {
         int indx=0;
         for(indx=0;indx<this.nicksWaiting.size();indx++)
@@ -2143,7 +2141,7 @@ catch (ArrayIndexOutOfBoundsException e)
         return indx;
     }
 
-    void updateWaitText(String nick,int sec)
+    public void updateWaitText(String nick,int sec)
     {
         this.guiController.soundPlayer.playClock();
         int indx=this.findIndexOfWait(nick);
@@ -2151,7 +2149,7 @@ catch (ArrayIndexOutOfBoundsException e)
         updateWaitSize();
     }
 
-    void stopWaiting(String nick) {
+    public void stopWaiting(String nick) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

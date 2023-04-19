@@ -39,35 +39,33 @@ import static java.lang.Math.abs;
 
 
 public class RankView extends Application {
-    Scene mainScene;
+    private final Scene mainScene;
 
 
-    final int startH=720;
-    final int startW=1280;
-    static final String resDir = "uno_client\\src\\main\\resources\\";
+    private  static final String resDir = "uno_client\\src\\main\\resources\\";
 
-    Color tranparentColor = new Color(1,0,0,0.0);
-    Color blueColor = new Color(0,0.1,0.6,1);
-    Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    private final Color tranparentColor = new Color(1,0,0,0.0);
+    private final Color blueColor = new Color(0,0.1,0.6,1);
+    private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
-    Rectangle button;
-    Text buttonText;
+    private  Rectangle button;
+    private  Text buttonText;
 
-    Text columnsHeadersText[] = new Text[3];
-    String columnsTextFill[] = new String[] {"nb.", "Nick","wins"};
-    Line linesMainSeparetor[];
-    Text nicksRank[];
-    Text amtOfWinsText[];
-    Text rankNbText[];
-    Line rowLineSeperator[];
+    private final Text[] columnsHeadersText = new Text[3];
+    private final String[] columnsTextFill = new String[] {"nb.", "Nick","wins"};
+    private  Line[] linesMainSeparetor;
+    private  Text[] nicksRank;
+    private  Text[] amtOfWinsText;
+    private  Text[] rankNbText;
+    private  Line[] rowLineSeperator;
 
 
-    Rectangle rankViewBase;
+    private Rectangle rankViewBase;
     double scrollAmount=0;
     private RadialGradient gradient;
     private Shape mask;
 
-    GuiController guiController;
+    private final GuiController guiController;
 
     public RankView(GuiController guiController, Scene mainScene) {
         this.guiController= guiController;
@@ -81,7 +79,7 @@ public class RankView extends Application {
 
 
 
-    Group root;
+    public  Group root;
 
 
     @Override
@@ -90,7 +88,9 @@ public class RankView extends Application {
 
             this.iniit(primaryStage);
             primaryStage.setScene(this.mainScene);
+            int startH = 720;
             primaryStage.setHeight(startH);
+            int startW = 1280;
             primaryStage.setWidth(startW);
             primaryStage.show();
         }
@@ -102,7 +102,7 @@ public class RankView extends Application {
     }
 
 
-    void iniit(Stage primaryStage) throws IOException, URISyntaxException {
+    public void iniit(Stage primaryStage) throws IOException, URISyntaxException {
         root = new Group();
 
         this.updateBackground();
@@ -127,8 +127,8 @@ public class RankView extends Application {
 
 
 
-        String nicks[] =this.getNicksArray();
-        int amtOfwins[]= this.getScoreArray();
+        String[] nicks =this.getNicksArray();
+        int[] amtOfwins = this.getScoreArray();
         this.nicksRank = new Text[nicks.length];
         this.amtOfWinsText = new Text[nicks.length];
         this.rankNbText = new Text[nicks.length];
@@ -193,7 +193,7 @@ public class RankView extends Application {
     }
 
 
-    void addListiners(Stage primaryStage) {
+    private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
                 new ChangeListener<Number>() {
@@ -322,7 +322,7 @@ public class RankView extends Application {
                             onScrollMainRank(event);
                         }
                     }
-            );;
+            );
         }
 
         for (Text text: this.rankNbText
@@ -334,7 +334,7 @@ public class RankView extends Application {
                             onScrollMainRank(event);
                         }
                     }
-            );;
+            );
         }
         for (Text text: this.amtOfWinsText
         ) {
@@ -345,7 +345,7 @@ public class RankView extends Application {
                             onScrollMainRank(event);
                         }
                     }
-            );;
+            );
         }
         for (Text text: this.nicksRank
         ) {
@@ -356,7 +356,7 @@ public class RankView extends Application {
                             onScrollMainRank(event);
                         }
                     }
-            );;
+            );
         }
 
 
@@ -466,7 +466,7 @@ public class RankView extends Application {
     }
 
 
-    void updateOnSize()
+    public void updateOnSize()
     {
         int miliSec=10;
         PauseTransition delay= new PauseTransition(Duration.millis(miliSec));
@@ -492,7 +492,7 @@ public class RankView extends Application {
 
     }
 
-    void updateMainRank()
+    private  void updateMainRank()
     {
         double scaleY=0.9;
         double scaleX=0.9;
@@ -625,7 +625,7 @@ public class RankView extends Application {
     }
 
 
-    void updateBackground()
+    private  void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.RANK) {
 
@@ -704,13 +704,13 @@ public class RankView extends Application {
         this.updateRecordsTextSize();
     }
 
-    int[] getScoreArray()
+    private  int[] getScoreArray()
     {
      return this.guiController.clientApp.rankingwinsAmt;
 
     }
 
-    String[] getNicksArray()
+    private String[] getNicksArray()
     {
                return this.guiController.clientApp.rankingNicks;
 

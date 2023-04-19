@@ -10,15 +10,15 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ServerApp {
-    int port;
-    ServerConnectionManager connectionManger;
+    private  int port;
+    private ServerConnectionManager connectionManger;
 
-    int playersConnected=0;
-    int playersReady=0;
+    public  int playersConnected=0;
+    public  int playersReady=0;
 
-    boolean clockOrder=true;
-    int turn=0;
-    UnoCard topCard;
+    public  boolean clockOrder=true;
+    public int turn=0;
+    private  UnoCard topCard;
 
     public UnoCard getTopCard() {
         return topCard;
@@ -28,14 +28,14 @@ public class ServerApp {
         this.topCard = topCard;
     }
 
-    List<PlayerData> nicks =new ArrayList<PlayerData>();
-    DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
+    public List<PlayerData> nicks =new ArrayList<PlayerData>();
+    public  DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
     public boolean gameStarted=false;
 
     ServerApp()
     {
     }
-    void  startServer()
+    public  void  startServer()
     {
         connectionManger = new ServerConnectionManager(this);
         try {
@@ -47,7 +47,7 @@ public class ServerApp {
         }
     }
 
-        boolean addPlayer(PlayerData pLayerData)
+    public boolean addPlayer(PlayerData pLayerData)
         {
 
             System.out.println("add player PLAYERS: "+ this.nicks + "\n");
@@ -107,7 +107,7 @@ public class ServerApp {
 
 
 
-    void disconnectPlayer(PlayerData pLayerData) throws IOException {
+    public  void disconnectPlayer(PlayerData pLayerData) throws IOException {
         this.nicks.remove(pLayerData);
         this.playersConnected--;
 
@@ -118,7 +118,7 @@ public class ServerApp {
         messageFormat.number = new int[1];
         int newAmtReady=this.getPlayersReady();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~playeres reasy: " + newAmtReady);
-        if(pLayerData.isReady)
+        if(pLayerData.isReady())
         {
             messageFormat.number[0]=1;
             newAmtReady-=1;
@@ -154,7 +154,7 @@ public class ServerApp {
     ////////////////////////////////////////// GAME
 
 
-    void giveCard(UnoCard card, PlayerData player) throws IOException, ClassNotFoundException {
+    public  void giveCard(UnoCard card, PlayerData player) throws IOException, ClassNotFoundException {
         MessageFormat messageFormat = new MessageFormat();
         MessageFormat messageFormatToAll= new MessageFormat();
 
@@ -170,7 +170,7 @@ public class ServerApp {
 
     }
 
-    void dealCards() throws IOException, ClassNotFoundException, InterruptedException {
+    private void dealCards() throws IOException, ClassNotFoundException, InterruptedException {
         System.out.println("preaping DECK");
         this.dataBaseMangaer.preapreDeck();
         System.out.println("DELAING CARDs");
@@ -204,7 +204,7 @@ System.out.println("giving cards");
 
     }
 
-    void createGame() {
+    private void createGame() {
         this.dataBaseMangaer.createNewGame(this.nicks.get(0).getNick());
         for(int i=1;i<this.nicks.size();i++)
         {
@@ -212,7 +212,7 @@ System.out.println("giving cards");
         }
     }
 
-    void setEveryoneNotReady()
+    private void setEveryoneNotReady()
     {
         this.playersReady = 0;
         for (PlayerData player: nicks
@@ -221,9 +221,9 @@ System.out.println("giving cards");
         }
     }
 
-boolean isInStratingProces=false;
+    public boolean isInStratingProces=false;
 
-    void startGame() throws IOException, ClassNotFoundException {
+    private  void startGame() throws IOException, ClassNotFoundException {
         isInStratingProces=true;
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -261,7 +261,7 @@ boolean isInStratingProces=false;
         isInStratingProces=false;
     }
 
-    void setTopCard()
+    private  void setTopCard()
     {
 
         List<UnoCard> unoCardsTable = new ArrayList<UnoCard>();
@@ -283,7 +283,7 @@ boolean isInStratingProces=false;
     }
 
 
-    void setTurn() throws IOException {
+    public  void setTurn() throws IOException {
 
 
 
@@ -300,7 +300,7 @@ boolean isInStratingProces=false;
         //this.connectionManger.finishGame();
     }
 
-    void sendPlayerOrder() throws IOException, ClassNotFoundException {
+    private  void sendPlayerOrder() throws IOException, ClassNotFoundException {
         System.out.println("NICKS: " + this.nicks + "\n");
         for (PlayerData player : this.nicks) {
             List<String> nicks = this.dataBaseMangaer.selectOrderFromPlayer(player.getNick());
@@ -321,19 +321,19 @@ boolean isInStratingProces=false;
 
 
 
-        void incrTurn()
+    public   void incrTurn()
     {
         this.turn++;
         if(this.turn>=this.nicks.size())
             this.turn=0;
     }
-    void decrTurn()
+    public  void decrTurn()
     {
         this.turn--;
         if(this.turn<0)
             this.turn=this.nicks.size()-1;
     }
-    void nextTurn()
+    private  void nextTurn()
     {
 
 
@@ -343,12 +343,12 @@ boolean isInStratingProces=false;
             this.decrTurn();
 
         this.connectionManger.checkFinishGame();
-        if(this.nicks.get(this.turn).isInGame()==false)
+        if(!this.nicks.get(this.turn).isInGame())
             nextTurn();
     }
 
 
-    void validateHand(PlayerData playerData)
+    private void validateHand(PlayerData playerData)
     {
         UnoCard topCard=this.getTopCard();
         int  validation=1;
@@ -506,7 +506,7 @@ boolean isInStratingProces=false;
     }
 
     public void handleWaitForPlayer(String nick) {
-        System.out.printf("WAITNG FOR ");
+        System.out.print("WAITNG FOR ");
     }
 
     public void shutGame() {
@@ -526,8 +526,8 @@ boolean isInStratingProces=false;
         try {
             int indx=this.connectionManger.findIndexOfWaitList(pLayerData.nick);
             this.connectionManger.waitListCheck.set(indx,true);
-            System.out.printf("CATCHUP: \n");
-            System.out.println(this.nicks);;
+            System.out.print("CATCHUP: \n");
+            System.out.println(this.nicks);
             MessageFormat messageFormat= new MessageFormat();
             this.sendPlayerOrder();
             messageFormat.type= MessageFormat.messegeTypes.CATCHUP;

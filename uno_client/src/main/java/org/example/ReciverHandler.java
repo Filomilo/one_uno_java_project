@@ -7,14 +7,14 @@ import java.net.SocketTimeoutException;
 
 public class ReciverHandler extends  Thread{
 
-    ClientConnectionManager clientConnectionManager;
-    ReciverHandler(ClientConnectionManager clientConnectionManager)
+   private final ClientConnectionManager clientConnectionManager;
+    public ReciverHandler(ClientConnectionManager clientConnectionManager)
     {
         this.clientConnectionManager=clientConnectionManager;
 
     }
 
-    boolean shoudldRun=true;
+    public boolean shoudldRun=true;
 
     public boolean isShoudldRun() {
         return shoudldRun;

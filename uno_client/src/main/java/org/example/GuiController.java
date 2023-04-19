@@ -31,14 +31,14 @@ import java.util.concurrent.TimeUnit;
 public class
 GuiController extends Application {
 
-    GameView gameView;
-    MainVew mainVew;
-    ResultView resultView;
-    RankView rankView;
-    InstructionView instructionView;
+    public   GameView gameView;
+    public  MainVew mainVew;
+    private   ResultView resultView;
+    private  RankView rankView;
+    private  InstructionView instructionView;
 
-    SoundPlayer soundPlayer;
-    LoginVew loginView;
+    public  SoundPlayer soundPlayer;
+    public  LoginVew loginView;
 
     public void succesfulLogin() {
         this.switchScenetoMain();
@@ -51,31 +51,31 @@ GuiController extends Application {
 
 
 
-    static enum SCENES{
+    enum SCENES{
         MAIN,
         INSRTUCTION,
         GAME,
         RANK,
         LOGIN, RESULT
-    };
+    }
 
-    GuiController.SCENES activeScenes=SCENES.MAIN;
-    GuiController.SCENES prevScene=SCENES.MAIN;
-    BooleanProperty isOnButton= new SimpleBooleanProperty(false);
+    public   GuiController.SCENES activeScenes=SCENES.MAIN;
+    private   GuiController.SCENES prevScene=SCENES.MAIN;
+    public  BooleanProperty isOnButton= new SimpleBooleanProperty(false);
 
-    Scene mainScene;
-    Group root;
-    static String nick="";
-    String ip="localhost";
-    String port="25565";
+    public  Scene mainScene;
+    private  Group root;
+    private  static String nick="";
+    private  String ip="localhost";
+    private  String port="25565";
 
-    ClientApp clientApp= new ClientApp(this);
+    public ClientApp clientApp= new ClientApp(this);
 
-    BooleanProperty isStarted= new SimpleBooleanProperty(false);
+    private  BooleanProperty isStarted= new SimpleBooleanProperty(false);
 
-    Scene previousScene;
+    private Scene previousScene;
     private Group prevRoot;
-    Boolean isGameLoaded=false;
+    public Boolean isGameLoaded=false;
 
 
     public static void main(String[] args) {
@@ -165,19 +165,19 @@ GuiController extends Application {
     }
 
 
-    void changeSceneToMain()
+    private  void changeSceneToMain()
     {
 
     }
 
-    void changeSceneToGame()
+    private void changeSceneToGame()
     {
         this.primaryStage.setScene(gameView.mainScene);
         this.gameView.updateOnSize();
     }
 
 
-    void disconnectFromServer()
+    public  void disconnectFromServer()
     {
         try {
             this.clientApp.discconct();
@@ -191,26 +191,26 @@ GuiController extends Application {
     }
 
 
-    void sendReady()
+    public void sendReady()
     {
         this.clientApp.setReady(true);
         this.updatePlayerAmt();
     }
 
-    void sendNotReady()
+    public void sendNotReady()
     {
         this.clientApp.setReady(false);
         this.updatePlayerAmt();
     }
 
 
-    void updatePlayerAmt()
+    private void updatePlayerAmt()
     {
         this.mainVew.setPlayersReady(this.clientApp.getReadyPlayers(), this.clientApp.getConnectedPlayers());
     }
 
 
-    void updateOnSize()
+    private void updateOnSize()
     {
         System.out.printf("update Size: "+ this.activeScenes + "\n");
 
@@ -241,7 +241,7 @@ GuiController extends Application {
             this.rankView.updateOnSize();
     }
 
-    void addListineres()
+    private void addListineres()
     {
 
 
@@ -271,7 +271,7 @@ GuiController extends Application {
                 new ChangeListener<Parent>() {
                     @Override
                     public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
-                        System.out.printf("ROOT CHANED\n");
+                        System.out.print("ROOT CHANED\n");
                         updateOnSize();
                     }
                 }
@@ -284,8 +284,8 @@ GuiController extends Application {
                     new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            System.out.printf("RANKING RECIVED\\n\n\n\n\n");
-                            if (newValue == true && oldValue == false) {
+                            System.out.print("RANKING RECIVED\\n\n\n\n\n");
+                            if (newValue && !oldValue) {
 
                                 Platform.runLater(
                                         new Runnable() {
@@ -398,7 +398,7 @@ GuiController extends Application {
 
     private void setScaneToRanking()
     {
-        System.out.printf("CHANGE SCNE TO RANKING");
+        System.out.print("CHANGE SCNE TO RANKING");
         try {
 
 

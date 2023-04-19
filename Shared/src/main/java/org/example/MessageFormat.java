@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class MessageFormat implements Serializable {
-    static enum messegeTypes{
+    enum messegeTypes{
         MESSAGE,
         CONNECT,
         DISCONNECT,
-        SUCCES,
         CONFIRM,
         READY,
         START,
@@ -20,7 +19,6 @@ public class MessageFormat implements Serializable {
         TOPCARD,
         PLAYCARD,
         TURN,
-        REVERSE,
         SHUFFLE,
         FINAL,
         ENDGAME,
@@ -31,13 +29,20 @@ public class MessageFormat implements Serializable {
         WAIT,
         WAITSTART,
         GAMESATRTED,
-        CATCHUP, STOPWAIT, REGISTER, LOGIN, NICKTAKEN, WRONGDATA, ALRADYLOGGED, SHUTGAME
+        CATCHUP,
+        STOPWAIT,
+        REGISTER,
+        LOGIN,
+        NICKTAKEN,
+        WRONGDATA,
+        ALRADYLOGGED,
+        SHUTGAME
 
     }
-    messegeTypes type;
-    int[] number;
-    String[] text;
-    UnoCard unoCard;
+    public messegeTypes type;
+    public int[] number;
+    public String[] text;
+    public UnoCard unoCard;
 
     @Override
     public String toString() {

@@ -40,24 +40,24 @@ import java.net.URISyntaxException;
 public class LoginVew extends Application {
 
 
-    Scene mainScene;
+    private  Scene mainScene;
 
-    boolean isConnected=false;
-    Boolean isReady=false;
-    final int startH=720;
-    final int startW=1280;
+    private final boolean isConnected=false;
+    private final Boolean isReady=false;
+    private  final int startH=720;
+    private final int startW=1280;
 
-    Color tranparentColor = new Color(1,0,0,0.0);
-    Color blueColor = new Color(0,0.1,0.6,1);
-    Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
-
-
-    boolean activeControles [];
+    private final Color tranparentColor = new Color(1,0,0,0.0);
+    private final Color blueColor = new Color(0,0.1,0.6,1);
+    private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
 
+    private  boolean[] activeControles;
 
-    String[] textFieldsTexts={"Nick","Ip","Port"};
-    private GuiController guiController;
+
+
+    private  String[] textFieldsTexts={"Nick","Ip","Port"};
+    private final GuiController guiController;
 
     public LoginVew(GuiController guiController) {
         this.guiController=guiController;
@@ -69,33 +69,33 @@ public class LoginVew extends Application {
     }
 
 
-    Rectangle returnButton;
-    Text returnButtonText;
+    private  Rectangle returnButton;
+    private   Text returnButtonText;
 
-    Line loginLines[];
-    TextField loginFields[];
-    Text loginGuides[];
-    Rectangle loginButton;
-    Text loginButtonText;
-    Line registerLines[];
-    TextField registerFields[];
-    Text registerGuides[];
-    Rectangle registerButton;
-    Text registerButtonText;
+    private   Line[] loginLines;
+    private  TextField[] loginFields;
+    private  Text[] loginGuides;
+    private    Rectangle loginButton;
+    private  Text loginButtonText;
+    private  Line[] registerLines;
+    private  TextField[] registerFields;
+    private   Text[] registerGuides;
+    private   Rectangle registerButton;
+    private  Text registerButtonText;
 
-    Text loginCommunicat;
-    Text registerCommunicat;
-
-
-    Line[] serverAdressLines;
-    Text serverAdressGuides[];
-    TextField serverAdressFields[];
-    Text serverAdressCommunicat;
+    private  Text loginCommunicat;
+    private  Text registerCommunicat;
 
 
+    private  Line[] serverAdressLines;
+    private  Text[] serverAdressGuides;
+    private  TextField[] serverAdressFields;
+    private  Text serverAdressCommunicat;
 
 
-    Group root;
+
+
+    public   Group root;
 
     //GuiController guiController;
     @Override
@@ -117,7 +117,7 @@ public class LoginVew extends Application {
     }
 
 
-    void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
+    public void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
 
 
         this.mainScene=mainScene;
@@ -285,7 +285,7 @@ public class LoginVew extends Application {
     }
 
 
-    void updateOnSize()
+    public  void updateOnSize()
     {
 
 
@@ -459,7 +459,7 @@ public class LoginVew extends Application {
 
     }
 
-    void addListiners(Stage primaryStage) {
+    private  void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
                 new ChangeListener<Number>() {
@@ -842,7 +842,7 @@ public class LoginVew extends Application {
 
 
 
-    void updateBackground()
+    private  void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.LOGIN) {
 
@@ -1017,13 +1017,13 @@ public class LoginVew extends Application {
     }
 
 
-    void setLoginCommuncat(String s)
+    public void setLoginCommuncat(String s)
     {
         loginCommunicat.setText(s);
         this.updateOnSize();
     }
 
-    void setRegisterCommunicat(String s)
+    public void setRegisterCommunicat(String s)
     {
         Platform.runLater(new Runnable() {
             @Override
@@ -1035,7 +1035,7 @@ public class LoginVew extends Application {
 
     }
 
-    void setServerAdressCommunicat(String s)
+    private void setServerAdressCommunicat(String s)
     {
         if(!s.equals(""))
         this.guiController.soundPlayer.playFailed();
@@ -1043,7 +1043,7 @@ public class LoginVew extends Application {
         this.updateOnSize();
     }
 
-    void resetCommnicats()
+    private  void resetCommnicats()
     {
         this.setServerAdressCommunicat("");
         this.setLoginCommuncat("");

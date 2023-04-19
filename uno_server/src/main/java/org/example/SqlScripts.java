@@ -4,89 +4,89 @@ package org.example;
 
 public class SqlScripts {
 
-    static String TableStackViewScript=
+    public static String TableStackViewScript=
     "SELECT * FROM Table_stack_view";
 
-    static String MainStackViewScript=
+    public static String MainStackViewScript=
             "SELECT * FROM stack_view";
 
-    static String validateNick=
+    public static String validateNick=
             "SELECT count(*) FROM PLAYERS\n" +
                     "WHERE NICK=?";
 
-    static String validatePass=
+    public static String validatePass=
             "SELECT count(*) FROM PLAYERS\n" +
                     "WHERE NICK= ? \n" +
                     "AND PASS = ?";
-    static String getResult=
+    public static String getResult=
             "SELECT * FROM RESULTS";
 
 
-    static String AddPlayerScript =
+    public static String AddPlayerScript =
             "{call ADD_PLAYER(?,?)}";
 
-    static String FillBaseCardsScripts=
+    public static String FillBaseCardsScripts=
             "{call FILL_BASE_CARDS}";
-    static String CreateNewGameScripts=
+    public static String CreateNewGameScripts=
             "{call CREATE_NEW_GAME(?)}";
 
-    static String AddPlayerToGameScript =
+    public static String AddPlayerToGameScript =
             "{call ADD_PLAYER_TO_GAME(?)}";
 
-    static String PreapareDeckScript=
+    public static String PreapareDeckScript=
             "{call PREPEARE_DECK}";
-    static String DealCardScript=
+    public static String DealCardScript=
             "{call DEAL_CARDS}";
-    static String PlayCardScript=
+    public static String PlayCardScript=
             "{call PLAY_CARD(?,?)}";
 
-    static String ReshuffleDeck=
+    public static String ReshuffleDeck=
             "{call RESHUFFLE_STACK}";
-    static String DrawCardScript=
+    public static String DrawCardScript=
             "{call DRAW_CARD(?)}";
 
-    static String SurrenderScript=
+    public static String SurrenderScript=
             "{call SURRENDER(?)}";
 
-    static String SetRankScript=
+    public static String SetRankScript=
             "{call SET_RANK(?)}";
 
-    static String ClearGameSrript=
+    public static String ClearGameSrript=
             "{call CLEAR_GAME}";
 
 
 
-    static String GetCardAmtOnStack=
+    public static String GetCardAmtOnStack=
             "{? = call GET_AMT_STACK}";
-    static String GetPlayerCountScript=
+    public static String GetPlayerCountScript=
     "{? = call GET_PLAYER_COUNT}";
 
-    static String GetNumberOnTableScript=
+    public static String GetNumberOnTableScript=
             "{? = call  GET_NUMBER_ON_TABLE }";
 
-    static String GetAmtOfCardsScript=
+    public static String GetAmtOfCardsScript=
             "{? = call  GET_AMT_OF_CARD(?) }";
 
-    static String ValidateHand=
+    public static String ValidateHand=
             "{? = call VALIDATE_HAND(?)}";
 
-    static String GetAMtOfCardInHands=
+    public static String GetAMtOfCardInHands=
             "Select count(*) from Active_card_places " +
                     "WHERE Active_card_places.NICK LIKE ?";
 
-    static String GetAmtOfActivePlayers="SELECT count(*)  FROM GAMES " +
+    public static String GetAmtOfActivePlayers="SELECT count(*)  FROM GAMES " +
             "WHERE GAMES_ID = GET_ACTIVE_GAME_ID " +
             "AND RANK=0 " +
             "ORDER BY NICK";
 
-    static String SelectCardsFromHandScript=
+    public static String SelectCardsFromHandScript=
             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
                     "WHERE ACTIVE_CARD_PLACES.NICK= ? AND "+
                     "ACTIVE_CARD_PLACES.CARDS_ID=CARDS.CARDS_ID "+
                     "ORDER BY POSITION DESC ";
 
 
-    static String SelectNicksRankingInOrder =
+    public static String SelectNicksRankingInOrder =
       "SELECT NICK FROM(\n" +
               "SELECT  NICK, sum(RANK) wins FROM (\n" +
               "    SELECT NICK, CASE RANK WHEN 1 THEN 1 ELSE 0 END AS RANK FROM GAMES\n" +
@@ -94,7 +94,7 @@ public class SqlScripts {
               "GROUP BY NICK)\n" +
               "ORDER BY WINS DESC";
 
-    static String SelectWinsRankingInOrder =
+    public static String SelectWinsRankingInOrder =
 "SELECT wins FROM(\n" +
         "SELECT  NICK, sum(RANK) wins FROM (\n" +
         "    SELECT NICK, CASE RANK WHEN 1 THEN 1 ELSE 0 END AS RANK FROM GAMES\n" +
@@ -103,7 +103,7 @@ public class SqlScripts {
         "ORDER BY WINS DESC";
 
 
-    static String SelectOrderForPlayer=
+    public static String SelectOrderForPlayer=
             "SELECT * FROM( "+
                     "SELECT * FROM( "+
                     " SELECT NICK, turn- (SELECT MAX(TURN) turn FROM PLAYER_ORDER "+
@@ -126,7 +126,7 @@ public class SqlScripts {
                     ") "+
                     ")ORDER BY TURN ";
 
-    static String[] CreateTablecSripts={
+    public static String[] CreateTablecSripts={
             "CREATE TABLE PLAYERS(\n" +
                     "NICK VARCHAR(30) PRIMARY KEY,\n" +
                     "PASS VARCHAR(100)        \n" +
@@ -158,7 +158,7 @@ public class SqlScripts {
                     "AND RANK != 0 " +
                     "ORDER BY RANK"
     };
-    static String[] DropTablecSripts={
+    public static String[] DropTablecSripts={
             "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT cards_nick_fk" ,
                     "ALTER TABLE GAMES DROP CONSTRAINT games_nick_fk" ,
             "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT card_id_fk" ,
@@ -172,7 +172,7 @@ public class SqlScripts {
                 "DROP TABLE  GAMES"
     };
 
-    static String[] DeleteAllScripts=
+    public static String[] DeleteAllScripts=
     {
         "DELETE FROM ACTIVE_CARD_PLACES"+
                 "",
@@ -185,7 +185,7 @@ public class SqlScripts {
     };
 
 
-    static String[] CreateViewsScripts=
+    public static String[] CreateViewsScripts=
             {
                     "CREATE OR REPLACE VIEW Table_stack_view AS "+
                             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
@@ -206,17 +206,17 @@ public class SqlScripts {
                             ""
             };
 
-    static String[] CreateSequencesScripts=
+    public static String[] CreateSequencesScripts=
     {
         "CREATE SEQUENCE GAME_ID_SEQ"+
                 "",
     };
-    static String[] DropSequencesScripts=
+    public static String[] DropSequencesScripts=
             {
                     "Drop SEQUENCE GAME_ID_SEQ"+
                             "",
             };
-    static String[] CreateFunctions=
+    public static String[] CreateFunctions=
     {
         "CREATE OR REPLACE FUNCTION GET_PLAYER_COUNT RETURN NUMBER "+
                 "AS "+
@@ -306,7 +306,7 @@ public class SqlScripts {
 
 
 
-    static String[] CreateProceduresScripts=
+    public static String[] CreateProceduresScripts=
     {
         "CREATE OR REPLACE PROCEDURE ADD_CARD(ID_var  NUMBER, COLOR_var VARCHAR, TYPE_VAR VARCHAR , NUMBER_VAR  NUMBER:=NULL) "+
                 "AS "+

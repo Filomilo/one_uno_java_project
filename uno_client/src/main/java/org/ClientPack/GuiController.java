@@ -459,7 +459,7 @@ public class GuiController extends Application {
         mainVew.buttons[2].setFill(mainVew.tranparentColor);
         mainVew.buttonTitles[2].setFill(Color.WHITE);
 
-
+            this.loginView.resetPassords();
             this.activeScenes=SCENES.LOGIN;
             this.mainScene.setRoot( this.loginView.root);
 

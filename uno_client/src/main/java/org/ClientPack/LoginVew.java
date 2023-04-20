@@ -199,15 +199,12 @@ public class LoginVew extends Application {
 
 
 
-        this.serverAdressFields[0].setText("localhost");
-        this.serverAdressFields[1].setText("25565");
 
-        this.registerFields[0].setText("admin");
-        this.registerFields[1].setText("admin");
-        this.registerFields[2].setText("admin");
+        this.registerFields[1].setText("");
+        this.registerFields[2].setText("");
 
-        this.loginFields[0].setText("admin");
-        this.loginFields[1].setText("admin");
+
+        this.loginFields[1].setText("");
 
 
     }
@@ -1189,6 +1186,12 @@ public class LoginVew extends Application {
         this.setRegisterCommunicat("");
     }
 
-
-
+    /**
+     * reset password fields when enetring again to login view
+     */
+    public void resetPassords() {
+        this.registerFields[1].setText("");
+        this.registerFields[2].setText("");
+        this.loginFields[1].setText("");
+    }
 }

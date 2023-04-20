@@ -1,4 +1,4 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.animation.*;
 import javafx.application.Application;
@@ -30,6 +30,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.SharedPack.UnoCard;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,64 +39,137 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * a class that handles game view
+ */
 public class GameView extends Application {
+    /**
+     * a varaible taht store main scene referance
+     */
     public Scene mainScene;
-
+    /**
+     * this boolean hold wheater or not assets are already loaded
+     */
     public  Boolean isAssetLoaded=false;
 
+    /**
+     * this boolean hold wheater or not its this player turn
+     */
     private   boolean isYourTurn=false;
-
-    private   final int startH = 720;
-    private   final int startW = 1280;
+    /**
+     * a varaible that stores half transparent black
+     */
     private final Color tranparentBlack = new Color(0, 0, 0, 0.5);
+    /**
+     * a varaible that stores transparent color for buttons
+     */
     private final Color tranparentColor = new Color(1, 0, 0, 0.0);
+    /**
+     * a varaible that holds  green color for gradeint base
+     */
     private final Color greenColor = new Color(0, 0.4, 0.1, 1);
+    /**
+     * a varaible that holds  dark green color for gradeint base
+     */
     private final Color darkGreenColor = new Color(0.2, 0.28, 0.01, 1);
+    /**
+     * this varialbe holds  green gradient
+     */
     private final Stop[] greenStops = new Stop[]{new Stop(0, this.greenColor), new Stop(1, Color.BLACK)};
+    /**
+     * this varialbe holds dark green gradient
+     */
     private final Stop[] darkGreenStops = new Stop[]{new Stop(0, darkGreenColor), new Stop(1, Color.BLACK)};
+    /**
+     * this varaible holds active backgoudn gradeint stops
+     */
     private   Stop[] backGroundStops = darkGreenStops;
-    private  GuiController guiController;
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
+    private final GuiController guiController;
 
+    /**
+     * this array holds images of all uno cards types
+     */
     private final Image[] cardImages = new Image[56];
 
-
-    private   final Object colorChoiceBlock=new Object();
-
-
+    /**
+     * this methos holds shape of help button
+     */
     private   Rectangle helpButton;
+    /**
+     * this varaible hold text of help button
+     */
     private    Text helpButtonText;
 
-
+    /**
+     * this array hild image view of all cards stacks in game
+     */
     private  ImageView[] emptyCards ;
 
+    /**
+     * this array holds text elemnts to show nick of players in game
+     */
     private   Text[] nickText;
+    /**
+     * this array holds rectangle elemnts that works as backgorund for texts
+     */
     private  Rectangle[] textBox;
+    /**
+     * this array hold number of amount of cards held by each plaer
+     */
     private  Integer[] amtOfOpponetsCards;
 
+    /**
+     * this variable holds array of text elemnts represeting amount of cards held by other players
+     */
     private   Text[] amtOfCardsText;
 
+    /**
+     * this variable holds current card size ration
+     */
     private   double cardWidth=100;
+    /**
+     * this variable holds current card postion offset from bottom
+     */
     private  double cardHandPosY=0;
 
-    private   List<ImageView> cardsInHand = new ArrayList<ImageView>();
+    /**
+     * this list conatting cards hold by this client player
+     */
+    private final List<ImageView> cardsInHand = new ArrayList<ImageView>();
 
-    private  Rectangle button = new Rectangle();
-    private  Text buttonText= new Text("Surrender");
+    /**
+     * this varaible holds elemt of button shpae
+     */
+    private final Rectangle button = new Rectangle();
+    /**
+     * this variable holds text element of button text
+     */
+    private final Text buttonText= new Text("Surrender");
 
+    /**
+     * this boolean determins if player is now choosing color
+     */
     private   Boolean isChoosingColor=false;
 
+    /**
+     * this varialbe holds amoutn of player at start of game
+     */
     public  int playersAtStart=0;
+
+    /**
+     * this method setup neccesery object referances
+     * @param guiController
+     * @param mainScene
+     */
 
     public GameView(GuiController guiController,Scene mainScene) {
         this.guiController=guiController;
         this.mainScene=mainScene;
     }
 
-    public GameView()
-    {
-
-    }
 
     public static void main(String[] args) {
         launch(args);
@@ -103,10 +177,14 @@ public class GameView extends Application {
 
 
 
-
+    /**
+     * a variable taht stores root group foe this view
+     */
     public  Group root;
 
-
+    /**
+     * this method setup card piles in game
+     */
     private  void setupEmptyCardsPostion()
     {
        for(int i=0;i<this.emptyCards.length;i++){
@@ -123,7 +201,10 @@ public class GameView extends Application {
 
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     */
     public  void iniit(Stage primaryStage) throws FileNotFoundException {
 
         root = new Group();
@@ -168,16 +249,28 @@ public class GameView extends Application {
         }
     }
 
+
+    /**
+     * this methos sets image of pile to be empty
+     * @param imageView
+     */
     private  void setEmpty(ImageView imageView)
     {
         imageView.setImage(this.cardImages[this.cardImages.length-1]);
     }
 
+    /**
+     * this methos sets image of pile to be basic uno card
+     * @param imageView
+     */
     private   void setNotEmpty(ImageView imageView)
     {
         imageView.setImage(this.cardImages[this.cardImages.length-2]);
     }
 
+    /**
+     * thi method updates amount of cards text elments of game view
+     */
     private   void updateAmtOfCards()
     {
         Integer[] amtOfCards = this.getAmtOfCards();
@@ -190,12 +283,12 @@ public class GameView extends Application {
 
         }
 
-
-
-
         this.updateOnSize();
     }
 
+    /**
+     * this method setups nick Text elements for game view
+     */
     private void setupNicks() {
         try {
             this.textBox=new Rectangle[this.getAmtOfOpponets()+1];
@@ -281,6 +374,10 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method load all images to from reserauces to game view
+     * @throws FileNotFoundException
+     */
     private void loadImages() throws FileNotFoundException {
         int iterator=0;
 
@@ -362,6 +459,11 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method load image of card provide in url to a specific postion in iimage table
+     * @param url
+     * @param positonInTable
+     */
     private   void loadCard(String url, int positonInTable)
     {
         try{
@@ -381,6 +483,9 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this methos updates card global scale based on window size
+     */
     private   void updateCardScale()
 {
     double scaleFactor=7;
@@ -393,7 +498,10 @@ public class GameView extends Application {
 }
 
 
-
+    /**
+     * this method returns amount of opponetsn for game view setup
+     * @return
+     */
     private  int getAmtOfOpponets()
     {
         int amt=0;
@@ -415,46 +523,29 @@ public class GameView extends Application {
     }
 
 
-
+    /**
+     * this method set ups listiners for game view
+     * @param primaryStage
+     */
     private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
-                new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                        updateOnSize();
-                    }
-                }
+                (observable, oldValue, newValue) -> updateOnSize()
         );
 
 
         this.mainScene.heightProperty().addListener(
-                new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                        updateOnSize();
-                    }
-                }
+                (observable, oldValue, newValue) -> updateOnSize()
 
         );
 
         primaryStage.fullScreenProperty().addListener(
-                new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        updateOnSize();
-                    }
-                }
+                (observable, oldValue, newValue) -> updateOnSize()
 
         );
 
         primaryStage.iconifiedProperty().addListener(
-                new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        updateOnSize();
-                    }
-                }
+                (observable, oldValue, newValue) -> updateOnSize()
         );
 
         primaryStage.maxHeightProperty().addListener(new ChangeListener<Number>() {
@@ -649,7 +740,9 @@ public class GameView extends Application {
 
     }
 
-
+    /**
+     * this method calls all update size method when channging scale of window
+     */
     public  void updateOnSize() {
         this.updateBackground();
         this.updateCardScale();
@@ -664,6 +757,9 @@ public class GameView extends Application {
         this.updateWaitSize();
     }
 
+    /**
+     * this method setups button elemnts in game view
+     */
     private void setupButtonShape()
     {
         this.buttonText.setFill(Color.WHITE);
@@ -675,6 +771,9 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method updates button shape and postion based on window size
+     */
     private void upadateButtonShape() {
         double buttonWidth=this.mainScene.getWidth()/8;
 
@@ -694,6 +793,9 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method updates scale and position of cards in hand based on window size
+     */
     private void updateCardsInHandScale() {
         int i=0;
         double width=this.mainScene.getWidth()/3;
@@ -710,13 +812,14 @@ public class GameView extends Application {
             translateTransition.setToX(startPostion+stepMove*i);
             translateTransition.setToY(cardHandPosY);
             translateTransition.play();
-         //   card.setX(startPostion+stepMove*i);
-           // card.setY(cardHandPosY);
             i++;
         }
 
     }
 
+    /**
+     * this emthod update postion and size of text elemts based on window size
+     */
     private void upadateText() {
         double fontSizeparm=5;
         Font font= new Font("Arial",cardWidth/fontSizeparm);
@@ -766,6 +869,9 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method updates card places based on winddow size
+     */
     private void updateEmptyCard() {
         if(this.emptyCards.length<=2)
         {
@@ -803,7 +909,9 @@ public class GameView extends Application {
         }
     }
 
-
+    /**
+     * this method updates background sze based on window size
+     */
     private  void updateBackground() {
         if(this.guiController.activeScenes== GuiController.SCENES.GAME) {
 
@@ -812,6 +920,10 @@ public class GameView extends Application {
         }
     }
 
+    /**
+     * this emthod updates guide color  to show color of card on table stack
+     * @param card
+     */
     private  void setTopGlow(UnoCard card)
     {
 
@@ -832,36 +944,14 @@ public class GameView extends Application {
         //DropShadow shadow=new DropShadow(10,color);
         this.setGuideColor(color);
 
-       // this.emptyCards[0].setEffect(shadow);
-        //this.updateGlowSize();
-       // this.updateOnSize();
-    }
-
-    private  void setTopGlow(UnoCard.UNO_COLOR col)
-    {
-        Color color = Color.WHITE;
-        switch (col)
-        {
-            case GREEN: color= Color.LIGHTGREEN;
-                break;
-            case RED: color= Color.RED;
-                break;
-            case YELLOW: color= Color.YELLOW;
-                break;
-            case BLUE: color= Color.BLUE;
-                break;
-            case BLACK: color= Color.BLACK;
-                break;
-        }
-        DropShadow shadow=new DropShadow(10,color);
-
-        this.emptyCards[0].setEffect(shadow);
 
     }
 
 
-
-
+    /**
+     * this method gets nick of all players in game
+     * @return
+     */
     private  List<String> getNick()
     {
         List<String> nicks= new ArrayList<String>();
@@ -873,36 +963,28 @@ public class GameView extends Application {
         return nicks;
     }
 
+    /**
+     * this method get nick of this client player
+     * @return
+     */
     private  String getPlayerNick()
     {
         return this.guiController.clientApp.getNick();
     }
 
+    /**
+     * this mehhod returns how many cards each player has
+     * @return
+     */
     private  Integer[] getAmtOfCards()
     {
         return this.amtOfOpponetsCards;
     }
 
-
-    private  void looadCardsInHand()
-    {
-        List<UnoCard> cards;
-        cards = new ArrayList<UnoCard>();
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,0));
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.YELLOW,0));
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.COLOR, UnoCard.UNO_COLOR.BLACK,0));
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.PLUS2, UnoCard.UNO_COLOR.BLUE,0));
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.PLUS4, UnoCard.UNO_COLOR.BLACK,0));
-        cards.add(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.RED,5));
-
-        for (UnoCard card: cards
-             ) {
-            this.addCard(card);
-        }
-
-
-    }
-
+    /**
+     * this method plays animation to recive new card from pile
+     * @param card
+     */
     public  void addCard(UnoCard card)
     {
         this.guiController.soundPlayer.playDrawCard();
@@ -960,6 +1042,11 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method return indesx of card in image list
+     * @param card
+     * @return
+     */
     private int getIndexOfmage(UnoCard card)
     {
         switch (card.getType())
@@ -985,6 +1072,10 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this methos updates card postioin after entering card area
+     * @param card
+     */
     private void onMouseOnCard(ImageView card)
     {
         TranslateTransition translateTransition= new TranslateTransition();
@@ -994,6 +1085,11 @@ public class GameView extends Application {
        translateTransition.play();
       //  System.out.println("OnCard");
     }
+
+    /**
+     * this mehod updates card position after leaving card area
+     * @param card
+     */
     private  void onMouseOutsideCard(ImageView card)
     {
         TranslateTransition translateTransition= new TranslateTransition();
@@ -1004,6 +1100,10 @@ public class GameView extends Application {
         //System.out.println("OutisideCard");
     }
 
+    /**
+     * this method is called when clicked card. It gets card from hand and calls play card method
+     * @param card
+     */
     private  void onCardClick(ImageView card)
     {
         Image playedImage=card.getImage();
@@ -1023,6 +1123,10 @@ public class GameView extends Application {
        // System.out.println("Click");
     }
 
+    /**
+     * this  method is called also when playing card but its black so also shows color choice panel
+     * @param card
+     */
     private void playBlackCard(ImageView card) {
         if(!isYourTurn)
             this.playCard(card);
@@ -1031,6 +1135,10 @@ public class GameView extends Application {
           this.showChoiceColor(card);
     }
 
+    /**
+     * this method is called when card is clicked and attepts too play on table
+     * @param card
+     */
     private void playCard(ImageView card) {
 
         if(!isChoosingColor && !this.isWaitingForPlayer) {
@@ -1038,12 +1146,7 @@ public class GameView extends Application {
 
             UnoCard unoCard = this.guiController.clientApp.cardsInHand.get(index);
             if (this.CanBePlayed(unoCard) && this.isYourTurn) {
-               /* if (unoCard.getColor() == UnoCard.UNO_COLOR.BLACK)
-                    unoCard.setColor(this.getChoiceOfColor());
 
-                this.waitForColorChoice();
-
-                */
                 this.guiController.soundPlayer.playDrawCard();
                 this.guiController.clientApp.playCard(index + 1, unoCard);
                 double duration = 250;
@@ -1111,13 +1214,18 @@ public class GameView extends Application {
         }
     }
 
-    private void waitForColorChoice() {
-    }
-
+    /**
+     * this method check if this uno card can be played on table
+     * @param card
+     * @return
+     */
     private boolean CanBePlayed(UnoCard card) {
         return this.guiController.clientApp.vaidateCard(card);
     }
 
+    /**
+     * this method udpates button look when mouse enters area of button
+     */
     private  void onMouseOnButton()
     {
 
@@ -1127,7 +1235,9 @@ public class GameView extends Application {
 
 }
 
-
+    /**
+     * this method updates button look when mouse moved outised area of button
+     */
     private  void onMouseOutsideButton()
     {
         this.button.setFill(this.tranparentColor);
@@ -1136,6 +1246,9 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method updates button look when pressed
+     */
     private  void onButtonPresed()
     {
         this.guiController.soundPlayer.playOnButtonClick();
@@ -1143,19 +1256,20 @@ public class GameView extends Application {
 
     }
 
+    /**
+     * this method updates button look when released
+     */
     private  void onButtonRealsed()
     {
         onMouseOnButton();
-       // this.addCard(new UnoCard(UnoCard.UNO_TYPE.REGULAR, UnoCard.UNO_COLOR.GREEN,5));
-     //   this.updateCardsInHandScale();
-       // setOpponentsHand(2,true);
-        //   this.giveCardToOpponent(3);
-      //  System.out.println("click");
-
-     //   this.playCardFromOppoent(5, new UnoCard(UnoCard.UNO_TYPE.BLOCK, UnoCard.UNO_COLOR.GREEN,0));
-    this.surrenderButton();
+        this.surrenderButton();
     }
 
+
+    /**
+     * thi smethod is called when hiting surrender button.
+     * it sends al cards into stack and informs server about it
+     */
     private void surrenderButton() {
         if(!this.isWaitingForPlayer) {
             this.guiController.clientApp.surrender();
@@ -1189,49 +1303,10 @@ public class GameView extends Application {
     }
 
 
-    /*
-    UnoCard.UNO_COLOR getChoiceOfColor()
-    {
-        isChoosingColor = true;
-        synchronized (colorChoiceBlock) {
-
-            //this.showChoiceColor();
-            UnoCard.UNO_COLOR col = UnoCard.UNO_COLOR.BLACK;
-            switch (this.clikcedPanel) {
-                case 1:
-                    col = UnoCard.UNO_COLOR.BLUE;
-                    break;
-                case 2:
-                    col = UnoCard.UNO_COLOR.RED;
-                    break;
-                case 3:
-                    col = UnoCard.UNO_COLOR.YELLOW;
-                    break;
-                case 4:
-                    col = UnoCard.UNO_COLOR.GREEN;
-                    break;
-            }
-            isChoosingColor = false;
-            this.colorChoiceBlock.notify();
-            return col;
-        }
-
-    }
-
+    /**
+     * this method sets stack pile to be emtoy or filled
+     * @param isFilled
      */
-
-    private  void setStackStable(boolean isFilled)
-    {
-        if(isFilled)
-        {
-            this.emptyCards[0].setImage(this.cardImages[this.cardImages.length-2]);
-        }
-        else
-        {
-            this.emptyCards[0].setImage(this.cardImages[this.cardImages.length-1]);
-        }
-    }
-
     private  void setStackPile(boolean isFilled)
     {
         try {
@@ -1246,18 +1321,10 @@ public class GameView extends Application {
         }
     }
 
-    private void setOpponentsHand(int nbOfOppoenent, boolean isFilled)
-    {
-        if(isFilled)
-        {
-            this.emptyCards[nbOfOppoenent+2].setImage(this.cardImages[this.cardImages.length-2]);
-        }
-        else
-        {
-            this.emptyCards[nbOfOppoenent+2].setImage(this.cardImages[this.cardImages.length-1]);
-        }
-    }
-
+    /**
+     * this method sets image of card on top of table stack
+     * @param card
+     */
     public void setCardOnTable(UnoCard card)
     {
         this.emptyCards[0].setImage(this.cardImages[this.getIndexOfmage(card)]);
@@ -1265,7 +1332,10 @@ public class GameView extends Application {
     }
 
 
-
+    /**
+     * this method play animation to add card to opponent in specific postioin an updates number of cards
+     * @param nbOfOpponent
+     */
     public void giveCardToOpponent(int nbOfOpponent)
     {
         double duration=250;
@@ -1335,11 +1405,21 @@ public class GameView extends Application {
 
 
 
-    // Color Choice panel
-
+    //////////////////////// Color Choice panel
+    /**
+     * this variable contains loades color panel images
+     */
     private  Image[] colorChoicePanel;
-    private  List<ImageView> colorPanel= new ArrayList<ImageView>();
-    private  int clikcedPanel=0;
+    /**
+     * this varaible contains images to view color panel
+     */
+    private final List<ImageView> colorPanel= new ArrayList<ImageView>();
+
+    /**
+     * this method shows color choice panel and locks other elements of gui
+     * @param card
+     * @return
+     */
     private  int showChoiceColor(ImageView card)
     {
 if(!this.isWaitingForPlayer) {
@@ -1408,6 +1488,10 @@ if(!this.isWaitingForPlayer) {
 
     }
 
+
+    /**
+     * this method updates scale of color panel based on window size
+     */
     private void updateColorPanelScale() {
         if(this.isChoosingColor) {
             double centerX = mainScene.getWidth() / 2;
@@ -1438,20 +1522,32 @@ if(!this.isWaitingForPlayer) {
     }
 
 
-
+    /**
+     * this method add slecting effects when mouse entred color panel
+     * @param panel
+     */
     private   void onPanelEntterd(ImageView panel)
     {
        panel.setEffect(new Bloom());
     }
 
+    /**
+     * this method removes selcting effect when exited color panel
+     * @param panel
+     */
     private  void onPanelExited(ImageView panel)
     {
         panel.setEffect(null);
     }
 
+    /**
+     * this method id called when person clicked on a color chocie panel and set chosen color
+     * @param panel
+     * @param card
+     */
     private  void onPanelClicked(ImageView panel, ImageView card)
     {
-        this.clikcedPanel=this.colorPanel.indexOf(panel);
+        int clikcedPanel = this.colorPanel.indexOf(panel);
 
         for(int i=0;i<this.colorPanel.size();i++)
         {
@@ -1463,7 +1559,7 @@ if(!this.isWaitingForPlayer) {
         int index=this.cardsInHand.indexOf(card);
 
         UnoCard playedCard=this.guiController.clientApp.cardsInHand.get(index);
-        switch (this.clikcedPanel)
+        switch (clikcedPanel)
         {
             case 0: playedCard.setColor(UnoCard.UNO_COLOR.BLUE);
                 break;
@@ -1480,6 +1576,11 @@ if(!this.isWaitingForPlayer) {
 
     }
 
+    /**
+     * this method plays animation nad updates cards when card played from provided player
+     * @param nbOfOppoonent
+     * @param card
+     */
     public  void playCardFromOppoent(int nbOfOppoonent, UnoCard card)
     {
         try {
@@ -1546,7 +1647,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-
+    /**
+     * this method set glow to text of specific index
+     * @param index
+     */
     private  void setTurnGlow(int index)
     {
         int i;
@@ -1559,7 +1663,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-
+    /**
+     * this method set turn to player provide in arugment including seting guide turn and glow
+     * @param nick
+     */
     public  void setTurn(String nick)
     {
         int index=0;
@@ -1586,17 +1693,28 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method sets guide turn text to be provided text
+     * @param txt
+     */
     private  void setGuideNickText(String txt)
     {
         this.turnText.setText(txt);
         updateGuidesSize();
     }
 
-
+    /**
+     * this method set image of player pile to be empty
+     * @param indexPLayer
+     */
     public void setPlayerEmptyPile(int indexPLayer) {
     this.setEmpty(this.emptyCards[2+indexPLayer]);
     }
 
+    /**
+     * this method handles operation of player surrending inculidng chagnig is amount of cards and playing animation
+     * @param index
+     */
     public void handleSurrender(int index) {
         this.amtOfOpponetsCards[index]=0;
         this.updateAmtOfCards();
@@ -1628,15 +1746,19 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-
-
+///////////////////////////////////// help button
+    /**
+     * a method called when mouse moved on help button
+     */
     private  void onHelpMoved()
     {
         helpButton.setFill(Color.WHITE);
         helpButtonText.setFill(Color.BLACK);
 
     }
-
+    /**
+     * a method called when mouse moved outide helpp button
+     */
     private  void onHelpMovedOutside()
     {
 
@@ -1645,7 +1767,9 @@ catch (ArrayIndexOutOfBoundsException e)
         this.helpButtonText.setFill(Color.WHITE);
 
     }
-
+    /**
+     * a method called when help clicked
+     */
     private  void onHelpBasicClick()
     {
 
@@ -1654,7 +1778,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
     }
-
+    /**
+     * a method that runs when mouse released from help button
+     */
     private   void onHelpReelased()
     {
         this.guiController.switchSceneToInstruction();
@@ -1664,7 +1790,9 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-
+    /**
+     * a mehtod that setup help button elemnt
+     */
     private void setupHelpButton() {
         this.helpButton = new Rectangle();
         this.helpButton.setFill(this.tranparentColor);
@@ -1679,6 +1807,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * a method that updats size of help button based on window size
+     */
     private void updateHelpButtonSize() {
 
         double screenRation=25;
@@ -1699,23 +1830,31 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
-
-
-
-
-
 //////////////////////////////////////// setup guides
 
 
+    /**
+     * this method hold lement of base for guides
+     */
     private  Polygon guideBaseTop;
 
+    /**
+     * this mehtod hold polygon element of color for guide
+     */
     private  Polygon guideColor;
+    /**
+     * this variable holds arrow polygon element of javafx
+     */
     private Polygon guideArrow;
-
+    /**
+     * this method holds elemnts of text turn in guide element in game view
+     */
     private Text turnText;
 
 
-
+    /**
+     * this method updates guides size and position based on window size
+     */
     private void updateGuidesSize()
     {
         try {
@@ -1775,37 +1914,51 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this varaible dtermins wideth size ration for game guides
+     */
     final private double guideWidht=200;
+    /**
+     * this varaible dtermins height size ration for game guides
+     */
     final private double guideHeight=10;
-    final private double guideTrapezoidDiff=12.5;
 
+    /**
+     * this boolean golds order of turns for guide
+     */
     private  boolean isTurnInOrder=true;
 
+    /**
+     * this method negeate turn order for guides
+     */
     private void swapTurnGuide()
     {
         this.isTurnInOrder=!isTurnInOrder;
         updateGuidesSize();
     }
 
-
+    /**
+     * this method setups guide elemnts in game view
+     */
     private void setupGuides()
     {
 
+        double guideTrapezoidDiff = 12.5;
         Double[] points = new Double[]{
                 0.0,0.0,
                 guideWidht,0.0,
-                guideWidht-guideTrapezoidDiff,guideHeight,
-                0+ guideTrapezoidDiff*2,guideHeight,
+                guideWidht- guideTrapezoidDiff,guideHeight,
+                0+ guideTrapezoidDiff *2,guideHeight,
         };
 
         Double[] arrowPointsp = new Double[]{
-                guideTrapezoidDiff*2,guideTrapezoidDiff/3,
-                guideTrapezoidDiff*2,guideHeight-guideTrapezoidDiff/3,
-                guideTrapezoidDiff*-1,guideHeight-guideTrapezoidDiff/3,
-                guideTrapezoidDiff*-1,guideHeight*0.8,
-                guideTrapezoidDiff*-1.5,guideHeight/2,
-                guideTrapezoidDiff*-1,guideHeight*(1-0.8),
-                guideTrapezoidDiff*-1,guideTrapezoidDiff/3,
+                guideTrapezoidDiff *2, guideTrapezoidDiff /3,
+                guideTrapezoidDiff *2,guideHeight- guideTrapezoidDiff /3,
+                guideTrapezoidDiff *-1,guideHeight- guideTrapezoidDiff /3,
+                guideTrapezoidDiff *-1,guideHeight*0.8,
+                guideTrapezoidDiff *-1.5,guideHeight/2,
+                guideTrapezoidDiff *-1,guideHeight*(1-0.8),
+                guideTrapezoidDiff *-1, guideTrapezoidDiff /3,
 
                 // 0.0,0.0
 
@@ -1845,7 +1998,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-
+    /**
+     * this method sets guide color in top guides of game view
+     * @param col
+     */
     private  void setGuideColor(Color col)
     {
         this.guideColor.setFill(col);
@@ -1856,26 +2012,40 @@ catch (ArrayIndexOutOfBoundsException e)
     }
 
 
+    /**
+     * this method swaps arrow direction on in top guides of game view
+     */
+
     public void swapTurn() {
         this.swapTurnGuide();
     }
 
-
-
-
 ///////////////////////////////////// chat
-
-
+    /**
+     * this varaible holds javafx element of text field to input chat messeage
+     */
     private  TextField chatArea;
+    /**
+     * this varaible hold javafx elemnts wiht chat logs
+     */
     private  TextArea chatLogs;
+    /**
+     * this varaible dtermins if player is currently writiing in char
+     */
     private boolean isWritingInChat=false;
 
+    /**
+     * this stack holds all meesegae sent during active game
+     */
     private  Stack<Text> popupMess;
-    private  int popupTime=2;
-    private   double fadeTime=2;
+    /**
+     * this varaible determins chat messeage limit
+     */
     private final int limitChat=40;
 
-
+    /**
+     * this method setups chat window for game view
+     */
     private  void setupChat()
     {
         mainScene.getStylesheets().add("Style.css");
@@ -1894,6 +2064,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method is run on tylda button which hides or show chat
+     */
     private   void onTyldaButton()
     {
         Platform.runLater(new Runnable() {
@@ -1913,6 +2086,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method show chat view and hides popup messegees
+     */
     private void showChat()
     {
 
@@ -1926,6 +2102,10 @@ catch (ArrayIndexOutOfBoundsException e)
             popup.setVisible(false);
         }
     }
+
+    /**
+     * this method hides chat and set view to popup messeages
+     */
     private void hideChat()
     {
         chatArea.setVisible(false);
@@ -1940,6 +2120,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method sets formatting for chat
+     */
     private  void setupChatFormatting()
     {
 
@@ -1964,6 +2147,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
 
     }
+
+    /**
+     * this method sends mesege from meessegae window to server
+     */
     private  void sendMessage()
     {
         if(this.chatArea.getLength()>0) {
@@ -1973,6 +2160,9 @@ catch (ArrayIndexOutOfBoundsException e)
         }
     }
 
+    /**
+     * this method updates size an postion of chat elements based on window size
+     */
     private  void updateChatSize()
     {
         double height= this.mainScene.getHeight()/45;
@@ -2011,6 +2201,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method adds messegaes to chat log after pressing ~
+     * @param chatMesseage
+     */
 
       public void addChatLog(ChatMesseage chatMesseage) {
         Platform.runLater(new Runnable() {
@@ -2024,6 +2218,10 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * this method adds popup messeage after reciving messeage from server
+     * @param chatMesseage
+     */
     private   void addPopupMesseage(ChatMesseage chatMesseage)
     {
 
@@ -2039,6 +2237,7 @@ catch (ArrayIndexOutOfBoundsException e)
         this.root.getChildren().add(text);
         updateChatSize();
 
+        int popupTime = 2;
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(popupTime), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -2049,8 +2248,13 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
+    /**
+     * a method called to remove text element from scene after defined time amount
+     * @param text
+     */
     private void removePopup(Text text)
     {
+        double fadeTime = 2;
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(fadeTime));
         fadeTransition.setNode(text);
         fadeTransition.setFromValue(1.0);
@@ -2076,15 +2280,28 @@ catch (ArrayIndexOutOfBoundsException e)
 //////////////////////////////////////////////// waitig processing
 
 
+    /**
+     * boolean variable to deteremine if server is still waiting for some players
+     */
     public   boolean isWaitingForPlayer=false;
-
-    private List<Rectangle> waitBackGrounds = new ArrayList<Rectangle>();
-    private   List<Text> waitTexts = new ArrayList<Text>();
+    /**
+     * a list to containg dark backgrounds elemnts for waiting lock
+     */
+    private final List<Rectangle> waitBackGrounds = new ArrayList<Rectangle>();
+    /**
+     * a list conataing javafx text elemnents that serer waits for
+     */
+    private final List<Text> waitTexts = new ArrayList<Text>();
+    /**
+     * wait list containng nick of players that peapole wait for
+     */
     public  List<String> nicksWaiting = new ArrayList<String>();
 
 
-
-
+    /**
+     * a method used to start waiting process for specific player
+     * @param nick
+     */
     public  void startWaiting(String nick)
     {
         Platform.runLater(new Runnable() {
@@ -2110,7 +2327,9 @@ catch (ArrayIndexOutOfBoundsException e)
 
     }
 
-
+    /**
+     * a method used to update size of wait list lock
+     */
     private  void updateWaitSize()
     {
         int amtOfwaits=waitBackGrounds.size();
@@ -2130,6 +2349,11 @@ catch (ArrayIndexOutOfBoundsException e)
         }
     }
 
+    /**
+     * a method usd to determiine wait index in wait list based on nick
+     * @param nick
+     * @return
+     */
     private  int findIndexOfWait(String nick)
     {
         int indx=0;
@@ -2141,6 +2365,11 @@ catch (ArrayIndexOutOfBoundsException e)
         return indx;
     }
 
+    /**
+     * a method to update text on wait screen
+     * @param nick
+     * @param sec
+     */
     public void updateWaitText(String nick,int sec)
     {
         this.guiController.soundPlayer.playClock();
@@ -2149,6 +2378,10 @@ catch (ArrayIndexOutOfBoundsException e)
         updateWaitSize();
     }
 
+    /**
+     * a method to stop waiting proces from specifc player
+     * @param nick
+     */
     public void stopWaiting(String nick) {
         Platform.runLater(new Runnable() {
             @Override
@@ -2178,10 +2411,5 @@ catch (ArrayIndexOutOfBoundsException e)
 
         });
     }
-
-
-
-
-
 }
 

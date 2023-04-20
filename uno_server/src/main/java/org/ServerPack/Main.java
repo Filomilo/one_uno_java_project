@@ -1,11 +1,16 @@
-package org.example;
+package org.ServerPack;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * main class that start server interaface
+ */
 public class Main {
+    /**
+     * main method to start server interface
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         UiInterface uiInterface= new UiInterface();
         uiInterface.strartInterface();

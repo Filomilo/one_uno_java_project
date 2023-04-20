@@ -1,4 +1,4 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -7,16 +7,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
@@ -27,46 +21,100 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import org.omg.CORBA.INTERNAL;
-import sun.awt.image.GifImageDecoder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import static java.lang.Math.abs;
 
-
+/**
+ * a class taht handles ranking view
+ */
 public class RankView extends Application {
+    /**
+     * a varaible taht store main scene referance
+     */
     private final Scene mainScene;
 
-
-    private  static final String resDir = "uno_client\\src\\main\\resources\\";
-
+    /**
+     * a varaible that stores transparent color for buttons
+     */
     private final Color tranparentColor = new Color(1,0,0,0.0);
+    /**
+     * a varaible that sotes blue color for gradeint base
+     */
     private final Color blueColor = new Color(0,0.1,0.6,1);
+
+    /**
+     * a varaible that stores gradient stops for background
+     */
     private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
+    /**
+     * a varaible that stores button shape
+     */
     private  Rectangle button;
+    /**
+     * a variable that stores button title element
+     */
     private  Text buttonText;
 
+    /**
+     * a varaible that stores text elements for columns titles
+     */
     private final Text[] columnsHeadersText = new Text[3];
+    /**
+     * a varaible taht stores titles for columns in table
+     */
     private final String[] columnsTextFill = new String[] {"nb.", "Nick","wins"};
+    /**
+     * a varaible that stores lines sperating each record in ranking table
+     */
     private  Line[] linesMainSeparetor;
+    /**
+     * a varaible that stores texts for nick columns in table
+     */
     private  Text[] nicksRank;
+    /**
+     * a varaible that stores amount of wins colums in ranking table
+     */
     private  Text[] amtOfWinsText;
+    /**
+     * a varaible that stores ranking numbers on ranking table
+     */
     private  Text[] rankNbText;
+    /**
+     * a varaible taht stoes lines sepreating each entry in ranking
+     */
     private  Line[] rowLineSeperator;
 
 
+    /**
+     * a varaible that stores base for table with ranking
+     */
     private Rectangle rankViewBase;
+    /**
+     * a varaible taht stores amount of scroll on table
+     */
     double scrollAmount=0;
+    /**
+     * a varaible that stores gradeint for background
+     */
     private RadialGradient gradient;
+    /**
+     * a varaible taht stores mask for round corners of table
+     */
     private Shape mask;
-
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
     private final GuiController guiController;
 
+    /**
+     * a constructor to setup base referances for this view
+     * @param guiController
+     * @param mainScene
+     */
     public RankView(GuiController guiController, Scene mainScene) {
         this.guiController= guiController;
         this.mainScene=mainScene;
@@ -78,7 +126,9 @@ public class RankView extends Application {
     }
 
 
-
+    /**
+     * a variable taht stores root group foe this view
+     */
     public  Group root;
 
 
@@ -101,7 +151,11 @@ public class RankView extends Application {
         this.updateOnSize();
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     * @throws IOException
+     */
     public void iniit(Stage primaryStage) throws IOException, URISyntaxException {
         root = new Group();
 
@@ -117,12 +171,18 @@ public class RankView extends Application {
 
     }
 
+    /**
+     * a method that sets up mask for round corners of table
+     */
     private void setupMask() {
         this.mask = new Rectangle();
         this.mask.setFill(Color.RED);
         this.root.getChildren().add(this.mask)
 ;    }
 
+    /**
+     * a method taht setsupu rankview for ciew
+     */
     private void setupRankView() {
 
 
@@ -192,7 +252,9 @@ public class RankView extends Application {
 
     }
 
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
@@ -465,7 +527,9 @@ public class RankView extends Application {
 
     }
 
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     public void updateOnSize()
     {
         int miliSec=10;
@@ -492,6 +556,9 @@ public class RankView extends Application {
 
     }
 
+    /**
+     * a method that updats scale of rank table based on window size
+     */
     private  void updateMainRank()
     {
         double scaleY=0.9;
@@ -508,6 +575,9 @@ public class RankView extends Application {
 
     }
 
+    /**
+     * a method that updates mask size based on window size
+     */
     private void updateMask()
     {
         int index = this.root.getChildren().indexOf(this.mask);
@@ -521,6 +591,9 @@ public class RankView extends Application {
         this.root.getChildren().set(index,this.mask);
     }
 
+    /**
+     * a method tath updates records size based on window size
+     */
     private void updateRecordsTextSize() {
 
         Font font = this.columnsHeadersText[0].getFont();
@@ -581,7 +654,9 @@ public class RankView extends Application {
 
 
     }
-
+    /**
+     * method that updates size of text based windows size
+     */
     private void updateHeaderTextSize() {
         double scaleGuide=this.mainScene.getWidth()>this.mainScene.getHeight()?this.mainScene.getHeight():this.mainScene.getWidth();
         double fontSize= scaleGuide/20;
@@ -624,7 +699,9 @@ public class RankView extends Application {
 
     }
 
-
+    /**
+     * method that update size backgournd
+     */
     private  void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.RANK) {
@@ -635,7 +712,9 @@ public class RankView extends Application {
             mainScene.setFill(gradient);
         }
     }
-
+    /**
+     * a method taht setups buton elemnts of this view
+     */
     private void setupButton() {
         this.button=new Rectangle();
         this.button.setFill(this.tranparentColor);
@@ -649,6 +728,10 @@ public class RankView extends Application {
 
 
     }
+
+    /**
+     * a method that updates button on size depending on window size
+     */
     private void updateButtonSize() {
         double buttonHeight=(this.mainScene.getHeight()<this.mainScene.getWidth()?this.mainScene.getHeight():this.mainScene.getWidth())/20;
         this.button.setHeight(buttonHeight);
@@ -666,13 +749,19 @@ public class RankView extends Application {
 
 
     }
+    /**
+     * method that is run when moved outside return button
+     */
+
     private void onMoveOutsideButton()
     {
         this.button.setFill(this.tranparentColor);
         this.buttonText.setFill(Color.WHITE);
         //System.out.println("outside Button");
     }
-
+    /**
+     * method that is run when mouse pushed from return button
+     */
     private void onButtonPush()
     {
         this.guiController.soundPlayer.playOnButtonClick();
@@ -680,6 +769,9 @@ public class RankView extends Application {
         //System.out.println("push");
     }
 
+    /**
+     * method that is run when mouse relsed from return button
+     */
     private void onButtonRelease()
     {
         System.out.println("realse");
@@ -688,6 +780,9 @@ public class RankView extends Application {
         this.guiController.switchScenetoMain();
     }
 
+    /**
+     * a method taht runs on mouse move on button
+     */
     private void onMoveOnButton()
     {
         //System.out.println("on button");
@@ -695,6 +790,10 @@ public class RankView extends Application {
         this.buttonText.setFill(Color.BLACK);
     }
 
+    /**
+     * a method taht runs when sroling on ranking view
+     * @param event
+     */
     private void onScrollMainRank(ScrollEvent event)
     {
         this.scrollAmount+=event.getDeltaY();
@@ -704,12 +803,20 @@ public class RankView extends Application {
         this.updateRecordsTextSize();
     }
 
+    /**
+     * a method taht retuens score for ranking
+     * @return
+     */
     private  int[] getScoreArray()
     {
      return this.guiController.clientApp.rankingwinsAmt;
 
     }
 
+    /**
+     * a method that returns nicks in ranking view
+     * @return
+     */
     private String[] getNicksArray()
     {
                return this.guiController.clientApp.rankingNicks;

@@ -1,84 +1,132 @@
 ///todo: napraiwc blad przekorczeonej ilosci kursow
 
-package org.example;
+package org.ServerPack;
 
+/**
+ * A class created for holding sql scripts
+ */
 public class SqlScripts {
 
+    /**
+     * sql script to get all cards from table stack
+     */
     public static String TableStackViewScript=
     "SELECT * FROM Table_stack_view";
 
+    /**
+     * sql script to get all cards from stack
+     */
     public static String MainStackViewScript=
             "SELECT * FROM stack_view";
 
+    /**
+     * sql script to check if nick is alrady used by another player
+     */
     public static String validateNick=
             "SELECT count(*) FROM PLAYERS\n" +
                     "WHERE NICK=?";
 
+    /**
+     * sql cript to validate login data
+     */
     public static String validatePass=
             "SELECT count(*) FROM PLAYERS\n" +
                     "WHERE NICK= ? \n" +
                     "AND PASS = ?";
+    /**
+     * sql script t get results from recent game
+     */
     public static String getResult=
             "SELECT * FROM RESULTS";
 
-
+    /**
+     * sql script to add new player account to database
+     */
     public static String AddPlayerScript =
             "{call ADD_PLAYER(?,?)}";
 
+    /**
+     * sql script to fill cards table with basic cards
+     */
     public static String FillBaseCardsScripts=
             "{call FILL_BASE_CARDS}";
     public static String CreateNewGameScripts=
             "{call CREATE_NEW_GAME(?)}";
-
+    /**
+     * sql script to add player to active game
+     */
     public static String AddPlayerToGameScript =
             "{call ADD_PLAYER_TO_GAME(?)}";
 
+    /**
+     * sql script to prepere deck for game
+     */
     public static String PreapareDeckScript=
             "{call PREPEARE_DECK}";
+    /**
+     * sql script to execute procedure to deal all cards
+     */
     public static String DealCardScript=
             "{call DEAL_CARDS}";
+    /**
+     * sql sript to execute procedure to play card from player hand
+     */
     public static String PlayCardScript=
             "{call PLAY_CARD(?,?)}";
-
+    /**
+     * sql script to execute procedure to reshuffle cards
+     */
     public static String ReshuffleDeck=
             "{call RESHUFFLE_STACK}";
+    /**
+     * sql sciprt to execute procedure to draw card from stack
+     */
     public static String DrawCardScript=
             "{call DRAW_CARD(?)}";
-
+    /**
+     * sql sciprt to execute to surrender scirpt on a player
+     */
     public static String SurrenderScript=
             "{call SURRENDER(?)}";
-
+    /**
+     * sql script to execute procedures to set rank of a player in result
+     */
     public static String SetRankScript=
             "{call SET_RANK(?)}";
 
-    public static String ClearGameSrript=
-            "{call CLEAR_GAME}";
 
 
-
+    /**
+     * sql script to get amount of cards on stack
+     */
     public static String GetCardAmtOnStack=
             "{? = call GET_AMT_STACK}";
-    public static String GetPlayerCountScript=
-    "{? = call GET_PLAYER_COUNT}";
 
-    public static String GetNumberOnTableScript=
-            "{? = call  GET_NUMBER_ON_TABLE }";
-
+    /**
+     * sql script to get amount of cards
+     */
     public static String GetAmtOfCardsScript=
             "{? = call  GET_AMT_OF_CARD(?) }";
 
-    public static String ValidateHand=
-            "{? = call VALIDATE_HAND(?)}";
 
+    /**
+     * sql scripts to get amount of cards in hand
+     */
     public static String GetAMtOfCardInHands=
             "Select count(*) from Active_card_places " +
                     "WHERE Active_card_places.NICK LIKE ?";
 
+    /**
+     * sql scripts to get number of active players
+     */
     public static String GetAmtOfActivePlayers="SELECT count(*)  FROM GAMES " +
             "WHERE GAMES_ID = GET_ACTIVE_GAME_ID " +
             "AND RANK=0 " +
             "ORDER BY NICK";
 
+    /**
+     * sql scripts to seelct cards in hand of a player
+     */
     public static String SelectCardsFromHandScript=
             "SELECT  ACTIVE_CARD_PLACES.CARDS_ID, ACTIVE_CARD_PLACES.POSITION, COLOR,TYPE, NUMB  FROM ACTIVE_CARD_PLACES, CARDS "+
                     "WHERE ACTIVE_CARD_PLACES.NICK= ? AND "+
@@ -86,6 +134,9 @@ public class SqlScripts {
                     "ORDER BY POSITION DESC ";
 
 
+    /**
+     * sql scripts to seelct order of nicks in ranking
+     */
     public static String SelectNicksRankingInOrder =
       "SELECT NICK FROM(\n" +
               "SELECT  NICK, sum(RANK) wins FROM (\n" +
@@ -94,6 +145,9 @@ public class SqlScripts {
               "GROUP BY NICK)\n" +
               "ORDER BY WINS DESC";
 
+    /**
+     * sql scripts to select amoutn of wins from data base
+     */
     public static String SelectWinsRankingInOrder =
 "SELECT wins FROM(\n" +
         "SELECT  NICK, sum(RANK) wins FROM (\n" +
@@ -103,6 +157,9 @@ public class SqlScripts {
         "ORDER BY WINS DESC";
 
 
+    /**
+     * sql script to select order of players in game
+     */
     public static String SelectOrderForPlayer=
             "SELECT * FROM( "+
                     "SELECT * FROM( "+
@@ -126,6 +183,9 @@ public class SqlScripts {
                     ") "+
                     ")ORDER BY TURN ";
 
+    /**
+     * sql scripts to create neccesery tables
+     */
     public static String[] CreateTablecSripts={
             "CREATE TABLE PLAYERS(\n" +
                     "NICK VARCHAR(30) PRIMARY KEY,\n" +
@@ -158,6 +218,9 @@ public class SqlScripts {
                     "AND RANK != 0 " +
                     "ORDER BY RANK"
     };
+    /**
+     * sql script to drop al tables from data base
+     */
     public static String[] DropTablecSripts={
             "ALTER TABLE ACTIVE_CARD_PLACES DROP CONSTRAINT cards_nick_fk" ,
                     "ALTER TABLE GAMES DROP CONSTRAINT games_nick_fk" ,
@@ -172,6 +235,9 @@ public class SqlScripts {
                 "DROP TABLE  GAMES"
     };
 
+    /**
+     * sql script to delete data from all tables
+     */
     public static String[] DeleteAllScripts=
     {
         "DELETE FROM ACTIVE_CARD_PLACES"+
@@ -185,6 +251,9 @@ public class SqlScripts {
     };
 
 
+    /**
+     * sql scripts to create views in data base
+     */
     public static String[] CreateViewsScripts=
             {
                     "CREATE OR REPLACE VIEW Table_stack_view AS "+
@@ -206,16 +275,25 @@ public class SqlScripts {
                             ""
             };
 
+    /**
+     * sql scripts to create necceseary sequnaces
+     */
     public static String[] CreateSequencesScripts=
     {
         "CREATE SEQUENCE GAME_ID_SEQ"+
                 "",
     };
+    /**
+     * sql scripts to drop all sequences
+     */
     public static String[] DropSequencesScripts=
             {
                     "Drop SEQUENCE GAME_ID_SEQ"+
                             "",
             };
+    /**
+     * sql script to create Fucntions in database
+     */
     public static String[] CreateFunctions=
     {
         "CREATE OR REPLACE FUNCTION GET_PLAYER_COUNT RETURN NUMBER "+
@@ -305,7 +383,9 @@ public class SqlScripts {
     };
 
 
-
+    /**
+     * sql Scripts to create neccesery procedures in database
+     */
     public static String[] CreateProceduresScripts=
     {
         "CREATE OR REPLACE PROCEDURE ADD_CARD(ID_var  NUMBER, COLOR_var VARCHAR, TYPE_VAR VARCHAR , NUMBER_VAR  NUMBER:=NULL) "+

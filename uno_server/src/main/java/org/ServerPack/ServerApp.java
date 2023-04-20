@@ -1,40 +1,83 @@
-package org.example;
+package org.ServerPack;
 
-import com.sun.xml.internal.ws.api.model.MEP;
+import org.SharedPack.MessageFormat;
+import org.SharedPack.UnoCard;
 
-import javax.swing.text.StyledEditorKit;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * main server class that handles main operaiton for mangaing database, users nad game
+ */
 public class ServerApp {
+    /**
+     * a variables to store port that server connection runs on
+     */
     private  int port;
+    /**
+     * a varaible to store connection manager class
+     */
     private ServerConnectionManager connectionManger;
-
+    /**
+     * a varaivle to store amount of conncted players
+     */
     public  int playersConnected=0;
+    /**
+     * a variable to store amount od players readt
+     */
     public  int playersReady=0;
 
+    /**
+     * a boolan that says if turn order is clockwise or counter clockwise
+     */
     public  boolean clockOrder=true;
+    /**
+     * a varaible to store currecnt turn
+     */
     public int turn=0;
-    private  UnoCard topCard;
+    /**
+     * a varaiable to store top card of table stack
+     */
+    private UnoCard topCard;
 
+    /**
+     * gets top card from table stack
+     * @return
+     */
     public UnoCard getTopCard() {
         return topCard;
     }
 
+    /**
+     * sets topCard of table stack
+     * @param topCard
+     */
     public void setTopCard(UnoCard topCard) {
         this.topCard = topCard;
     }
 
+    /**
+     * a list of player connected to server
+     */
     public List<PlayerData> nicks =new ArrayList<PlayerData>();
+
+    /**
+     * a varaible to store referacne to data base manager
+     */
     public  DataBaseMangaer dataBaseMangaer= new DataBaseMangaer();
+    /**
+     * a varaible to store if game startes
+     */
     public boolean gameStarted=false;
 
     ServerApp()
     {
     }
+
+    /**
+     * a method to start server and server connection
+     */
     public  void  startServer()
     {
         connectionManger = new ServerConnectionManager(this);
@@ -47,6 +90,12 @@ public class ServerApp {
         }
     }
 
+
+    /**
+     * a method to add player to connected players list
+     * @param pLayerData
+     * @return
+     */
     public boolean addPlayer(PlayerData pLayerData)
         {
 
@@ -59,11 +108,18 @@ public class ServerApp {
 
         }
 
+    /**
+     * a method to set port of ther server
+     * @param port
+     */
     public void setPort(int port) {
         this.port = port;
     }
 
-    //method that shoudl be run when ineting STOP commnad in server terminal to close server
+    /**
+     * a method that actiates afer writing STOP in cosole by player
+     */
+
     void stopServer()
     {
         connectionManger.isServerRunning =false;
@@ -71,18 +127,18 @@ public class ServerApp {
     }
 
 
-    public int getPlayersConnected() {
-        return playersConnected;
-    }
-
-    public void setPlayersConnected(int playersConnected) {
-        this.playersConnected = playersConnected;
-    }
-
+    /**
+     * return amount of players ready
+     * @return
+     */
     public int getPlayersReady() {
         return playersReady;
     }
 
+    /**
+     * sets amount playres ready for game
+     * @param playersReady
+     */
     public void setPlayersReady(int playersReady) {
         this.playersReady = playersReady;
         System.out.println("PLAYERS READY " + this.playersReady);
@@ -101,12 +157,11 @@ public class ServerApp {
     }
 
 
-
-
-
-
-
-
+    /**
+     * a method handles diconnting player and staritng waiting if the player was active in game
+     * @param pLayerData
+     * @throws IOException
+     */
     public  void disconnectPlayer(PlayerData pLayerData) throws IOException {
         this.nicks.remove(pLayerData);
         this.playersConnected--;
@@ -131,7 +186,10 @@ public class ServerApp {
     }
 
 
-
+    /**
+     * an overwrittenr method to used to print server that for debbuging
+     * @return
+     */
     @Override
     public String toString() {
         return "ServerApp{" +
@@ -153,7 +211,13 @@ public class ServerApp {
 
     ////////////////////////////////////////// GAME
 
-
+    /**
+     * a method to give card to a specific player and infrom him and onther pplayer about it
+     * @param card
+     * @param player
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public  void giveCard(UnoCard card, PlayerData player) throws IOException, ClassNotFoundException {
         MessageFormat messageFormat = new MessageFormat();
         MessageFormat messageFormatToAll= new MessageFormat();
@@ -170,6 +234,12 @@ public class ServerApp {
 
     }
 
+    /**
+     * a method to deal cards to all players in data base and get card for each player and inform the player about getting this card
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
     private void dealCards() throws IOException, ClassNotFoundException, InterruptedException {
         System.out.println("preaping DECK");
         this.dataBaseMangaer.preapreDeck();
@@ -204,6 +274,9 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a mthod to create new game in data base and add players to it
+     */
     private void createGame() {
         this.dataBaseMangaer.createNewGame(this.nicks.get(0).getNick());
         for(int i=1;i<this.nicks.size();i++)
@@ -212,17 +285,13 @@ System.out.println("giving cards");
         }
     }
 
-    private void setEveryoneNotReady()
-    {
-        this.playersReady = 0;
-        for (PlayerData player: nicks
-             ) {
-            player.setReady(false);
-        }
-    }
-
     public boolean isInStratingProces=false;
 
+    /**
+     * a mthod taht prepares game for play and infroms players to also prepere game
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private  void startGame() throws IOException, ClassNotFoundException {
         isInStratingProces=true;
         try {
@@ -261,6 +330,9 @@ System.out.println("giving cards");
         isInStratingProces=false;
     }
 
+    /**
+     * a method taht set new card on table stack and informs players about it
+     */
     private  void setTopCard()
     {
 
@@ -282,7 +354,10 @@ System.out.println("giving cards");
 
     }
 
-
+    /**
+     * a method that set new turn and iforms players about it
+     * @throws IOException
+     */
     public  void setTurn() throws IOException {
 
 
@@ -300,6 +375,11 @@ System.out.println("giving cards");
         //this.connectionManger.finishGame();
     }
 
+    /**
+     * a method taht sends to all playres nick of players that takes part in this game
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private  void sendPlayerOrder() throws IOException, ClassNotFoundException {
         System.out.println("NICKS: " + this.nicks + "\n");
         for (PlayerData player : this.nicks) {
@@ -320,19 +400,29 @@ System.out.println("giving cards");
     }
 
 
-
+    /**
+     * a method that inreases turn number
+     */
     public   void incrTurn()
     {
         this.turn++;
         if(this.turn>=this.nicks.size())
             this.turn=0;
     }
+
+    /**
+     * a method that decresing turn number
+     */
     public  void decrTurn()
     {
         this.turn--;
         if(this.turn<0)
             this.turn=this.nicks.size()-1;
     }
+
+    /**
+     * a method that caclucates new turn in game
+     */
     private  void nextTurn()
     {
 
@@ -347,7 +437,10 @@ System.out.println("giving cards");
             nextTurn();
     }
 
-
+    /**
+     * a method that checks if player has some cards to play and if not draws for him cards from deck
+     * @param playerData
+     */
     private void validateHand(PlayerData playerData)
     {
         UnoCard topCard=this.getTopCard();
@@ -408,6 +501,10 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a method that draws card for a scpecific player
+     * @param playerData
+     */
     private void drawCard(PlayerData playerData) {
         try {
 
@@ -427,6 +524,9 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a mthod taht resshudle deck in data base and infomrs other player about it
+     */
     private void reshuffleDeck() {
         this.dataBaseMangaer.reshuffleDeck();
 
@@ -441,6 +541,11 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a method that handles player surreneding from game
+     * @param playerData
+     * @throws IOException
+     */
     public void surrender(PlayerData playerData) throws IOException {
         this.dataBaseMangaer.surrender(playerData.getNick());
         MessageFormat messageFormat= new MessageFormat();
@@ -467,6 +572,10 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a method that sennds ranking data to player that equested it
+     * @param playerData
+     */
     public void sendRanking(PlayerData playerData) {
 
         List<Integer> numbers= this.dataBaseMangaer.getAmtOfWinsRaning();
@@ -491,6 +600,11 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a method that send communiact to specific players about messseage sent abount antoher player
+     * @param playerData
+     * @param s
+     */
     public void sendChatMess(PlayerData playerData, String s) {
         try {
 
@@ -505,10 +619,9 @@ System.out.println("giving cards");
         }
     }
 
-    public void handleWaitForPlayer(String nick) {
-        System.out.print("WAITNG FOR ");
-    }
-
+    /**
+     * a method that sends to shut game messeage to all the players when problem occured
+     */
     public void shutGame() {
 
         try {
@@ -521,6 +634,10 @@ System.out.println("giving cards");
         }
     }
 
+    /**
+     * a method that send messeages required for a player to have the same data as the other players after reconnecting
+     * @param pLayerData
+     */
     public void catchUp(PlayerData pLayerData) {
 
         try {
@@ -543,6 +660,10 @@ System.out.println("giving cards");
         }
     }
 
+    /**
+     * a method that send to chosen player messeages with all the cards taht it holds in hand
+     * @param pLayerData
+     */
     private void sendCardsInHand(PlayerData pLayerData) {
         List<UnoCard> cards= this.dataBaseMangaer.selectFromHand(pLayerData.nick);
         for (UnoCard card: cards
@@ -560,6 +681,12 @@ System.out.println("giving cards");
 
     }
 
+    /**
+     * a method to check if nick of user i alrady taken
+     * @param nick
+     * @param pass
+     * @return
+     */
     public Boolean validateRegistration(String nick, String pass) {
         Boolean isNotTaken=this.dataBaseMangaer.validateNick(nick);
         if(!isNotTaken)
@@ -571,10 +698,21 @@ System.out.println("giving cards");
         return true;
     }
 
+    /**
+     * a method to vlaidate nick and passowrd login
+     * @param nick
+     * @param pass
+     * @return
+     */
     public Boolean validateLogin(String nick, String pass) {
         return this.dataBaseMangaer.validatePass(nick,pass);
     }
 
+    /**
+     * method to check if a player of that nick is alray logged to server
+     * @param nick
+     * @return
+     */
     public boolean checkIfAlradyLogged(String nick)
     {
         Boolean res=false;

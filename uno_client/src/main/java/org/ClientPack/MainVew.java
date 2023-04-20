@@ -1,113 +1,131 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.binding.When;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import org.omg.CORBA.WStringSeqHelper;
 
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-import java.util.concurrent.TimeUnit;
 
-
+/**
+ * a class that handles main view
+ */
 public class MainVew extends Application {
 
+    /**
+     * a varaible taht store main scene referance
+     */
     private Scene mainScene;
-
+    /**
+     * a varaibles that stores information if players connected to server
+     */
     private boolean isConnected=false;
+    /**
+     * a varaibles that stores information if playres declared him self as ready
+     */
     public  Boolean isReady=false;
-    private  final int startH=720;
-    private  final int startW=1280;
-    private static final String resDir = "uno_client\\src\\main\\resources\\";
 
+    /**
+     * a varaible that stores transparent color for buttons
+     */
     public  Color tranparentColor = new Color(1,0,0,0.0);
-    private  Color blueColor = new Color(0,0.1,0.6,1);
-    private  Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    /**
+     * a varaible that sotes blue color for gradeint base
+     */
+    private final Color blueColor = new Color(0,0.1,0.6,1);
 
+    /**
+     * a varaible that stores gradient stops for background
+     */
+    private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
+    /**
+     * a that stores locks for each controller
+     */
     private boolean[] activeControles;
 
 
 
-
+    /**
+     * a araible taht stores communicat status text
+     */
     private Text connectionStatusText;
+    /**
+     * a araible taht stores communicat text
+     */
     public  Text communicatText;
+    /**
+     * a varaible that stores status text
+     */
     private Text readyStatusText;
 
 
     public static void main(String[] args) {
         launch(args);
     }
-
-    private  Image unoLogo;
+    /**
+     * a araible that stores logo image
+     */
     private ImageView unoLogoView;
 
-
+    /**
+     * a araible taht stores buttons text for titles
+     */
     public  String[] buttonsTexts ={"Connect","Ready","Ranking","Exit"};
+    /**
+     * a araible taht stores buttons titles
+     */
     public Text[] buttonTitles = new Text[buttonsTexts.length];
+    /**
+     * a araible taht stores buttons shapes
+     */
     public  Rectangle[] buttons = new Rectangle[buttonsTexts.length];
-    private  final float buttonSizeRatio=9;
-    private final float buttonHeightToScreenRatio=12;
 
-
-
+    /**
+     * a varialbe that stores help button shape
+     */
     private  Rectangle helpButton;
+    /**
+     * a varaible that stores txet of help button
+     */
     private Text helpButtonText;
 
 
 
-
+    /**
+     * a variable taht stores root group foe this view
+     */
 
     public Group root;
-
-    private GuiController guiController;
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
+    private final GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -124,7 +142,11 @@ public class MainVew extends Application {
 
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     * @throws IOException
+     */
     public void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
 
 
@@ -145,6 +167,9 @@ public class MainVew extends Application {
         this.updateLocks();
     }
 
+    /**
+     * a mehtod that setup help button elemnt
+     */
     private void setupHelpButton() {
         this.helpButton = new Rectangle();
         this.helpButton.setFill(this.tranparentColor);
@@ -159,6 +184,9 @@ public class MainVew extends Application {
 
     }
 
+    /**
+     * a method that updats size of help button based on window size
+     */
     private void updateHelpButtonSize() {
 
         double screenRation=25;
@@ -178,12 +206,18 @@ public class MainVew extends Application {
 
     }
 
+    /**
+     * a method that setups lock for buttons
+     */
     private void setupLock() {
        this.activeControles = new boolean[]{true, true, true, true, false, false, true};
     //    this.activeControles = new boolean[]{false, false, false, false, false, false, false};
        // this.updateLocks();
     }
 
+    /**
+     * a method taht updates look of buttons based on if they are locked
+     */
     public void updateLocks() {
 
         System.out.println("LOCK UPDATE: " + Arrays.toString(this.activeControles) + "\n");
@@ -202,6 +236,9 @@ public class MainVew extends Application {
 
     }
 
+    /**
+     * a mtohed that setup status txt elements
+     */
     private void setupStatusText() {
 
         this.connectionStatusText= new Text();
@@ -220,7 +257,9 @@ public class MainVew extends Application {
         
     }
 
-
+    /**
+     * a method that setups sets status as connected
+     */
     public  void setStatusConnected()
     {
         this.isConnected=true;
@@ -239,13 +278,18 @@ public class MainVew extends Application {
         this.updateButtonsSize();
 
     }
-
+    /**
+     * a method that setups sets status as connecting
+     */
     public  void setStatusConnecting()
     {
         this.connectionStatusText.setText("Trying to connect");
         this.connectionStatusText.setFill(Color.YELLOW);
     }
 
+    /**
+     * a method that setups sets status as disconnected
+     */
     private void setStatusDiscconnted()
     {
         this.isConnected=false;
@@ -266,13 +310,12 @@ public class MainVew extends Application {
 
 
 
-    private  void setupTextFiledTitle(Text text)
-    {
-    text.setFill(Color.WHITE);
-    }
 
-
-
+    /**
+     * a method taht sets players ready and players connect in bottom right corner
+     * @param ready
+     * @param connected
+     */
 
     public void setPlayersReady(int ready, int connected)
     {
@@ -280,24 +323,16 @@ public class MainVew extends Application {
         this.readyStatusText.setText("Players ready " + ready + "/" + connected);
     }
 
-    private void setupTextField(TextField textField)
-    {
-        textField.setStyle("-fx-text-fill: white;");
-       textField.setBackground(Background.EMPTY);
-        textField.setAlignment(Pos.CENTER);
-    }
 
-    private void setupLine(Line line)
-    {
-        line.setStroke(Color.WHITE);
-        line.setStrokeWidth(2);
-        line.setStrokeLineCap(StrokeLineCap.ROUND);
-    }
-
+    /**
+     * a method taht loads and setups images
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     private void setupImages() throws IOException, URISyntaxException {
         //FileInputStream fileInputStream= new FileInputStream(getResource("one_logo.png"));
         InputStream inputStream=getClass().getClassLoader().getResourceAsStream("one_logo.png");
-        this.unoLogo = new Image(inputStream);
+        Image unoLogo = new Image(inputStream);
 
         this.unoLogoView= new ImageView(unoLogo);
         this.unoLogoView.setPreserveRatio(true);
@@ -315,7 +350,9 @@ public class MainVew extends Application {
     public MainVew(GuiController guiController) {
         this.guiController=guiController;
     }
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     private  void addListiners(Stage primaryStage) {
 
        this.mainScene.widthProperty().addListener(
@@ -686,7 +723,9 @@ public class MainVew extends Application {
 
     }
 
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     public  void updateOnSize()
     {
         int miliSec=10;
@@ -715,6 +754,9 @@ delay.play();
 
     }
 
+    /**
+     * a method called to udpate status text size and postion based n window size
+     */
     private void updateStatusText() {
         double fontSize= this.buttonTitles[0].getFont().getSize()/2;
         Font font=new Font("Arial",fontSize );
@@ -737,6 +779,9 @@ delay.play();
 
     }
 
+    /**
+     * a method that updates image size and postioin based window size
+     */
     private  void updateImagesSize()
     {
        this.unoLogoView.setFitHeight(mainScene.getHeight()<mainScene.getWidth()?mainScene.getHeight()/2:mainScene.getWidth()/5.0);
@@ -744,18 +789,23 @@ delay.play();
        this.unoLogoView.setX(mainScene.getWidth()/50.0);
     }
 
+    /**
+     * a method taht updates buttons size and postioins based on window size
+     */
     private  void updateButtonsSize()
     {
         double buttonHeight=0;
 
+        float buttonHeightToScreenRatio = 12;
         if(this.mainScene.getHeight()<this.mainScene.getWidth()) {
-            buttonHeight=(this.mainScene.getHeight() / this.buttonHeightToScreenRatio);
+            buttonHeight=(this.mainScene.getHeight() / buttonHeightToScreenRatio);
         }
         else
         {
-            buttonHeight=(this.mainScene.getWidth() / this.buttonHeightToScreenRatio  );
+            buttonHeight=(this.mainScene.getWidth() / buttonHeightToScreenRatio);
         }
-        double buttonWIdth=buttonHeight * this.buttonSizeRatio;
+        float buttonSizeRatio = 9;
+        double buttonWIdth=buttonHeight * buttonSizeRatio;
         double offset=10;
 
         double initalX=this.mainScene.getWidth()-buttonWIdth-buttonWIdth/5;
@@ -798,6 +848,10 @@ delay.play();
     }
 
 
+    /**
+     * a method that setup buttons shapes
+     */
+
     private  void setupButtons()
     {
         for(int i=0;i<buttons.length;i++){
@@ -813,10 +867,19 @@ delay.play();
 
     }
 
+    /**
+     * a method that setups text parametrs for provided text elements
+     * @param text
+     */
     private  void setupTextParams(Text text)
     {
 text.setFill(Color.WHITE);
     }
+
+    /**
+     * a method that sets up buttons shapes
+     * @param rectangle
+     */
     private  void setupButtonshape(Rectangle rectangle)
     {
         rectangle.setStrokeWidth(1.5);
@@ -824,6 +887,9 @@ text.setFill(Color.WHITE);
         rectangle.setFill(tranparentColor);
     }
 
+    /**
+     * a method that updates background size based window sizee
+     */
     private  void updateBackground()
     {
 
@@ -835,6 +901,11 @@ text.setFill(Color.WHITE);
         }
     }
 
+    /**
+     * a method that returns index of bututon to determines action on general button methos
+     * @param button
+     * @return
+     */
     private int getButtonINdex(Rectangle button)
     {
         int index=0;
@@ -846,6 +917,11 @@ text.setFill(Color.WHITE);
         }
         return index;
     }
+
+    /**
+     * a method called when mouse moved on any button
+     * @param button
+     */
     private  void onButtonMoved(Rectangle button)
     {
 
@@ -859,6 +935,10 @@ text.setFill(Color.WHITE);
         }
     }
 
+    /**
+     * a method called mouse moved outiside every button
+     * @param button
+     */
     private void onButtonMovedOutside(Rectangle button)
     {
         this.guiController.isOnButton.set(false);
@@ -870,6 +950,10 @@ text.setFill(Color.WHITE);
         }
     }
 
+    /**
+     * a mehtod called on every button when clicked
+     * @param button
+     */
     private void onButtonBasicClick(Rectangle button)
     {
         int index=getButtonINdex(button);
@@ -881,6 +965,9 @@ text.setFill(Color.WHITE);
 
     }
 
+    /**
+     * a method called on connect button click
+     */
     private void onButtonConnectClick()
     {
         if(this.activeControles[3]) {
@@ -913,13 +1000,18 @@ text.setFill(Color.WHITE);
         }
     }
 
-
+    /**
+     * a method that sets button not ready to ready
+     */
     public void setButtonReady()
     {
         this.buttonTitles[1].setText("Ready");
         this.updateButtonsSize();
     }
 
+    /**
+     * a method set button ready to not ready
+     */
     private void setButtonNotReady()
     {
         this.buttonTitles[1].setText("Not Ready");
@@ -927,6 +1019,9 @@ text.setFill(Color.WHITE);
     }
 
 
+    /**
+     * a method called on button ready click
+     */
     private void onButtonReadyClick()
     {
         if(this.activeControles[4]) {
@@ -947,6 +1042,9 @@ text.setFill(Color.WHITE);
         }
     }
 
+    /**
+     * a method called on ranking click
+     */
     private void onButtonRankingClick()
     {
         if(this.activeControles[5]) {
@@ -957,6 +1055,9 @@ text.setFill(Color.WHITE);
 
         }
 
+    /**
+     * a method called on button exitr clik
+     */
     private  void onButtonExitClick()
     {
         if(this.activeControles[6]) {
@@ -966,7 +1067,9 @@ text.setFill(Color.WHITE);
     }
 
 
-
+    /**
+     * a method called when mouse moved on help button
+     */
 
     private  void onHelpMoved()
     {
@@ -975,6 +1078,9 @@ text.setFill(Color.WHITE);
 
     }
 
+    /**
+     * a method called when mouse moved outide helpp button
+     */
     private  void onHelpMovedOutside()
     {
 
@@ -984,6 +1090,9 @@ text.setFill(Color.WHITE);
 
     }
 
+    /**
+     * a method called when help clicked
+     */
     private  void onHelpBasicClick()
     {
 
@@ -994,9 +1103,9 @@ text.setFill(Color.WHITE);
     }
 
 
-
-
-
+    /**
+     * a method that runs when mouse released from help button
+     */
     private void onHelpReelased()
 {
     this.guiController.switchSceneToInstruction();

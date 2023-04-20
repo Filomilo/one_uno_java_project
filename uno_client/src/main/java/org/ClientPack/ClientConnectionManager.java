@@ -1,52 +1,92 @@
-//todo: repaier rproblmeoccutign hwen clint starts to connec t discconr ctonnt and then discconr again
 
-package org.example;
+package org.ClientPack;
 
-import com.sun.xml.internal.ws.api.model.MEP;
+import org.SharedPack.MessageFormat;
 
 import java.io.*;
-import java.net.ServerSocket;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.Base64;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * a class that handles client connections with server
+ */
 public class ClientConnectionManager {
-
-    private  String nick;
+    /**
+     * this variable holds socket for server connection
+     */
     private  Socket socket;
+    /**
+     * this variable hold output stream to server
+     */
     private  OutputStream outStream;
+    /**
+     * this variable hold object output stream to server
+     */
     private  ObjectOutputStream objectOutStream;
+    /**
+     * this variable hold input stream to server
+     */
     private   InputStream inStream;
+    /**
+     * this variable hold object input stream to server
+     */
     private   ObjectInputStream objectInStream;
-
+    /**
+     * this varabile stores theread of recvier ot recive messege while server is running
+     */
     private  ReciverHandler reciverHandler;
 
+    /**
+     * this varaible dtermines if messeage was confirmed
+     */
     private  boolean confirmedMesseage=false;
-
+    /**
+     * this variable hold referacne to main class
+     */
     public  ClientApp clientApp;
-
+    /**
+     * this boolean determins if conection with serer was succseful
+     */
     private  boolean conectionResult;
 
 
+    /**
+     * this constructor setups base class with referacne to main client app
+     * @param clientApp
+     */
     public ClientConnectionManager(ClientApp clientApp) {
         this.clientApp = clientApp;
     }
 
+    /**
+     * this method check if conenction result was succesdful
+     * @return
+     */
     public boolean isConectionResult() {
         return conectionResult;
     }
 
+    /**
+     * this method sets connection result
+     * @param conectionResult
+     */
     public void setConectionResult(boolean conectionResult) {
         this.conectionResult = conectionResult;
     }
 
+    /**
+     * this emthod chekcs if client recinved confimed messeage
+     * @return
+     */
     public boolean isConfirmedMesseage() {
         return confirmedMesseage;
     }
 
+    /**
+     * this emthod sends specificly confimed messeage to server
+     * @param confirmedMesseage
+     */
     public void setConfirmedMesseage(boolean confirmedMesseage) {
         synchronized (clientApp.confirmLock) {
             this.confirmedMesseage = confirmedMesseage;
@@ -54,6 +94,11 @@ public class ClientConnectionManager {
         }
     }
 
+    /**
+     * this methid sends provided messege to server
+     * @param messageFormat
+     * @throws IOException
+     */
     public   void sendMessage(MessageFormat messageFormat) throws IOException {
         this.objectOutStream.writeObject(messageFormat);
         this.objectOutStream.flush();
@@ -73,11 +118,21 @@ public class ClientConnectionManager {
         return messageFormat;
     }
 
-    public boolean connectToServer(String ip, int port, String nick, String pass, int choice) throws IOException, ClassNotFoundException {
+    /**
+     * this method tries login or register to server and setup conenction thread if it was ssuccesful
+     * @param ip
+     * @param port
+     * @param nick
+     * @param pass
+     * @param choice
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public boolean connectToServer(String ip, int port, String nick, String pass, int choice) throws  IOException, ClassNotFoundException {
         boolean result = false;
         this.socket = new Socket(ip, port);
         socket.setSoTimeout(100);
-        this.nick = nick;
         this.outStream = socket.getOutputStream();
         this.objectOutStream = new ObjectOutputStream(this.outStream);
         this.inStream = socket.getInputStream();
@@ -87,7 +142,7 @@ public class ClientConnectionManager {
         MessageFormat message = new MessageFormat();
         message.type = MessageFormat.messegeTypes.CONNECT;
         message.text = new String[2];
-        message.text[0] = this.nick;
+        message.text[0] = nick;
         message.text[1]= pass;
         message.number = new int[1];
         message.number[0]=choice;
@@ -109,6 +164,12 @@ public class ClientConnectionManager {
     }
 
 
+    /**
+     * this methdd send disconnect messegage to server and closes all conenctions and connection threads
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
     public void disconnetFromServer() throws IOException, ClassNotFoundException, InterruptedException {
         MessageFormat message=new MessageFormat();
         message.type=MessageFormat.messegeTypes.DISCONNECT;
@@ -123,6 +184,9 @@ public class ClientConnectionManager {
         socket.close();
     }
 
+    /**
+     * this method goes into loop until gets confimation messeaeg
+     */
     private void waitTillconfirmed()
     {
         while(!isConfirmedMesseage())
@@ -135,6 +199,11 @@ public class ClientConnectionManager {
         }
     }
 
+    /**
+     * this method sends ready status to server
+     * @param type
+     * @return
+     */
     public boolean sendReady(boolean type)
     {
 
@@ -153,6 +222,9 @@ this.waitTillconfirmed();
         return  result;
     }
 
+    /**
+     * this method sens cofiramtion messeage to server
+     */
     private void sendConfirm()  {
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
@@ -163,6 +235,10 @@ this.waitTillconfirmed();
         }
     }
 
+    /**
+     * this method hnadles recived messeage and call specific method depending on messeage type
+     * @param messageFormat
+     */
     public void handleMesseage(MessageFormat messageFormat) {
         switch (messageFormat.type) {
             case CONFIRM:
@@ -310,11 +386,6 @@ this.waitTillconfirmed();
       //  System.out.println(this.clientApp);
 
     }
-
-
-
-
-
 
     }
 

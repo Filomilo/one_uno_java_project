@@ -1,4 +1,6 @@
-package org.example;
+package org.ClientPack;
+
+
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -7,7 +9,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,28 +19,48 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
-import sun.java2d.windows.GDIRenderer;
+import org.SharedPack.UnoCard;
 
-import javax.swing.text.View;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.ResultSet;
-import java.util.concurrent.TimeUnit;
+/**
+ * main class to manage all gui scenes in program
+ */
+public class GuiController extends Application {
 
-public class
-GuiController extends Application {
-
+    /**
+     * a varaible store class object of game view
+     */
     public   GameView gameView;
+    /**
+     * a varaible store class object of main view
+     */
     public  MainVew mainVew;
+    /**
+     * a varaible store class object of result view
+     */
     private   ResultView resultView;
+    /**
+     * a varaible store class object of rank view
+     */
     private  RankView rankView;
+    /**
+     * a varaible store class object of Instruction view
+     */
     private  InstructionView instructionView;
-
+    /**
+     * a varaible store class object of soundPlayer
+     */
     public  SoundPlayer soundPlayer;
+    /**
+     * a varaible store class object of login view
+     */
     public  LoginVew loginView;
 
+    /**
+     * a method called when person succesfully logined to server
+     */
     public void succesfulLogin() {
         this.switchScenetoMain();
         this.mainVew.setStatusConnecting();
@@ -49,8 +70,9 @@ GuiController extends Application {
         }
 
 
-
-
+    /**
+     * enum that names of scene taht can be used to store information about which scene is loaded or should be loaded
+     */
     enum SCENES{
         MAIN,
         INSRTUCTION,
@@ -59,25 +81,47 @@ GuiController extends Application {
         LOGIN, RESULT
     }
 
+    /**
+     * a varaible to determine acitve scene in gui from enum
+     */
     public   GuiController.SCENES activeScenes=SCENES.MAIN;
+
+    /**
+     * a varaible used to hold information about previous scene from enum
+     */
     private   GuiController.SCENES prevScene=SCENES.MAIN;
+    /**
+     * a property used to determined if mosue is on any of the button
+     */
     public  BooleanProperty isOnButton= new SimpleBooleanProperty(false);
 
+    /**
+     *java fx varaiable to store main scene
+     */
     public  Scene mainScene;
-    private  Group root;
+    /**
+     * a varaible to store nick of conected player
+     */
     private  static String nick="";
-    private  String ip="localhost";
-    private  String port="25565";
 
+    /**
+     * a varaible to store referance to clientapp that mangaes all main operations
+     */
     public ClientApp clientApp= new ClientApp(this);
 
-    private  BooleanProperty isStarted= new SimpleBooleanProperty(false);
-
-    private Scene previousScene;
+    /**
+     * a variable to hold group root of preveoious scene to be able to return back to correct scene
+      */
     private Group prevRoot;
+    /**
+     * a boolean varaible that says if game finished loading
+     */
     public Boolean isGameLoaded=false;
 
-
+    /**
+     * a method called to set paramentes of program from arguments and call java fx launch method
+     * @param args
+     */
     public static void main(String[] args) {
 
 
@@ -95,6 +139,15 @@ GuiController extends Application {
 
 
      Stage primaryStage;
+
+    /**
+     * start method from javafx that includes intinlization of whole program
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set. The primary stage will be embedded in
+     * the browser if the application was launched as an applet.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages and will not be embedded in the browser.
+     */
     @Override
     public void start(Stage primaryStage) {
 
@@ -102,8 +155,8 @@ GuiController extends Application {
         try{
 
 
-            this.root = new Group();
-            mainScene = new Scene(this.root, 360, 360,true, SceneAntialiasing.BALANCED);
+            Group root = new Group();
+            mainScene = new Scene(root, 360, 360,true, SceneAntialiasing.BALANCED);
             this.primaryStage=primaryStage;
             primaryStage.setScene(mainScene);
             primaryStage.show();
@@ -165,18 +218,9 @@ GuiController extends Application {
     }
 
 
-    private  void changeSceneToMain()
-    {
-
-    }
-
-    private void changeSceneToGame()
-    {
-        this.primaryStage.setScene(gameView.mainScene);
-        this.gameView.updateOnSize();
-    }
-
-
+    /**
+     * a mehtod used to dicoonet from the server after pushing button
+     */
     public  void disconnectFromServer()
     {
         try {
@@ -190,13 +234,18 @@ GuiController extends Application {
         this.mainVew.setPlayersReady(0,0);
     }
 
-
+    /**
+     * a method used send meseeage to server about being ready for game
+     */
     public void sendReady()
     {
         this.clientApp.setReady(true);
         this.updatePlayerAmt();
     }
 
+    /**
+     * a method used send meseeage to server about being not ready for game
+     */
     public void sendNotReady()
     {
         this.clientApp.setReady(false);
@@ -204,12 +253,18 @@ GuiController extends Application {
     }
 
 
+    /**
+     * updates amount of players in main view
+     */
     private void updatePlayerAmt()
     {
         this.mainVew.setPlayersReady(this.clientApp.getReadyPlayers(), this.clientApp.getConnectedPlayers());
     }
 
 
+    /**
+     * a method called to update size when scaling window
+     */
     private void updateOnSize()
     {
         System.out.printf("update Size: "+ this.activeScenes + "\n");
@@ -241,6 +296,9 @@ GuiController extends Application {
             this.rankView.updateOnSize();
     }
 
+    /**
+     * a emthod to create global listiner for whole gui
+     */
     private void addListineres()
     {
 
@@ -304,6 +362,9 @@ GuiController extends Application {
 
     }
 
+    /**
+     * a mathod used setup and load asseets for game view
+     */
     public void startGame() {
         this.gameView= new GameView(this,mainScene);
         try {
@@ -333,14 +394,23 @@ GuiController extends Application {
     this.isGameLoaded=true;
     }
 
+    /**
+     * a method used to call anmation of reciving card in game view
+     */
     public void getCard(UnoCard unoCard) {
         this.gameView.addCard(unoCard);
     }
 
+    /**
+     * a method used to call anmation of giving card in game view
+     */
     public void giveCardToOpponent(int nmbOFOppoennt) {
         this.gameView.giveCardToOpponent(nmbOFOppoennt);
     }
 
+    /**
+     * a method to switch root of a view with root conating result view roor
+     */
     public void switchSceneToResult()
     {
         GuiController guiController=  this;
@@ -368,6 +438,9 @@ GuiController extends Application {
 
     }
 
+    /**
+     * a method to switch root of a view with root conating main view roor
+     */
     public void switchScenetoMain() {
 
         mainVew.buttons[2].setFill(mainVew.tranparentColor);
@@ -377,6 +450,10 @@ GuiController extends Application {
 
 
     }
+
+    /**
+     * a method to switch root of a view with root conating login view roor
+     */
     public void switchScenetoLogin() {
 
         mainVew.buttons[2].setFill(mainVew.tranparentColor);
@@ -393,9 +470,9 @@ GuiController extends Application {
     }
 
 
-
-
-
+    /**
+     * a method to switch root of a view with root conating ranking view roor
+     */
     private void setScaneToRanking()
     {
         System.out.print("CHANGE SCNE TO RANKING");
@@ -413,7 +490,9 @@ GuiController extends Application {
         }
     }
 
-
+    /**
+     * a method called to return scene that was saved while switch to instruction view to return to coorect view
+     */
     public void ReturnScene()
     {
 
@@ -422,6 +501,9 @@ GuiController extends Application {
         this.mainScene.setRoot(this.prevRoot);
     }
 
+    /**
+     * a method to switch root of a view with root conating insruction view roor
+     */
     public void switchSceneToInstruction() {
 
         this.prevScene=this.activeScenes;

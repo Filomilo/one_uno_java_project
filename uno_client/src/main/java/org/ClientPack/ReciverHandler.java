@@ -1,12 +1,20 @@
-package org.example;
+package org.ClientPack;
+
+import org.SharedPack.MessageFormat;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * a class that run thread to recive meseges from server
+ */
+
 public class ReciverHandler extends  Thread{
 
+    /**
+     * a varaible taht store referance for client connection manger
+     */
    private final ClientConnectionManager clientConnectionManager;
     public ReciverHandler(ClientConnectionManager clientConnectionManager)
     {
@@ -14,16 +22,22 @@ public class ReciverHandler extends  Thread{
 
     }
 
+    /**
+     * a boolean varaibles that stores information about that
+     */
     public boolean shoudldRun=true;
 
-    public boolean isShoudldRun() {
-        return shoudldRun;
-    }
-
+    /**
+     * setter for shouldRun varaibles
+     * @param shoudldRun
+     */
     public void setShoudldRun(boolean shoudldRun) {
         this.shoudldRun = shoudldRun;
     }
 
+    /**
+     * overwrtieen method that until shouldn't run recives messegaes and than sned them to handle method
+     */
     @Override
     public void run()
     {

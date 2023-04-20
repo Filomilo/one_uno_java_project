@@ -1,4 +1,4 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -7,25 +7,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -35,24 +27,37 @@ import java.net.URISyntaxException;
 
 import static java.lang.Math.abs;
 
-
+/**
+ * a class that handles instruction view
+ */
 public class InstructionView extends Application {
+    /**
+     * a varaible that store main scene referance
+     */
     private Scene mainScene;
-
-
-    private  static final String resDir = "uno_client\\src\\main\\resources\\";
-
+    /**
+     * a varaible taht stores transparent color
+     */
     private final Color tranparentColor = new Color(1,0,0,0.0);
+    /**
+     * a varaible that sotes blue color for gradeint base
+     */
     private final Color blueColor = new Color(0,0.1,0.6,1);
+    /**
+     * a varaible that stores gradient stops for background
+     */
     private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    /**
+     * a varaible that sotres shape of a button
+     */
     private  Rectangle button;
+    /**
+     *  vatiable that stores text on a button
+     */
     private  Text buttonText;
-    private  Rectangle rankViewBase;
-    private final double scrollAmount=0;
-    private Shape mask;
-
-
-
+    /**
+     * String varaible that holds  insctuction of instruction text element
+     */
     final private  String instructions= "In order to play this game, you have to be connected with at least 1 other person. The maximum number of players during the game is 8. Status and amount of players connected to the same server as you can be seen in the bottom right corner of the main menu. The game will begin automatically once everyone connected is ready.\n" +
             "\n" +
             "The order of players is determined alphabetically, and you begin the game in clockwise order.\n" +
@@ -79,21 +84,33 @@ public class InstructionView extends Application {
             "During the game, you have the ability to surrender.\n" +
             "The Game will finish once there will be only one active player. After game finish, you can see ranking of players with winners of this game\n" +
             "\t\n";
+    /**
+     * varaible that stores text elemnt of contaitng instruction
+     */
     private  Text instructionText;
 
+    /**
+     * a constructo that sets up neccesery referacnes for this view
+     * @param guiController
+     */
     public InstructionView(GuiController guiController) {
         this.guiController = guiController;
     }
+
 
     public static void main(String[] args) {
         launch(args);
     }
 
 
-
+    /**
+     * a variable taht stores root group foe this view
+     */
     public Group root;
-
-    private GuiController guiController;
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
+    private final GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -113,7 +130,11 @@ public class InstructionView extends Application {
         this.updateOnSize();
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     * @throws IOException
+     */
     public  void iniit(Stage primaryStage, Scene mainScene) throws IOException, URISyntaxException {
         root = new Group();
 
@@ -130,16 +151,21 @@ public class InstructionView extends Application {
 
     }
 
+    /**
+     * setups instruction text element for instruction view
+     */
     private void setupInstruction() {
         this.instructionText = new Text();
         this.instructionText.setText(this.instructions);
         this.instructionText.setFill(Color.WHITE);
-        //this.instructionTextArea.(0,0,(int)this.mainScene.getWidth(),(int)this.mainScene.getHeight());
         this.root.getChildren().add(this.instructionText);
     }
 
 
-
+    /**
+     * adds all listiners to elemnts of this view
+     * @param primaryStage
+     */
 
     private void addListiners(Stage primaryStage) {
 
@@ -358,7 +384,9 @@ public class InstructionView extends Application {
 
     }
 
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     public void updateOnSize()
     {
         int miliSec=10;
@@ -384,7 +412,9 @@ public class InstructionView extends Application {
 
     }
 
-
+    /**
+     * update size of instruction based on window size
+     */
     private void updateInstructionText()
     {
         double scaleGuide= this.mainScene.getWidth()<this.mainScene.getHeight()?this.mainScene.getHeight():this.mainScene.getWidth();
@@ -398,6 +428,9 @@ public class InstructionView extends Application {
             this.instructionText.setFont(newfont);
         }
     }
+    /**
+     * method that update size backgournd
+     */
     private void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.INSRTUCTION) {
@@ -422,6 +455,9 @@ public class InstructionView extends Application {
 
 
     }
+    /**
+     * method that updates button shape an size based on windows size
+     */
     private void updateButtonSize() {
         double buttonHeight=(this.mainScene.getHeight()<this.mainScene.getWidth()?this.mainScene.getHeight():this.mainScene.getWidth())/20;
         this.button.setHeight(buttonHeight);
@@ -439,19 +475,27 @@ public class InstructionView extends Application {
 
 
     }
+    /**
+     * method that is run when moved outside return button
+     */
     private void onMoveOutsideButton()
     {
         this.button.setFill(this.tranparentColor);
         this.buttonText.setFill(Color.WHITE);
         //System.out.println("outside Button");
     }
-
+    /**
+     * method that is run when mouse pushed from return button
+     */
     private void onButtonPush()
     {
         this.guiController.soundPlayer.playOnButtonClick();
         this.button.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }
+    /**
+     * method that is run when mouse relsed from return button
+     */
 
     private void onButtonRelease()
     {
@@ -460,6 +504,9 @@ public class InstructionView extends Application {
         this.guiController.ReturnScene();
     }
 
+    /**
+     * method that is run when moved on return button
+     */
     private void onMoveOnButton()
     {
         //System.out.println("on button");

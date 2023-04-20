@@ -1,4 +1,4 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -7,15 +7,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
@@ -24,7 +20,6 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -33,32 +28,42 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 
-
+/**
+ * a class that handles login view
+ */
 public class LoginVew extends Application {
 
-
+    /**
+     * a varaible taht store main scene referance
+     */
     private  Scene mainScene;
 
-    private final boolean isConnected=false;
-    private final Boolean isReady=false;
-    private  final int startH=720;
-    private final int startW=1280;
-
+    /**
+     * a varaible that stores transparent color for buttons
+     */
     private final Color tranparentColor = new Color(1,0,0,0.0);
+    /**
+     * a varaible that sotes blue color for gradeint base
+     */
     private final Color blueColor = new Color(0,0.1,0.6,1);
-    private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
+    /**
+     * a varaible that stores gradient stops for background
+     */
+   private final Stop[] blueStops = new Stop [] {new Stop(0, this.blueColor), new Stop(1, Color.BLACK)} ;
 
 
-    private  boolean[] activeControles;
 
-
-
-    private  String[] textFieldsTexts={"Nick","Ip","Port"};
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
     private final GuiController guiController;
 
+    /**
+     * this contructor creates elemnt with gui cotnroller
+     * @param guiController
+     */
     public LoginVew(GuiController guiController) {
         this.guiController=guiController;
     }
@@ -68,36 +73,87 @@ public class LoginVew extends Application {
         launch(args);
     }
 
-
+    /**
+     * this varaible holds shape of return button
+     */
     private  Rectangle returnButton;
+    /**
+     * this varaible holds text elemnt got return button
+     */
     private   Text returnButtonText;
-
+    /**
+     * this varaible hold line guides for login sector
+     */
     private   Line[] loginLines;
+    /**
+     * this varaible holds login text fields
+     */
     private  TextField[] loginFields;
+    /**
+     * this varaible hold text guides for login fields
+     */
     private  Text[] loginGuides;
+    /**
+     * this varaible holds login button shape
+     */
     private    Rectangle loginButton;
+    /**
+     * this varaible holds text login button text
+     */
     private  Text loginButtonText;
+    /**
+     * this varaible hold line guides for register sector
+     */
     private  Line[] registerLines;
+    /**
+     * this varaible holds text fields of register sector
+     */
     private  TextField[] registerFields;
+    /**
+     * this varaible holds text elemnts with register lines
+     */
     private   Text[] registerGuides;
+    /**
+     * this varaible holds shape of register button
+     */
     private   Rectangle registerButton;
+    /**
+     * this varaible holds text elemnt of button register button
+     */
     private  Text registerButtonText;
-
+    /**
+     * this varaible holds text elemnt of login communicat
+     */
     private  Text loginCommunicat;
+    /**
+     * this varaible holds text elemnt of register communicat
+     */
     private  Text registerCommunicat;
 
-
+    /**
+     * this varaible hold text elemnt of server adress line guides
+     */
     private  Line[] serverAdressLines;
+    /**
+     * this varaible hold text elemnt of server adress fields text
+     */
     private  Text[] serverAdressGuides;
+    /**
+     * this varaible hold text elemnt of server adress fields
+     */
     private  TextField[] serverAdressFields;
+    /**
+     * this varaible hold text elemnt of server adress communicat
+     */
     private  Text serverAdressCommunicat;
 
 
 
-
+    /**
+     * a variable taht stores root group foe this view
+     */
     public   Group root;
 
-    //GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
@@ -116,7 +172,11 @@ public class LoginVew extends Application {
 
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     * @throws IOException
+     */
     public void iniit(Stage primaryStage,Scene mainScene) throws IOException, URISyntaxException {
 
 
@@ -152,6 +212,9 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method setup adress field for login view
+     */
     private void setupAdressField() {
         this.serverAdressLines = new Line[2];
         this.serverAdressLines[0] = new Line();
@@ -186,7 +249,9 @@ public class LoginVew extends Application {
         this.root.getChildren().addAll( this.serverAdressFields);
         this.root.getChildren().addAll(  this.serverAdressGuides);
     }
-
+    /**
+     * this method setup login sector of login view
+     */
     private void setupLoginSector() {
         loginCommunicat = new Text();
         loginCommunicat.setFill(Color.GOLDENROD);
@@ -235,7 +300,9 @@ public class LoginVew extends Application {
         this.root.getChildren().addAll(loginButton,loginButtonText,loginCommunicat);
     }
 
-
+    /**
+     * this method setup reigsiter sector of login view
+     */
     private void setupRegisterSector() {
         registerCommunicat= new Text();
         registerCommunicat.setFill(Color.GOLDENROD);
@@ -284,7 +351,9 @@ public class LoginVew extends Application {
         this.root.getChildren().addAll(registerButton,registerButtonText,registerCommunicat);
     }
 
-
+    /**
+     * this method calls all update size method when chaning size of window
+     */
     public  void updateOnSize()
     {
 
@@ -317,6 +386,9 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method update adress areas size and postion based on windwo size
+     */
     private void updateAress() {
         double fieldWidth=this.mainScene.getWidth()/5;
         double fieldHeight=this.mainScene.getHeight()/8;
@@ -358,6 +430,9 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * update size and position of login and register size
+     */
     private void updateSectors() {
 
 
@@ -459,6 +534,10 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method add listiners to login view
+     * @param primaryStage
+     */
     private  void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
@@ -839,9 +918,9 @@ public class LoginVew extends Application {
     }
 
 
-
-
-
+    /**
+     * this method update backgournd size based on window size
+     */
     private  void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.LOGIN) {
@@ -852,7 +931,9 @@ public class LoginVew extends Application {
         }
     }
 
-
+    /**
+     * this method set ups return button
+     */
     private void setupReturnButton() {
         this.returnButton=new Rectangle();
         this.returnButton.setFill(this.tranparentColor);
@@ -867,6 +948,9 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method updateds return button size and position based on window size
+     */
     private void updateReturnButtonSize() {
         double buttonHeight=(this.mainScene.getHeight()<this.mainScene.getWidth()?this.mainScene.getHeight():this.mainScene.getWidth())/20;
         this.returnButton.setHeight(buttonHeight);
@@ -885,7 +969,9 @@ public class LoginVew extends Application {
 
     }
 
-
+    /**
+     * this method is called when move outside return button
+     */
     private void onMoveOutsideReturnButton()
     {
         this.returnButton.setFill(this.tranparentColor);
@@ -893,6 +979,9 @@ public class LoginVew extends Application {
         //System.out.println("outside Button");
     }
 
+    /**
+     * this method is called when push return button
+     */
     private void onButtonReturnPush()
     {
         this.guiController.soundPlayer.playOnButtonClick();
@@ -900,6 +989,9 @@ public class LoginVew extends Application {
         //System.out.println("push");
     }
 
+    /**
+     * this method is called when release return button
+     */
     private void onButtonReturnRelease()
     {
         this.resetCommnicats();
@@ -909,6 +1001,9 @@ public class LoginVew extends Application {
         this.guiController.switchScenetoMain();
     }
 
+    /**
+     * this method is called when  move on return button
+     */
     private void onMoveOnReturnButton()
     {
         //System.out.println("on button");
@@ -917,7 +1012,9 @@ public class LoginVew extends Application {
     }
 
 
-
+    /**
+     * this method is called when  move outside login button
+     */
     private void onMoveOutsideLoginButton()
     {
         this.loginButton.setFill(this.tranparentColor);
@@ -925,6 +1022,9 @@ public class LoginVew extends Application {
         //System.out.println("outside Button");
     }
 
+    /**
+     * this method is called when  pushed login button
+     */
     private void onButtonLoginPush()
     {
         this.guiController.soundPlayer.playOnButtonClick();
@@ -932,6 +1032,9 @@ public class LoginVew extends Application {
         //System.out.println("push");
     }
 
+    /**
+     * this method is called when  released login button
+     */
     private void onButtonLoginRelease()
     {
        this.resetCommnicats();
@@ -957,6 +1060,9 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method is called when move on login button
+     */
     private void onMoveOnLoginButton()
     {
         //System.out.println("on button");
@@ -966,14 +1072,18 @@ public class LoginVew extends Application {
 
 
 
-
+    /**
+     * this method is called when move outisede register button
+     */
     private void onMoveOutsideRegisterButton()
     {
         this.registerButton.setFill(this.tranparentColor);
         this.registerButtonText.setFill(Color.WHITE);
         //System.out.println("outside Button");
     }
-
+    /**
+     * this method is called when pushed register button
+     */
     private void onButtonRegisterPush()
     {
         this.guiController.soundPlayer.playOnButtonClick();
@@ -981,6 +1091,9 @@ public class LoginVew extends Application {
         //System.out.println("push");
     }
 
+    /**
+     * this method is called when released register button
+     */
     private void onButtonRegisterRelease()
     {
         this.resetCommnicats();
@@ -1002,13 +1115,25 @@ public class LoginVew extends Application {
              this.updateOnSize();
          }
         }
+        else
+        {
+            this.setRegisterCommunicat("Passwords dont match");
+        }
         // this.guiController.ReturnScene();
     }
 
+    /**
+     * this mehtod checks if password in registrer field macth
+     * @return
+     */
     private Boolean validateRegistration() {
-        return true;
+        return this.registerFields[1].getText().equals( this.registerFields[2].getText());
+
     }
 
+    /**
+     * this method is called then moved outisde of register button
+     */
     private void onMoveOnRegisterButton()
     {
         //System.out.println("on button");
@@ -1016,13 +1141,20 @@ public class LoginVew extends Application {
         this.registerButtonText.setFill(Color.BLACK);
     }
 
-
+    /**
+     * this method set login communicat
+     * @param s
+     */
     public void setLoginCommuncat(String s)
     {
         loginCommunicat.setText(s);
         this.updateOnSize();
     }
 
+    /**
+     * this methos sets resigster communicat
+     * @param s
+     */
     public void setRegisterCommunicat(String s)
     {
         Platform.runLater(new Runnable() {
@@ -1035,6 +1167,10 @@ public class LoginVew extends Application {
 
     }
 
+    /**
+     * this method sets sever adress comuniacat
+     * @param s
+     */
     private void setServerAdressCommunicat(String s)
     {
         if(!s.equals(""))
@@ -1043,6 +1179,9 @@ public class LoginVew extends Application {
         this.updateOnSize();
     }
 
+    /**
+     * this method reset all comuniacats in login view
+     */
     private  void resetCommnicats()
     {
         this.setServerAdressCommunicat("");

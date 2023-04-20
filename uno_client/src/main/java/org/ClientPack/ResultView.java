@@ -1,4 +1,4 @@
-package org.example;
+package org.ClientPack;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -6,7 +6,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -19,21 +18,40 @@ import javafx.stage.Stage;
 
 
 import java.io.IOException;
-import java.net.CookieHandler;
-import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * a class taht handles result view
+ */
 public class ResultView extends Application {
 
+    /**
+     * a varaible taht store main scene referance
+     */
     private final Scene mainScene;
 
+    /**
+     * a varaible taht stores transparent color
+     */
     private final Color tranparentColor = new Color(1,0,0,0.0);
+    /**
+     * a varaible that sotes orange color for gradeint base
+     */
     private final Color orangeColor = new Color(0.8,0.55,0,1);
+    /**
+     * a varaible that stores gradient stops for background
+     */
     private final Stop[] orangeStops = new Stop [] {new Stop(0, this.orangeColor), new Stop(1, Color.BLACK)} ;
 
+    /**
+     * a varaible that sotres shape of a button
+     */
     private Rectangle button;
 
+    /**
+     *  vatiable that stores text on a button
+     */
     private Text buttonText;
 
 
@@ -41,30 +59,26 @@ public class ResultView extends Application {
         launch(args);
     }
 
+    /**
+     * a varaible that stores text elemnts of this view
+     */
     private Text[] rankingText;
-    private final float buttonSizeRatio=9;
-    private final float winTextHeightToScreenRatio=12;
 
+
+    /**
+     * a variable taht stores root group foe this view
+     */
     public Group root;
 
+    /**
+     * a varaivle that stoes refence to gui contorller
+     */
     private final GuiController guiController;
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
             this.iniit(primaryStage);
-
-
-
-
-
             primaryStage.setScene(mainScene);
-             //primaryStage.setFullScreen(true);
-
-
-
-
-
-
             primaryStage.show();
         }
         catch (Exception e)
@@ -73,7 +87,11 @@ public class ResultView extends Application {
         }
     }
 
-
+    /**
+     * a mthod that setuups alle elemnts of this view
+     * @param primaryStage
+     * @throws IOException
+     */
     void iniit(Stage primaryStage) throws IOException {
 
         root = new Group();
@@ -93,6 +111,9 @@ public class ResultView extends Application {
         this.updateBackground();
     }
 
+    /**
+     * a method taht setups ranking elemnts of this view
+     */
     private void setupRanking() {
         List<String> ranking = this.getResults();
         this.rankingText = new Text[ranking.size()];
@@ -106,6 +127,9 @@ public class ResultView extends Application {
 
     }
 
+    /**
+     * a method taht setups buton elemnts of this view
+     */
     private void setupButton() {
         this.button=new Rectangle();
         this.button.setFill(this.tranparentColor);
@@ -121,14 +145,20 @@ public class ResultView extends Application {
     }
 
 
-
-
-
+    /**
+     * a constructo that sets up neccesery referacnes for this view
+     * @param guiController
+     * @param mainScene
+     */
     public ResultView(GuiController guiController, Scene mainScene) {
         this.guiController=guiController;
         this.mainScene=mainScene;
     }
 
+    /**
+     * adds all listiners to elemnts of this view
+     * @param primaryStage
+     */
     private void addListiners(Stage primaryStage) {
 
         this.mainScene.widthProperty().addListener(
@@ -260,7 +290,9 @@ public class ResultView extends Application {
 
     }
 
-
+    /**
+     * method that runs all update size method when scaling window
+     */
     public void updateOnSize()
     {
         this.updateTextSize();
@@ -268,6 +300,9 @@ public class ResultView extends Application {
         this.updateBackground();
     }
 
+    /**
+     * method that updates button shape an size based on windows size
+     */
     private void updateButtonSize() {
         double buttonHeight=(this.mainScene.getHeight()<this.mainScene.getWidth()?this.mainScene.getHeight():this.mainScene.getWidth())/20;
         this.button.setHeight(buttonHeight);
@@ -286,6 +321,9 @@ public class ResultView extends Application {
 
     }
 
+    /**
+     * method that updates size of text based windows size
+     */
     private void updateTextSize() {
         double bigFontSize=(this.mainScene.getHeight()<this.mainScene.getWidth()?this.mainScene.getHeight():this.mainScene.getWidth())/(1.5 * this.rankingText.length);
         Font bigFont=new Font("Arial",bigFontSize);
@@ -304,6 +342,9 @@ public class ResultView extends Application {
     }
 
 
+    /**
+     * method that update size backgournd
+     */
     private void updateBackground()
     {
         if(this.guiController.activeScenes== GuiController.SCENES.RESULT) {
@@ -313,7 +354,9 @@ public class ResultView extends Application {
         }
     }
 
-
+    /**
+     * method that returns results for this game
+     */
     private List<String> getResults()
     {
         List<String> results= this.guiController.clientApp.getResults();
@@ -321,13 +364,18 @@ public class ResultView extends Application {
         return results;
     }
 
-
+    /**
+     * method that is run when moved on return button
+     */
     private void onMoveOnButton()
     {
         //System.out.println("on button");
         this.button.setFill(Color.WHITE);
         this.buttonText.setFill(Color.BLACK);
     }
+    /**
+     * method that is run when moved outside return button
+     */
 
     private void onMoveOutsideButton()
     {
@@ -335,6 +383,9 @@ public class ResultView extends Application {
         this.buttonText.setFill(Color.WHITE);
         //System.out.println("outside Button");
     }
+    /**
+     * method that is run when mouse pushed from return button
+     */
 
     private void onButtonPush()
     {
@@ -342,6 +393,11 @@ public class ResultView extends Application {
         this.button.setFill(Color.LIGHTGRAY);
         //System.out.println("push");
     }
+
+
+    /**
+     * method that is run when mouse relsed from return button
+     */
 
     private void onButtonRelease()
     {

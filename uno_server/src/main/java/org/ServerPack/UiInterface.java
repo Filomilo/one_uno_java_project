@@ -1,21 +1,40 @@
-package org.example;
+package org.ServerPack;
 
-import java.nio.file.LinkPermission;
 import java.sql.SQLException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.Scanner;
 
+/**
+ * this class handles user console interaface fro server
+ */
 public class UiInterface {
 
+    /**
+     * varaible to store main classof server app
+     */
     private final ServerApp serverApp = new ServerApp();
+    /**
+     * scanner to handle user console iinput
+     */
     private final Scanner scanner= new Scanner(System.in);
+    /**
+     * thread class to handle input while server is running
+     */
+
     private ServerRunThread serverRunThread;
+
+    /**
+     * method to clean terminal on windows
+     */
     private  void clearTerminal()
     {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    /**
+     * a method to get yes or no in user console interface
+     * @return
+     */
     private  boolean getYesNo()
     {
         while(true) {
@@ -33,6 +52,9 @@ public class UiInterface {
 
     }
 
+    /**
+     * user interface for setting app connections
+     */
     private void createDataBaseConectionUi()
     {
 
@@ -85,6 +107,10 @@ public class UiInterface {
         }
     }
 
+    /**
+     * a method to ask whether or not to reset data base
+     * @return
+     */
     private  boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
@@ -98,6 +124,10 @@ public class UiInterface {
         return false;
     }
 
+    /**
+     * a method to check if database is correct
+     * @throws SQLException
+     */
     private void checkDataBae() throws SQLException {
         boolean dataBaseVaidity=this.serverApp.dataBaseMangaer.checkTable();
         if(!dataBaseVaidity)
@@ -114,7 +144,10 @@ public class UiInterface {
         }
     }
 
-public void strartInterface()
+    /**
+     * a method to start main server interface
+     */
+    public void strartInterface()
 {
     int input;
     while (true) {
@@ -144,7 +177,10 @@ public void strartInterface()
 
 }
 
-    //method run on Server run thread to get messege to STOP server
+    /**
+     * a mthod to wait for exit strign to stop server from running
+     * @throws InterruptedException
+     */
     private void waitForExit() throws InterruptedException {
         while(true) {
             String input = scanner.next();

@@ -1,6 +1,8 @@
-package org.example;
+package org.ServerPack;
 
-import javax.swing.text.StyledEditorKit;
+import org.SharedPack.MessageFormat;
+import org.SharedPack.UnoCard;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,24 +13,46 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.exp;
 
-
+/**
+ * this class is used to control conenctions between server and clients
+ */
 public class ServerConnectionManager {
 
-
+    /**
+     * this variable holds referacne to serverApp main class
+     */
     public ServerApp serverApp;
+    /**
+     * this varaible holds socket for server
+     */
     private ServerSocket serverSocket;
-    //variable that change should close thrad and server
+
+    /**
+     * this varaible holds if server is ruuning
+     */
     public boolean isServerRunning=true;
-    //basic construcor for class
+
+    /**
+     * construct that sets up serverapp referance for this class
+     * @param serverApp
+     */
     public ServerConnectionManager(ServerApp serverApp) {
         this.serverApp = serverApp;
     }
 
 
+    /**
+     * this object is used for synrhonization send messegage
+     */
     private static final Object sendMessegeLocker= new Object();
-    //static function for sending object of messeafe to chosen stream
+
+    /**
+     * this method send messsage to specific stream
+     * @param objectOutputStream
+     * @param messageFormat
+     * @throws IOException
+     */
      public static void sendMessage(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
         synchronized (sendMessegeLocker) {
             objectOutputStream.writeObject(messageFormat);
@@ -41,6 +65,12 @@ public class ServerConnectionManager {
         }
     }
 
+    /**
+     * this method sends messege to specifc stream but with send lock
+     * @param objectOutputStream
+     * @param messageFormat
+     * @throws IOException
+     */
     private  void sendMessageWithoutLock(ObjectOutputStream objectOutputStream, MessageFormat messageFormat) throws IOException {
         synchronized (sendMessegeLocker) {
             objectOutputStream.writeObject(messageFormat);
@@ -55,7 +85,13 @@ public class ServerConnectionManager {
 
     }
 
-    //static funciton fo receving object messege form chosen stream
+    /**
+     * this method recives message but from specific stream
+     * @param objectInputStream
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private  static MessageFormat getMesseage(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
 
         MessageFormat messageFormat = new MessageFormat();
@@ -76,9 +112,14 @@ public class ServerConnectionManager {
     }
 
 
-//method to get meege form specif player, after getting messege auntamtl send confimation messee to seder
 
-
+    /**
+     * this method hadles reciving messeage from specific player
+     * @param playerData
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public  MessageFormat getMesseage(PlayerData playerData) throws IOException, ClassNotFoundException {
          //synchronized (ServerConnectionManager.messeageLocker) {
              System.out.println("from: " + playerData.getNick());
@@ -86,7 +127,7 @@ public class ServerConnectionManager {
 
              System.out.println(messageFormat);
              System.out.println("$$$$$$$$$$$$$$$$$$ sedning CONFIRm\n");
-             if (messageFormat.type != org.example.MessageFormat.messegeTypes.CONFIRM) {
+             if (messageFormat.type != MessageFormat.messegeTypes.CONFIRM) {
                  System.out.println("$$$$$$$$$$$$$$$$$$ sedning CONFIRm\n");
                  sendConfirm(playerData);
              }
@@ -97,6 +138,12 @@ public class ServerConnectionManager {
 
     // funcion to send Confirmation messege to sender to commnunciate proper communication
     // this function should be always send after receving mesegae
+
+    /**
+     * this method send to player specificly confirmation messeage
+     * @param playerData
+     * @throws IOException
+     */
     private void sendConfirm(PlayerData playerData) throws IOException {
         MessageFormat messageFormat = new MessageFormat();
         messageFormat.type= MessageFormat.messegeTypes.CONFIRM;
@@ -104,6 +151,11 @@ public class ServerConnectionManager {
     }
 
     //method to wait for cofnirmation from specifc player
+
+    /**
+     * this method waits until server get confirmation messegae
+     * @param playerData
+     */
     private void waitConfirm(PlayerData playerData)
     {
         while(!playerData.isConfirmedMesseage())
@@ -123,6 +175,13 @@ public class ServerConnectionManager {
 
     // funciton to send messege to specifcly connected player
     // this method should be used instead of the static to automaticly wait for confirmation method
+
+    /**
+     * this method provides ability to send messege to specific player
+     * @param playerData
+     * @param messageFormat
+     * @throws IOException
+     */
     public  void sendMessage(PlayerData playerData, MessageFormat messageFormat) throws IOException {
         synchronized (sendMessegeLocker) {
             System.out.println("Sending To: " + playerData.getNick() + ": " + messageFormat);
@@ -136,15 +195,22 @@ public class ServerConnectionManager {
     }
 
 
-
-    private void playCard(PlayerData playerData, UnoCard  unoCard , int num) throws IOException, ClassNotFoundException {
+    /**
+     * this method hadnles operatino of playing card by player. It updated infomation in databse and also informs other players about pplayed cards
+     * and check if it was the last card played by this card
+     * @param playerData
+     * @param unoCard
+     * @param num
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void playCard(PlayerData playerData, UnoCard unoCard , int num) throws IOException, ClassNotFoundException {
         System.out.println(
                 this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) + " - " + num +" = " + (this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num) + "\n");
 
 
         this.serverApp.dataBaseMangaer.playCard(playerData.getNick(), this.serverApp.dataBaseMangaer.getPlayerAmtOfCards(playerData.getNick()) - num +1);
 
-        System.out.println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()"+this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick()));
         if(this.serverApp.dataBaseMangaer.getAmtInHand(playerData.getNick())==0)
             this.procesFinished(playerData);
 
@@ -159,7 +225,6 @@ public class ServerConnectionManager {
 
         if(unoCard.getType()== UnoCard.UNO_TYPE.REVERSE)
         {
-            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ REVERSE");
             this.serverApp.clockOrder=!this.serverApp.clockOrder;
             MessageFormat messageFormat =new MessageFormat();
             messageFormat.type=MessageFormat.messegeTypes.SWAPTURN;
@@ -213,6 +278,10 @@ public class ServerConnectionManager {
 
     }
 
+
+    /**
+     * this method checks amount of cards in each hand to determin if game is finished. If it is it starts process of finishing game
+     */
     public void checkFinishGame() {
         System.out.print("Check finsh gmeae \n\n");
         if(this.serverApp.dataBaseMangaer.getAmtActivePlayers()==1)
@@ -222,7 +291,9 @@ public class ServerConnectionManager {
     }
 
 
-
+    /**
+     * thihs method handles operations to finish now played game
+     */
     public void finishGame() {
         System.out.print("FINSHIND GMAE \n\n\n\n");
         for (PlayerData player: this.serverApp.nicks
@@ -266,6 +337,9 @@ public class ServerConnectionManager {
 
     }
 
+    /**
+     * this method calcluates new turn based on order of turns and active players
+     */
     private void setupNextTurn() {
         if (this.serverApp.clockOrder)
         this.serverApp.incrTurn();
@@ -276,6 +350,11 @@ public class ServerConnectionManager {
     }
 
 
+    /**
+     * this method actived specingifc actions in databse and connection to handle player finishing game
+     * @param playerData
+     * @throws IOException
+     */
     private void procesFinished(PlayerData playerData) throws IOException {
         this.serverApp.dataBaseMangaer.setRank(playerData.getNick());
         playerData.setInGame(false);
@@ -287,7 +366,14 @@ public class ServerConnectionManager {
 
     }
 
-    // this method is my client thread in order to proces te meessege they received
+    /**
+     * this method handle messeges activate speecifc method depending on types of messege it recives
+     * @param playerData
+     * @param messageFormat
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public Boolean handleMesseage(PlayerData playerData, MessageFormat messageFormat) throws IOException, ClassNotFoundException {
         switch (messageFormat.type)
         {
@@ -346,8 +432,12 @@ public class ServerConnectionManager {
         return true;
     }
 
-//method that setups connections and data with new connecetd client
-private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
+    /**
+     * method setups connecton
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
         Socket socket = serverSocket.accept();
 
         InputStream inStream = socket.getInputStream();
@@ -454,14 +544,25 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
     }
 
 
-    // mrthod that send the same messege to all connected players
+    /**
+     * this mehod sends messege to every connected player
+     * @param messageFormat
+     * @throws IOException
+     */
     public void sendToAll(MessageFormat messageFormat) throws IOException {
         for (PlayerData player:
                 this.serverApp.nicks) {
                 this.sendMessage(player, messageFormat);
             }
         }
-    //method that sends messeages to everyone exlcuding the chosen player
+
+    /**
+     * method sends messege to every connected client except for the one provided in argument
+     * @param messageFormat
+     * @param playerExclued
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public void sendExclusice(MessageFormat messageFormat, PlayerData playerExclued) throws IOException, ClassNotFoundException {
         for (PlayerData player:
                 this.serverApp.nicks) {
@@ -473,6 +574,11 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
     }
 
 
+    /**
+     * method setup serer connections on port provided in argument
+     * @param port
+     * @throws IOException
+     */
     public void setupServerConnections(int port) throws IOException {
 
         this.serverSocket = new ServerSocket(port);
@@ -490,12 +596,21 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
         serverSocket.close();
     }
 
-    private final int secWaitLimir=7;
-
+    /**
+     * dynamic list containing nicks of player waiter for by sever
+     */
     List<String> waitList= new ArrayList<String>();
-    List<Boolean> waitListCheck= new ArrayList<Boolean>();
+    /**
+     *  dynamic list conating wiat list status to check if specific player conncted back into game
+     */
+     List<Boolean> waitListCheck= new ArrayList<Boolean>();
 
 
+    /**
+     * finds and returns index of nick on waitlist
+     * @param nick
+     * @return
+     */
     public int findIndexOfWaitList(String nick)
     {
         int i;
@@ -509,6 +624,11 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
     return i;
     }
 
+    /**
+     * check if players with specific nick is on waitlist
+     * @param nick
+     * @return
+     */
     private boolean findIfInWaitList(String nick)
     {
         int i;
@@ -524,15 +644,21 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
         return res;
     }
 
+    /**
+     * Method setup wait for player. It goes in llop where it sends wait counter to clinents
+     * if time runs up then it is treated as a player surrended game
+     * if player connets it time limit than it returns to game
+     * @param playerData
+     */
     public void handleWaitForPlayer(PlayerData playerData) {
-
+        int secWaitLimir = 15;
         try {
             MessageFormat messageFormat = new MessageFormat();
             messageFormat.type= MessageFormat.messegeTypes.WAITSTART;
             messageFormat.text = new String[1];
             messageFormat.text[0] = playerData.getNick();
             messageFormat.number = new int[1];
-            messageFormat.number[0]= this.secWaitLimir;
+            messageFormat.number[0]= secWaitLimir;
             this.sendToAll(messageFormat);
             waitList.add(playerData.nick);
             waitListCheck.add(false);
@@ -544,32 +670,20 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
         while(true)
         {
             try {
-
-
+                TimeUnit.SECONDS.sleep(1);
                 MessageFormat messageFormat = new MessageFormat();
                 messageFormat.type= MessageFormat.messegeTypes.WAIT;
                 messageFormat.text = new String[1];
                 messageFormat.text[0] = playerData.getNick();
                 messageFormat.number = new int[1];
-                messageFormat.number[0]= secWaitLimir-i;
+                messageFormat.number[0]= secWaitLimir -i;
                 this.sendToAll(messageFormat);
-
-
-                TimeUnit.SECONDS.sleep(1);
-
-
-
-
                 i++;
-
                 int indx=this.findIndexOfWaitList(playerData.nick);
                 if(waitListCheck.get(indx)) {
-
                     break;
                 }
-
-
-            if(i>secWaitLimir) {
+            if(i> secWaitLimir) {
                 res = false;
                 break;
             }
@@ -591,6 +705,11 @@ private void connectWithNewPlyer() throws IOException, ClassNotFoundException {
         }
     }
 
+
+    /**
+     * Method sends Messege to clients to stop wiaitng for specific player
+     * @param playerData
+     */
     private void stopWaitMesseage( PlayerData playerData)
     {
         MessageFormat messageFormat = new MessageFormat();

@@ -1,12 +1,17 @@
-package org.example;
+package org.SharedPack;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.PrimitiveIterator;
 
+/**
+ * a class that holds data about uno card
+ */
 public class UnoCard  implements Serializable  {
-    enum UNO_COLOR{
+    /**
+     * enum typpes that holds all possible colors of card in game
+     */
+    public enum UNO_COLOR{
         GREEN,
         RED,
         YELLOW,
@@ -14,7 +19,10 @@ public class UnoCard  implements Serializable  {
         BLACK
     }
 
-    enum UNO_TYPE{
+    /**
+     * enum types that holds all types of uno cards in game
+     */
+    public enum UNO_TYPE{
       REGULAR,
       PLUS2,
         PLUS4,
@@ -24,12 +32,23 @@ public class UnoCard  implements Serializable  {
     }
 
 
+    /**
+     * a constructor that setups card data from each varaible seperate
+     * @param type
+     * @param color
+     * @param numb
+     */
     public UnoCard(UNO_TYPE type, UNO_COLOR color, int numb) {
         this.type = type;
         this.color = color;
         this.numb = numb;
     }
 
+    /**
+     * a constructor that set ups card data from the data base query result
+     * @param resultSet
+     * @throws SQLException
+     */
     public UnoCard(ResultSet resultSet) throws SQLException {
 
         switch (resultSet.getString("COLOR")) {
@@ -58,7 +77,10 @@ public class UnoCard  implements Serializable  {
         }
     }
 
-
+    /**
+     * overwrittern method to print data baout card
+     * @return
+     */
     @Override
     public String toString() {
         if(type==UNO_TYPE.REGULAR)
@@ -67,30 +89,48 @@ public class UnoCard  implements Serializable  {
             return type +"," + color  ;
     }
 
+    /**
+     * varaible that sores type of card
+     */
     private UNO_TYPE type;
+    /**
+     * variable taht stores color of card
+     */
     private UNO_COLOR color;
-    private int numb;
+    /**
+     * cariables taht stores number on card
+     */
+    private final int numb;
 
-    public void setType(UNO_TYPE type) {
-        this.type = type;
-    }
-
+    /**
+     * setter to set color of card
+     * @param color
+     */
     public void setColor(UNO_COLOR color) {
         this.color = color;
     }
 
-    public void setNumb(int numb) {
-        this.numb = numb;
-    }
 
+    /**
+     * a getter to get type of card
+     * @return
+     */
     public UNO_TYPE getType() {
         return type;
     }
 
+    /**
+     * gett to get color of card
+     * @return
+     */
     public UNO_COLOR getColor() {
         return color;
     }
 
+    /**
+     * a gett to get number on card
+     * @return
+     */
     public int getNumb() {
         return numb;
     }

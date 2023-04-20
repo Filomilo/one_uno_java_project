@@ -33,7 +33,6 @@ public class UiInterface {
 
     /**
      * a method to get yes or no in user console interface
-     * @return
      */
     private  boolean getYesNo()
     {
@@ -62,28 +61,29 @@ public class UiInterface {
         while (true)
         {
             System.out.println("what ip of your Oracle Data Base server");
-            input="localhost";
-           // input=scanner.next();
+            //input="localhost";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseAdres(input);
 
             System.out.println("What is port of your Oracel Dataa Base sever");
-            input="1521";
-            //input=scanner.next();
+           // input="1521";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBasePort(input);
 
             System.out.println("What is name of your Data base");
-            input="xe";
-            //input=scanner.next();
+           // input="xe";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseName(input);
 
             System.out.println("What username that you would like to connect to Data base");
-            input="test";
-            //input=scanner.next();
+           // input="test";
+            input=scanner.next();
             this.serverApp.dataBaseMangaer.setDataBaseUserName(input);
 
             System.out.println("What password that you would like to connect to Data base");
-            //input=scanner.next();
-            input="test";
+           // input="test";
+            input=scanner.next();
+
             this.serverApp.dataBaseMangaer.setDataBasePass(input);
 
             boolean res= this.serverApp.dataBaseMangaer.connectWithDataBase();
@@ -109,12 +109,11 @@ public class UiInterface {
 
     /**
      * a method to ask whether or not to reset data base
-     * @return
      */
     private  boolean resetDataBase()
     {
         System.out.println("Would you like to reset data Base");
-        boolean res=false;//this.getYesNo();
+        boolean res=this.getYesNo();
 
         if(res)
         {
@@ -126,7 +125,6 @@ public class UiInterface {
 
     /**
      * a method to check if database is correct
-     * @throws SQLException
      */
     private void checkDataBae() throws SQLException {
         boolean dataBaseVaidity=this.serverApp.dataBaseMangaer.checkTable();
@@ -159,8 +157,9 @@ public class UiInterface {
             this.clearTerminal();
             System.out.println("Data base setup finished");
             System.out.println("On what port would you like to start uno Server");
-            //input=scanner.nextInt();
-            input=25565;
+            //input=25565;
+            input=scanner.nextInt();
+
             this.serverApp.setPort(input);
             serverRunThread = new ServerRunThread(this.serverApp);
             serverRunThread.start();
@@ -179,7 +178,6 @@ public class UiInterface {
 
     /**
      * a mthod to wait for exit strign to stop server from running
-     * @throws InterruptedException
      */
     private void waitForExit() throws InterruptedException {
         while(true) {

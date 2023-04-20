@@ -7,7 +7,7 @@
       </element>
       <element id="module-output" name="uno_server" />
       <element id="module-output" name="Shared" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/uno_server/src/main/java/org/example/ojdbc8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/uno_server/src/main/java/org/ServerPack/ojdbc8.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
